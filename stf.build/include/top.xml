@@ -1,0 +1,341 @@
+<?xml version="1.0"?>
+
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<project name="stf.top">
+
+	<!-- Set a property for accessing environment variables.  -->
+	<property environment="env"/>
+
+	<!-- Set default prereqs_root.  -->
+	<!-- If source has been checked out to /home/user/git/stf, default location for prereqs is /home/user/systemtest_prereqs.  -->
+	<property name="prereqs_root" location="${source_root}/../../systemtest_prereqs"/>
+
+	<!-- Platform dependent settings.  -->
+	<condition property="exe_suffix" value=".exe" else="" >
+	   <os family="windows" />
+    </condition>
+
+	<!--
+		Some interoperability tests may involve running two javas of different versions.
+		The test classes will need to be built using the earliest of the two versions.
+		To facilitiate this, the test project build.xml files say explicitly which compiler
+		to version to use via a javax_home property (java8_home, java9_home, etc.)
+		If no values are provided for the javax_home properties, the java running ant
+		will be used for the compiles.
+		The following targets set all this up.
+	-->
+	<!--
+		Properties are also set for the location of the directories containing JDK tools (jar, javac, idlj etc.)
+		On IBM zOS java and Java 9, the ant property java.home points at JAVA_HOME.
+		On pre Java 9 non IBM zOS java, the ant property java.home points at JAVA_HOME/jre.
+	-->
+	<target name="setup-java-homes" depends="setup_java8_home, setup_java9_home">
+	</target>
+	<target name="setup_java8_home">
+		<condition property="java8_home" value="${java.home}">
+			<not>
+				<available file="${java8_home}"/>
+			</not>
+		</condition>
+		<available file="${java8_home}/bin/javac${exe_suffix}" property="java8_bindir" value="${java8_home}/bin"/>
+		<available file="${java8_home}/../bin/javac${exe_suffix}" property="java8_bindir" value="${java8_home}/../bin"/>
+		<property name="java8_compiler" location="${java8_bindir}/javac${exe_suffix}"/>
+		<echo message="java8_home set to ${java8_home}"/>
+		<echo message="java8_compiler set to ${java8_compiler}"/>
+	</target>
+	<target name="setup_java9_home">
+		<condition property="java9_home" value="${java.home}">
+			<not>
+				<available file="${java9_home}"/>
+			</not>
+		</condition>
+		<available file="${java9_home}/bin/javac${exe_suffix}" property="java9_bindir" value="${java9_home}/bin"/>
+		<available file="${java9_home}/../bin/javac${exe_suffix}" property="java9_bindir" value="${java9_home}/../bin"/>
+		<property name="java9_compiler" location="${java9_bindir}/javac${exe_suffix}"/>
+		<echo message="java9_home set to ${java9_home}"/>
+		<echo message="java9_compiler set to ${java9_compiler}"/>
+	</target>
+
+	<!--
+		Set properties which point at the directory containing tools (jar, javac, idlj etc.)
+		On IBM zOS java and Java 9, the ant property java.home points at JAVA_HOME
+		On pre Java 9 non IBM zOS java, the ant property java.home points at JAVA_HOME/jre
+	-->
+	<!--
+	<available file="${java.home}/bin/javac" property="java_bindir" value="${java.home}/bin"/>
+	<available file="${java.home}/bin/javac.exe" property="java_bindir" value="${java.home}/bin"/>
+	<available file="${java.home}/../bin/javac" property="java_bindir" value="${java.home}/../bin"/>
+	<available file="${java.home}/../bin/javac.exe" property="java_bindir" value="${java.home}/../bin"/>
+
+	<property name="java_compiler" location="${java_bindir}/javac.exe"/>
+	-->
+
+	<!-- Set up classpaths for prereqs. -->
+	<path id="junit.class.path">
+		<pathelement location="${prereqs_root}/junit-4.12/junit-4.12.jar"/>
+		<pathelement location="${prereqs_root}/junit-4.12/hamcrest-core-1.3.jar"/>
+	</path>
+	<path id="log4j-2.3.class.path">
+		<pathelement location="${prereqs_root}/log4j-2.3/log4j-api-2.3.jar"/>
+		<pathelement location="${prereqs_root}/log4j-2.3/log4j-core-2.3.jar"/>
+	</path>   
+	<path id="project.class.path">
+		<path refid="junit.class.path" />
+		<path refid="log4j-2.3.class.path" />
+	</path>		
+
+	<!--
+		Target to check for prereqs.
+		Same as configure target except prereqs are not installed if missing.
+	-->
+	<target name="check-prereqs" depends="check-for-ant-1.10.1, print-ant-1.10.1-location, print-ant-1.10.1-error,
+										  check-for-junit-4.12, print-junit-4.12-location, print-junit-4.12-error,
+										  check-for-hamcrest-core-1.3, print-hamcrest-core-1.3-location, print-hamcrest-core-1.3-error,
+										  check-for-log4j-2.3, print-log4j-2.3-location, print-log4j-2.3-error,
+										  check-for-windows-sysinternals, print-windows-sysinternals-location, print-windows-sysinternals-error,
+										  fail-if-error,
+										  setup-java-homes">
+	</target>
+
+	<!--
+		Targets to check for and download prereqs.
+		All prereqs are installed under the same ${prereqs_root} directory.
+	-->
+	<target name="configure" depends="check-for-wget,
+									  check-for-ant-1.10.1, configure-ant-1.10.1, print-ant-1.10.1-location, print-ant-1.10.1-error,
+									  check-for-junit-4.12, configure-junit-4.12, print-junit-4.12-location, print-junit-4.12-error,
+									  check-for-hamcrest-core-1.3, configure-hamcrest-core-1.3, print-hamcrest-core-1.3-location, print-hamcrest-core-1.3-error,
+									  check-for-log4j-2.3, configure-log4j-2.3, print-log4j-2.3-location, print-log4j-2.3-error,
+									  check-for-windows-sysinternals, set-download-windows-sysinternals-required, configure-windows-sysinternals, print-windows-sysinternals-location, print-windows-sysinternals-error,
+									  fail-if-error">
+	</target>
+
+	<!-- Target to check if ant 1.10.1 is available. -->
+	<!-- At the time of writing, the default apt-get ant version on Ubuntu is 1.9.6. -->
+	<!-- Building Java 9 applications requires 1.10.1. -->
+	<target name="check-for-ant-1.10.1">
+		<property name="ant_1.10.1_dir" location="${prereqs_root}/apache-ant-1.10.1"/>
+		<property name="ant_1.10.1_file" value="lib/ant-launcher.jar"/>
+		<property name="ant_1.10.1" location="${ant_1.10.1_dir}/${ant_1.10.1_file}"/>
+	    <available file="${ant_1.10.1}" property="ant_1.10.1_available"/>
+	</target>
+
+	<!--
+		Target to get ant 1.10.1 from http://www-eu.apache.org/dist//ant/binaries/apache-ant-1.10.1-bin.zip
+		Unzip to PREREQS_ROOT/ant-1.10.1
+	-->
+	<target name="configure-ant-1.10.1" unless="${ant_1.10.1_available}">
+		<download-file destdir="${java.io.tmpdir}/apache-ant-1.10.1" destfile="apache-ant-1.10.1-bin.zip" srcurl="http://www-eu.apache.org/dist//ant/binaries/apache-ant-1.10.1-bin.zip"/>
+		<!-- The ant 1.10.1 zip file includes a top level apache-ant-1.10.1 directory. -->
+		<unzip src="${java.io.tmpdir}/apache-ant-1.10.1/apache-ant-1.10.1-bin.zip" dest="${prereqs_root}"/>
+		<delete dir="${java.io.tmpdir}/apache-ant-1.10.1"/>
+	    <available file="${ant_1.10.1}" property="ant_1.10.1_available"/>
+	</target>
+
+	<!-- Target to check if junit 4.12 is available. -->
+	<target name="check-for-junit-4.12">
+		<property name="junit_4.12_dir" location="${prereqs_root}/junit-4.12"/>
+		<property name="junit_4.12_file" value="junit-4.12.jar"/>
+		<property name="junit_4.12" location="${junit_4.12_dir}/${junit_4.12_file}"/>
+		<available file="${junit_4.12}" property="junit_4.12_available"/>
+	</target>
+
+	<!--
+		Target to get junit from https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar
+		Copy to ${prereqs_root}/junit-4.12/junit-4.12.jar
+	-->
+	<target name="configure-junit-4.12" unless="${junit_4.12_available}">
+		<download-file destdir="${prereqs_root}/junit-4.12" destfile="junit-4.12.jar" srcurl="https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar"/>
+		<available file="${junit_4.12}" property="junit_4.12_available"/>
+	</target>
+
+	<!-- Target to check if hamcrest core 1.3 (required by junit) is available. -->
+	<target name="check-for-hamcrest-core-1.3">
+		<property name="hamcrest_core_1.3_dir" location="${prereqs_root}/junit-4.12"/>
+		<property name="hamcrest_core_1.3_file" value="hamcrest-core-1.3.jar"/>
+		<property name="hamcrest_core_1.3" location="${hamcrest_core_1.3_dir}/${hamcrest_core_1.3_file}"/>
+		<available file="${hamcrest_core_1.3}" property="hamcrest_core_1.3_available"/>
+	</target>
+
+	<!--
+		Target to get hamcrest core from https://search.maven.org/remotecontent?filepath=org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar
+		Copy to PREREQS_ROOT/junit-4.12/hamcrest-core-1.3.jar
+	-->
+	<target name="configure-hamcrest-core-1.3" unless="${hamcrest_core_1.3_available}">
+		<download-file destdir="${prereqs_root}/junit-4.12" destfile="hamcrest-core-1.3.jar" srcurl="https://search.maven.org/remotecontent?filepath=org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"/>
+		<available file="${hamcrest_core_1.3}" property="hamcrest_core_1.3_available"/>
+	</target>
+
+	<!-- Target to check if log4j 2.3 is available. -->
+	<target name="check-for-log4j-2.3">
+		<property name="log4j_2.3_dir" location="${prereqs_root}/log4j-2.3"/>
+		<property name="log4j_api_2.3_file" value="log4j-api-2.3.jar"/>
+		<property name="log4j_core_2.3_file" value="log4j-core-2.3.jar"/>
+		<property name="log4j_api_2.3" location="${log4j_2.3_dir}/${log4j_api_2.3_file}"/>
+		<property name="log4j_core_2.3" location="${log4j_2.3_dir}/${log4j_core_2.3_file}"/>
+		<condition property="log4j_2.3_available">
+			<and>
+				<available file="${log4j_api_2.3}"/>
+				<available file="${log4j_core_2.3}"/>
+			</and>
+		</condition>
+	</target>
+
+	<!--
+		Target to get log4j 2.3 from https://archive.apache.org/dist/logging/log4j/2.3/apache-log4j-2.3-bin.zip
+		Copy to PREREQS_ROOT/log4j-2.3/log4j-api-2.3.jar and PREREQS_ROOT/log4j-2.3/log4j-core-2.3.jar
+	-->
+	<target name="configure-log4j-2.3" unless="${log4j_2.3_available}">
+		<download-file destdir="${java.io.tmpdir}/log4j-2.3" destfile="apache-log4j-2.3-bin.zip" srcurl="https://archive.apache.org/dist/logging/log4j/2.3/apache-log4j-2.3-bin.zip"/>
+		<unzip src="${java.io.tmpdir}/log4j-2.3/apache-log4j-2.3-bin.zip" dest="${java.io.tmpdir}/log4j-2.3"/>
+		<copy file="${java.io.tmpdir}/log4j-2.3/apache-log4j-2.3-bin/log4j-api-2.3.jar" tofile="${log4j_api_2.3}"/>
+		<copy file="${java.io.tmpdir}/log4j-2.3/apache-log4j-2.3-bin/log4j-core-2.3.jar" tofile="${log4j_core_2.3}"/>
+		<delete dir="${java.io.tmpdir}/log4j-2.3"/>
+		<condition property="log4j_2.3_available">
+			<and>
+				<available file="${log4j_api_2.3}"/>
+				<available file="${log4j_core_2.3}"/>
+			</and>
+		</condition>
+	</target>
+	<!--
+		If we're running on Windows, check if the windows systnternals tools are available.
+	 	The Windows Sysinternals tools are used to collect dumps and kill hung processes.
+	-->
+	<target name="check-for-windows-sysinternals">
+		<property name="windows_sysinternals_dir" location="${prereqs_root}/windows_sysinternals"/>
+		<!-- We're just using the existence of pskill.exe to determine whether the tools are installed. -->
+	    <available file="${windows_sysinternals_dir}/pskill.exe" property="windows_sysinternals_available"/>
+	</target>
+	
+	<target name="set-download-windows-sysinternals-required">
+		<condition property="download_windows_sysinternals_required">
+			<and>
+				<os family="windows" />
+				<not>
+					<isset property="windows_sysinternals_available"/>
+				</not>
+			</and>
+	    </condition>
+	</target>
+	<!--
+		Get the windows sysinternals tools from https://download.sysinternals.com/files/SysinternalsSuite.zip
+		Unzip to PREREQS_ROOT/windows_sysinternals
+	-->
+	<target name="configure-windows-sysinternals" if="${download_windows_sysinternals_required}">
+		<download-file destdir="${java.io.tmpdir}/windows_sysinternals" destfile="SysinternalsSuite.zip" srcurl="https://download.sysinternals.com/files/SysinternalsSuite.zip"/>
+		<unzip src="${java.io.tmpdir}/windows_sysinternals/SysinternalsSuite.zip" dest="${windows_sysinternals_dir}"/>
+		<delete dir="${java.io.tmpdir}/windows_sysinternals"/>
+		<!-- We're just using the existence of pskill.exe to determine whether the tools are installed. -->
+	    <available file="${windows_sysinternals_dir}/pskill.exe" property="windows_sysinternals_available"/>
+	</target>
+
+	<!-- Target to check if wget is available. -->
+	<target name="check-for-wget">
+		<!-- wget will be used to download files. -->
+		<!-- If it cannot be found on the PATH then the build will fail when the download-file macro (in macrodefs.xml) is invoked. -->
+		<echo message="Looking for wget on PATH"/>
+		<available file="wget" filepath="${env.PATH}" property="wget_available"/>
+		<available file="wget.exe" filepath="${env.PATH}" property="wget_available"/>
+		<!-- On Windows PATH environment variable may be Path -->
+		<available file="wget.exe" filepath="${env.Path}" property="wget_available"/>
+	</target>
+
+	<macrodef name="download-file" description="Use wget to download a file">
+		<attribute name="srcurl" description="URL of file to download"/>
+		<attribute name="destdir" description="Directory in which to place the downloaded file"/>
+		<attribute name="destfile" description="File name of the downloaded file"/>
+		<sequential>
+			<echo message="Executing macro download-file"/>
+			<echo message="srcurl is @{srcurl}"/>
+			<echo message="destdir is @{destdir}"/>
+			<echo message="destfile is @{destfile}"/>
+			<fail unless="wget_available" message="Cannot find wget (or wget.exe) on PATH, needed to download @{srcurl}. Either install wget or add it to PATH and retry.  If you are running the build from the Ant view in Eclipse, add wget to your PATH before starting Eclipse."/>
+			<mkdir dir="@{destdir}"/>
+			<exec executable="wget">
+				<arg value="--no-check-certificate"/>
+				<arg value="-O"/>
+				<arg value="@{destdir}/@{destfile}"/>
+				<arg value="@{srcurl}"/>
+			</exec>
+		</sequential>			
+	</macrodef>
+
+	<target name="print-ant-1.10.1-location" if="${ant_1.10.1_available}">
+		<echo message="Using ant-1.10.1 from ${ant_1.10.1}"/>
+	</target>
+
+	<target name="print-junit-4.12-location" if="${junit_4.12_available}">
+		<echo message="Using junit-4.12 from ${junit_4.12}"/>
+	</target>
+
+	<target name="print-hamcrest-core-1.3-location" if="${hamcrest_core_1.3_available}">
+		<echo message="Using hamcrest-core-1.3 from ${hamcrest_core_1.3}"/>
+	</target>
+
+	<target name="print-log4j-2.3-location" if="${log4j_2.3_available}">
+		<echo message="Using log4j-api-2.3 from ${log4j_api_2.3} and log4j-core-2.3 from ${log4j_core_2.3}"/>
+	</target>
+
+	<target name="print-windows-sysinternals-location" if="${windows_sysinternals_available}">
+		<echo message="Using windows sysinternals from from ${windows_sysinternals_dir}"/>
+	</target>
+
+	<target name="print-ant-1.10.1-error" unless="${ant_1.10.1_available}">
+		<echo message="ERROR: Cannot find ant_1.10.1 at ${ant_1.10.1}"/>
+		<property name="fail_run" value="true"/>
+	</target>
+
+	<target name="print-junit-4.12-error" unless="${junit_4.12_available}">
+		<echo message="ERROR: Cannot find junit-4.12 at ${junit_4.12}"/>
+		<property name="fail_run" value="true"/>
+	</target>
+
+	<target name="print-hamcrest-core-1.3-error" unless="${hamcrest_core_1.3_available}">
+		<echo message="ERROR: Cannot find hamcrest-core-1.3 at ${hamcrest_core_1.3}"/>
+		<property name="fail_run" value="true"/>
+	</target>
+
+	<target name="print-log4j-2.3-error" unless="${log4j_2.3_available}">
+		<echo message="ERROR: Cannot find log4j-api-2.3 at ${log4j_api_2.3} and / or log4j-core-2.3 at ${log4j_core_2.3}"/>
+		<property name="fail_run" value="true"/>
+	</target>
+
+	<target name="print-windows-sysinternals-error" depends="set-print-windows-sysinternals-error-required,really-print-windows-sysinternals-error">
+	</target>
+
+	<target name="set-print-windows-sysinternals-error-required">
+		<condition property="print_windows_sysinternals_error_required">
+			<and>
+				<os family="windows" />
+				<not>
+					<isset property="windows_sysinternals_available"/>
+				</not>
+			</and>
+	    </condition>
+	</target>
+
+	<target name="really-print-windows-sysinternals-error" if="${print_windows_sysinternals_error_required}">
+		<echo message="ERROR: Cannot find windows sysinternals at ${windows_sysinternals_dir}"/>
+		<property name="fail_run" value="true"/>
+	</target>
+
+	<!-- <target name="fail-if-error" if="${fail_run}"> -->
+	<target name="fail-if-error" if="fail_run">
+		<fail message="Cannot find one or more prereqs.  See the above error messages.  Running 'make configure' or the ant configure target may get all the missing prereqs.  See the appropriate stf.build/docs/build.md or openjdk.build/docs/build.md for more details."/>
+	</target>
+
+</project>

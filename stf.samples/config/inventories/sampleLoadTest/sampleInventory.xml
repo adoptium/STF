@@ -1,0 +1,4 @@
+<inventory> 
+	<include inventory="/stf.samples/config/inventories/sampleLoadTest/subtests/arbitraryJavaInventory.xml"/>
+	<include inventory="/stf.samples/config/inventories/sampleLoadTest/subtests/junitInventory.xml"/>
+</inventory>

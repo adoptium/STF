@@ -1,0 +1,10 @@
+<inventory>
+    <!-- Run some java code -->
+	<arbitraryJava class="net.adoptopenjdk.stf.ArbitraryJavaTest" method="runSimpleTest" />
+	
+    <!-- Run some tests which use constructor and method arguments -->
+	<arbitraryJava class="net.adoptopenjdk.stf.ArbitraryJavaTest" constructorArguments="ADD" method="runTest" methodArguments="5, 2,3" />
+	<arbitraryJava class="net.adoptopenjdk.stf.ArbitraryJavaTest" constructorArguments="SUBTRACT" method="runTest" methodArguments="21, 28,7" />
+	<arbitraryJava class="net.adoptopenjdk.stf.ArbitraryJavaTest" constructorArguments="MULTIPLY" method="runTest" methodArguments="90, 10,9" />
+	<arbitraryJava class="net.adoptopenjdk.stf.ArbitraryJavaTest" constructorArguments="DIVIDE" method="runTest" methodArguments="5, 55,11" />
+</inventory>

@@ -1,0 +1,4 @@
+<inventory> 
+	<!-- Inventory for running a test which is going to fail -->
+	<junit class="net.adoptopenjdk.stf.FailingJUnitTest" />
+</inventory>

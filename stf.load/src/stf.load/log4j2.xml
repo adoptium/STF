@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<Configuration status="WARN" strict="true">
+  <Appenders>
+    <!-- Appender for run of the mill messages going to the console. Minimal extra information -->
+    <Appender type="Console" name="InformationAppender" ignoreExceptions="false">
+      <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="ACCEPT" />
+      <Layout type="PatternLayout" pattern="%d{HH:mm:ss.SSS} - %msg%n"/>
+    </Appender>
+    
+    <!-- For Error and Fatal messages (shows the level string) -->
+    <Appender type="Console" name="ErrorAppender" ignoreExceptions="false">
+      <ThresholdFilter level="ERROR" onMatch="ACCEPT" />
+      <Layout type="PatternLayout" pattern="%d{HH:mm:ss.SSS} - **%level** %msg%n"/>
+    </Appender>
+  </Appenders>
+
+  <Loggers>
+    <!-- Only handle logging from the load test tool itself.
+      -  Ignore logging from the tests themselves (which will be in a different package.
+      -  For debugging set the logging level to TRACE or DEBUG.
+      -->
+    <Logger name="net.adoptopenjdk" level="INFO" additivity="false">
+      <AppenderRef ref="InformationAppender"/>
+      <AppenderRef ref="ErrorAppender"/>
+    </Logger>
+    <Root level="error">
+    </Root>
+  </Loggers>
+</Configuration>
