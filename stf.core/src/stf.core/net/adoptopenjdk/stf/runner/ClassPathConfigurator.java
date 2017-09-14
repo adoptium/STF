@@ -40,6 +40,7 @@ import net.adoptopenjdk.stf.StfConstants;
 import net.adoptopenjdk.stf.StfException;
 import net.adoptopenjdk.stf.environment.DirectoryRef;
 import net.adoptopenjdk.stf.environment.FileRef;
+import net.adoptopenjdk.stf.environment.JavaVersion;
 import net.adoptopenjdk.stf.environment.StfEnvironmentCore;
 
 
@@ -215,18 +216,32 @@ public class ClassPathConfigurator {
 				// the project that contains the stf code but there is then no sign of 
 				// jar references such as say '/systemtest_prereqs/log4j-2.3/log4j-api-2.3.jar'.
 				// In such cases the full path to the jar is created found by replacing the first
-				// part with the relevant systemtest-prereqs root.  
+				// part with the relevant systemtest-prereqs root.
+				//
+				// tools.jar is a special case. In order to resolve dependencies test cases have on
+				// classes in tools.jar, tools.jar is copied into systemtest_prereqs at make configure time
+				// (a reference to a particular Java location cannot be hard coded into the classpath file).
+				// However. post Java 8, tools.jar is no longer present, so on test machines which have never
+				// run a Java 8 test, tools.jar will not be present in systemtest_prereqs. So if we running
+				// post Java 8, do not try to locate tools.jar.
+
+				JavaVersion jvm = environmentCore.primaryJvm();
 				if (jarName.startsWith("/systemtest_prereqs")) {
-					// Jar needs to be found below a systemtest-prereqs root
-					String tempJarPath = jarName.replace("/systemtest_prereqs", "");
-					String fullJarPath = environmentCore.findPrereqFile(tempJarPath).getSpec();
-					
-					jarsUsed.add(fullJarPath);
-					if (!new File(fullJarPath).exists()) {
-						throw new StfException("Failed to parse '.classpath' file for project '" + projectName + "'. "
-								+ "The jar file for entry '" + jarName + "' does not exist in any of the systemtest-prereqs roots at its expected location: '<systemtest_prereqs>" + tempJarPath + "'");
+					if ( jarName.endsWith("tools.jar") && ! jvm.isJava8() ) {
+						logger.info("  " + projectName + ": Ignoring classpath tools.jar entry because test is not executing against Java 8");
 					}
-					logger.trace("  " + projectName + ": Found prereq jar from 'lib' entry: '" + fullJarPath);
+					else {
+						// Jar needs to be found below a systemtest-prereqs root
+						String tempJarPath = jarName.replace("/systemtest_prereqs", "");
+						String fullJarPath = environmentCore.findPrereqFile(tempJarPath).getSpec();
+					
+						jarsUsed.add(fullJarPath);
+						if (!new File(fullJarPath).exists()) {
+							throw new StfException("Failed to parse '.classpath' file for project '" + projectName + "'. "
+									+ "The jar file for entry '" + jarName + "' does not exist in any of the systemtest-prereqs roots at its expected location: '<systemtest_prereqs>" + tempJarPath + "'");
+						}
+						logger.trace("  " + projectName + ": Found prereq jar from 'lib' entry: '" + fullJarPath);
+					}
 				} else {
 					// Usual case. Find the jar within the eclipse workspace
 					FileRef fullJarPath = environmentCore.findTestFile(jarName);
