@@ -93,7 +93,7 @@ public class PluginFinder {
 			}
 			//Then we throw the error. 
 			System.out.println(Thread.currentThread().getStackTrace().toString());
-			throw new StfError("Could not find test plugin cpalled '" + testName + "' "
+			throw new StfError("Could not find test plugin called '" + testName + "' "
 					+ "in any of these workspaces: " + workspaces.substring(1) + ". "
 					+ "To fix this correct the name of the test plugin.");
 		}
