@@ -698,24 +698,34 @@ sub kill_process {
 		return;
 	}
 
-	# If on Windows use the pskill tool to kill the process, if that doesn't work try stop and then term signals.
+	# On Windows use powershell to kill the process if it's present, otherwise use pskill.
 	if ($^O eq 'MSWin32') {
-		debug("Using pskill tool to kill " . $process->{uid});
-		
-		my $sysinternals_dir =  $ENV{'WINDOWS_SYSINTERNALS_ROOT'};
-		my $pskill = catfile("$sysinternals_dir", "pskill")." -t ${ppid}";
+		my $kill_type = "";
+		my $kill_cmd = "";
+		my $powershell_flag = `where powershell.exe`;
+		if ( $powershell_flag == 0 ) {
+			info("Using powershell to kill " . $process->{uid});
+			$kill_type = "kill_powershell";
+			$kill_cmd = "powershell Stop-Process ${ppid}";
+		}
+		else {
+			info ("Using pskill to kill " . $process->{uid});
+			$kill_type = "kill_pskill";
+			my $sysinternals_dir =  $ENV{'WINDOWS_SYSINTERNALS_ROOT'};
+			$kill_cmd = catfile("$sysinternals_dir", "pskill")." -t ${ppid}";
+		}
 		
 		$rc = $self->start_process(
 			mnemonic => "KILL",
-			logName  => $process->{logdir} . $delimiter . "pskill",
-			command  => $pskill
+			logName  => $process->{logdir} . $delimiter . $kill_type,
+			command  => $kill_cmd
 		);
 
 		if ($rc != 0) {
-			debug("The pskill tool ran without error");
+			debug("$kill_cmd ran without error");
 		}
 		else {
-			debug("The pskill tool exited with a $rc return code");
+			debug("$kill_cmd exited with a $rc return code");
 		}
 
 		sleep 2;
