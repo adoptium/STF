@@ -255,14 +255,26 @@ if ($num_to_delete >= 0) {
     my @results_to_delete = @results_dirs[0..$num_to_delete];
     foreach my $results_root (@results_to_delete) {
         _log("Deleting old STF results: $results_root");
-        rmtree($results_root, {keep_root => 1}, {error => \my $err} );
-        if ((defined $err) and (@$err)) {
-            for my $diag (@$err) {
-                my ($file, $message) = %$diag;
-                if ($file eq '') {
-                    _log("  general error: $message");
-                } else {
-                    _log("  problem unlinking $file: $message");
+        # Some files may be longer than the Windows MAX_PATH value - e.g. the JCK run creates files
+        # longer than that in the results directory. rmtree cannot delete those files, so use rmtree
+        # instead.
+        if ( $^O eq 'MSWin32' ) {
+        	my $cmd = "rmdir /s /q \"$results_root\"";
+            `$cmd`;
+            if ( $? ) {
+                die "Error running $cmd: $!";
+            } 
+        }
+        else {
+            rmtree($results_root, {keep_root => 1}, {error => \my $err} );
+            if ((defined $err) and (@$err)) {
+                for my $diag (@$err) {
+                    my ($file, $message) = %$diag;
+                    if ($file eq '') {
+                        _log("  general error: $message");
+                    } else {
+                        _log("  problem unlinking $file: $message");
+                    }
                 }
             }
         }
