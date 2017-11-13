@@ -259,7 +259,11 @@ ifneq (,$(JAVA_ARGS))
   JAVA_ARGS_ARG:=-java-args="$(subst ",$(ESC_DQ),$(JAVA_ARGS))"
 endif
 
-STF_COMMAND:=perl $(TARGET_ROOT)$(D)stf.core$(D)scripts$(D)stf.pl $(JAVA_ARGS_ARG) -systemtest-prereqs=$(PREREQS_ROOT)
+ifeq ($(RM_PASS),1)
+    RM_PASS_ARG:=-rm-pass
+endif
+
+STF_COMMAND:=perl $(TARGET_ROOT)$(D)stf.core$(D)scripts$(D)stf.pl $(JAVA_ARGS_ARG) -systemtest-prereqs=$(PREREQS_ROOT) $(RM_PASS_ARG)
 
 # Targets to run the samples
 SAMPLE_TARGETS:=test.list \
