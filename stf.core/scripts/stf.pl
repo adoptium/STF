@@ -258,26 +258,7 @@ if ($num_to_delete >= 0) {
         # Some files may be longer than the Windows MAX_PATH value - e.g. the JCK run creates files
         # longer than that in the results directory. rmtree cannot delete those files, so use rmtree
         # instead.
-        if ( $^O eq 'MSWin32' ) {
-        	my $cmd = "rmdir /s /q \"$results_root\"";
-            `$cmd`;
-            if ( $? ) {
-                die "Error running $cmd: $!";
-            } 
-        }
-        else {
-            rmtree($results_root, {keep_root => 1}, {error => \my $err} );
-            if ((defined $err) and (@$err)) {
-                for my $diag (@$err) {
-                    my ($file, $message) = %$diag;
-                    if ($file eq '') {
-                        _log("  general error: $message");
-                    } else {
-                        _log("  problem unlinking $file: $message");
-                    }
-                }
-            }
-        }
+        deleteDirectory($results_root);
     }
 }
 
@@ -500,6 +481,12 @@ my ($now, $date, $time) = stf::stfUtility->getNow(date => $TRUE, time => $TRUE);
    		_log("");
    		if ($rc_overall == 0) {
 	        _log("Overall result: PASSED");
+	        # If the --rm-pass option was specified, delete the results directory because the test passed.
+	        if (stfArguments::get_boolean_argument("rm-pass")) {
+	            _log("Deleting the results directory because no failures were detected.");
+	            chdir $results_root;
+	            deleteDirectory($test_dir);
+	        }
 	    } else {
 	    	$rc_overall = 1;
 	        _log("Overall result: **FAILED**");
@@ -802,6 +789,32 @@ sub findElement {
 	die "Could not find " . $elementName . " in any of these supplied paths: " . $stringOfPaths . "\n" unless (!($elementPath eq "null")); 
 	    
 	return $elementPath;
+}
+
+# Takes a single directory and attempts to delete it, along with any contents.
+
+sub deleteDirectory {
+	my $doomed_directory = shift;
+	if ( $^O eq 'MSWin32' ) {
+        	my $cmd = "rmdir /s /q \"$doomed_directory\"";
+            `$cmd`;
+            if ( $? ) {
+                die "Error running $cmd: $!";
+            } 
+        }
+        else {
+            rmtree($doomed_directory, {keep_root => 1}, {error => \my $err} );
+            if ((defined $err) and (@$err)) {
+                for my $diag (@$err) {
+                    my ($file, $message) = %$diag;
+                    if ($file eq '') {
+                        _log("  general error: $message");
+                    } else {
+                        _log("  problem unlinking $file: $message");
+                    }
+                }
+            }
+        }
 }
 
 # Simple internal method for logging.
