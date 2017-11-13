@@ -34,6 +34,7 @@ public class Stf implements StfExtension {
 	public static Argument ARG_DEBUG_GENERATION                    = new Argument("stf", "debug-generation",                    true,  Required.OPTIONAL);
 	public static Argument ARG_JAVA_DEBUG_ARGS                     = new Argument("stf", "java-debug-args",                     false, Required.MANDATORY);
 	public static Argument ARG_CREATE_RESULTS_SYM_LINKS            = new Argument("stf", "create-results-sym-links",            true,  Required.MANDATORY);
+	public static Argument ARG_RM_PASS                             = new Argument("stf", "rm-pass",                             true,  Required.OPTIONAL);
 	// For perl and java
 	public static Argument ARG_HELP                                = new Argument("stf", "help",                                true,  Required.OPTIONAL);
 	public static Argument ARG_LIST_TESTS                          = new Argument("stf", "list",                                true,  Required.OPTIONAL);	
@@ -71,6 +72,7 @@ public class Stf implements StfExtension {
 			ARG_DEBUG_GENERATION,
 			ARG_JAVA_DEBUG_ARGS,
 			ARG_CREATE_RESULTS_SYM_LINKS,
+			ARG_RM_PASS,
 			ARG_TEST_ROOT,
 			ARG_HELP,
 			ARG_LIST_TESTS,
@@ -209,6 +211,10 @@ public class Stf implements StfExtension {
 				+ "always be at the same location.\n"
 				+ "Only supported on systems which support symbolic links.\n"
 				+ "Disabled by default to prevent.");
+		
+		help.outputArgName("-" + ARG_RM_PASS.getName());
+		help.outputArgDesc("If set to true (or just passed as a flag) then stf.pl deletes the results directory if the test passes."
+				+ "Disabled by default.");
 	}
 
 	@Override
