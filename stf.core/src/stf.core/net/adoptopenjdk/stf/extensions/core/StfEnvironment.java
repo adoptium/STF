@@ -199,7 +199,7 @@ public class StfEnvironment {
 
 	/** 
 	 * Returns the osgi.arch name.
-	 * Expected return values are x86, x86_64, ppc, ppc64
+	 * Expected return values are x86, x86_64, ppc, ppc64, arm
 	 */
 	public String getOsgiProcessorArchitecture() throws StfException {
 		return environmentCore.getOsgiProcessorArchitecture();
