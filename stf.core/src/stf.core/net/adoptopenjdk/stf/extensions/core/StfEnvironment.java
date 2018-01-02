@@ -183,7 +183,7 @@ public class StfEnvironment {
 
 	/** 
 	 * Returns the osgi.os name.
-	 * Expected return values are win32, linux, aix
+	 * Expected return values are win32, linux, aix, macosx
 	 */
 	public String getOsgiOperatingSystemName() throws StfException {
 		return environmentCore.getOsgiOperatingSystemName();
