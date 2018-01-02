@@ -162,7 +162,9 @@ if ($test_list_arg ne 'false') {
 my $timestamp = sprintf '%04d%02d%02d-%02d%02d%02d', $year+1900, $mon+1, $mday, $hour, $min, $sec;
 
 # Work out where the working, temp and results directories are going
-my $results_root = stfArguments::get_and_check_argument("results-root");
+my $results_root  = stfArguments::get_and_check_argument("results-root");
+my $retain_number = stfArguments::get_and_check_argument("retain");
+my $retain_limit  = stfArguments::get_and_check_argument("retain-limit");
 my $test_dir = $results_root . "/$timestamp-$test_name";
 my $debug_dir   = $test_dir . "/debug";
 my $results_dir = $test_dir . "/results";
@@ -170,12 +172,31 @@ my $generation_dir = $test_dir . "/generation";
 my $setup_dir      = $test_dir . "/setUp";
 my $execute_dir    = $test_dir . "/execute";
 my $teardown_dir   = $test_dir . "/tearDown";
+my $delete_results_root = $FALSE;
 
 my @results_dirs;
 
+if ( length $retain_limit ) {
+   $results_retention_limit = $retain_limit;
+}
+
+if ( length $retain_number ) {
+   if ( $retain_number == 0 ) {
+     # Nothing we run should produce this much ...
+     $results_retention_number = 1000000;
+   } else {
+     $results_retention_number = $retain_number;
+   }
+   # Increase results_retention_limit in line, otherwise failures are likely
+   # User can override this with the retain-limit option if the wish to
+   if ( $results_retention_number > $results_retention_limit ) {
+      print "WARNING: Overriding retain-limit to retain + 1\n";
+      $results_retention_limit = $results_retention_number+1;
+   }
+}
+
 # We are only going to remove results_root if it passes some basic checks.
 # So check its structure to verify it contains STF artifacts.
-my $delete_results_root = $FALSE;
 if (-e $results_root) {
 	my @files = <'$results_root/*'>;
 	my $count = @files;
