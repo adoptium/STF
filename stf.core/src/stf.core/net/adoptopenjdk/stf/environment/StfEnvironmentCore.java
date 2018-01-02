@@ -402,7 +402,7 @@ public class StfEnvironmentCore {
 	
 	/** 
 	 * Returns the osgi.os name.
-	 * Expected return values are win32, linux, aix, zos
+	 * Expected return values are win32, linux, aix, zos, macosx
 	 */
 	public String getOsgiOperatingSystemName() throws StfException {
 		switch (PlatformFinder.getPlatform()) {
@@ -410,6 +410,7 @@ public class StfEnvironmentCore {
 		case AIX :    return "aix";
 		case LINUX:   return "linux";
 		case ZOS :    return "zos";
+		case OSX :    return "macosx";
 		default:      throw new StfException("Unknown platform for osgi.os: " + PlatformFinder.getPlatformAsString());
 		}
 	}
