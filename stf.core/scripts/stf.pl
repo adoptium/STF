@@ -142,6 +142,10 @@ if (stfArguments::get_argument("help") ne 'false') {
     if ($test_name eq 'null') {
         print "To get STF help please run again with a '-test' argument.\n";
         print "This will allow STF to produce help on the extensions used by that test case.\n";
+        print "Extra options specific to this perl script.\n";
+        print "   -retain=nnn        Set the number of output directories to keep.\n";
+        print "   -retain-limit=nnn  Set the maximum number of failed output\n";
+        print "                      directories before a failure condition is declared\n";
         exit 0;
     }
 }
