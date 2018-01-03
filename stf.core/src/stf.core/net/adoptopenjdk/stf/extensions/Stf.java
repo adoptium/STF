@@ -63,8 +63,9 @@ public class Stf implements StfExtension {
 	public static Argument ARG_JAVA_ARGS_EXECUTE_SECONDARY         = new Argument("stf", "java-args-execute-secondary",         false, Required.OPTIONAL);
 	public static Argument ARG_JAVA_ARGS_EXECUTE_SECONDARY_COMMENT = new Argument("stf", "java-args-execute-secondary-comment", false, Required.OPTIONAL);
 	public static Argument ARG_JAVA_ARGS_TEARDOWN                  = new Argument("stf", "java-args-teardown",                  false, Required.OPTIONAL);
-	// Stf doesn't use these but since the perl layuer requires defaults
-	// in the properties file they get set, so need to allow them
+	// Stf doesn't use these but since the perl layer requires defaults
+	// in the properties file they get set, so need to tolerate them
+	// To avoid confusion these aren't listed in the help output
 	public static Argument ARG_RETAIN                              = new Argument("stf", "retain",                              false, Required.OPTIONAL);
 	public static Argument ARG_RETAIN_LIMIT                        = new Argument("stf", "retain-limit",                        false, Required.OPTIONAL);
 	

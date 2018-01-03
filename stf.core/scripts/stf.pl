@@ -181,12 +181,7 @@ if ( length $retain_limit ) {
 }
 
 if ( length $retain_number ) {
-   if ( $retain_number == 0 ) {
-     # Nothing we run should produce this much ...
-     $results_retention_number = 1000000;
-   } else {
-     $results_retention_number = $retain_number;
-   }
+   $results_retention_number = $retain_number;
    # Increase results_retention_limit in line, otherwise failures are likely
    # User can override this with the retain-limit option if the wish to
    if ( $results_retention_number > $results_retention_limit ) {
