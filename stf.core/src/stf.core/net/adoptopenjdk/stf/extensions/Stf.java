@@ -43,7 +43,7 @@ public class Stf implements StfExtension {
 	public static Argument ARG_TEST_ROOT                           = new Argument("stf", "test-root",                           false, Required.OPTIONAL);
 	public static Argument ARG_TEST_ARGS                           = new Argument("stf", "test-args",                           false, Required.OPTIONAL);
 	public static Argument ARG_STF_BIN_DIR                         = new Argument("stf", "stf-bin-dir",                         false, Required.OPTIONAL);
-	public static Argument ARG_SYSTEMTEST_PREREQS                     = new Argument("stf", "systemtest-prereqs",                     false, Required.MANDATORY);
+	public static Argument ARG_SYSTEMTEST_PREREQS                  = new Argument("stf", "systemtest-prereqs",                     false, Required.MANDATORY);
 	public static Argument ARG_REPEAT_COUNT                        = new Argument("stf", "repeat",                              false, Required.OPTIONAL);
 	public static Argument ARG_VERBOSE                             = new Argument("stf", "v",                                   true,  Required.OPTIONAL);	
 	public static Argument ARG_VERBOSE_VERBOSE                     = new Argument("stf", "vv",                                  true,  Required.OPTIONAL);	
@@ -63,7 +63,11 @@ public class Stf implements StfExtension {
 	public static Argument ARG_JAVA_ARGS_EXECUTE_SECONDARY         = new Argument("stf", "java-args-execute-secondary",         false, Required.OPTIONAL);
 	public static Argument ARG_JAVA_ARGS_EXECUTE_SECONDARY_COMMENT = new Argument("stf", "java-args-execute-secondary-comment", false, Required.OPTIONAL);
 	public static Argument ARG_JAVA_ARGS_TEARDOWN                  = new Argument("stf", "java-args-teardown",                  false, Required.OPTIONAL);
-
+	// Stf doesn't use these but since the perl layer requires defaults
+	// in the properties file they get set, so need to tolerate them
+	// To avoid confusion these aren't listed in the help output
+	public static Argument ARG_RETAIN                              = new Argument("stf", "retain",                              false, Required.OPTIONAL);
+	public static Argument ARG_RETAIN_LIMIT                        = new Argument("stf", "retain-limit",                        false, Required.OPTIONAL);
 	
 	@Override
 	public Argument[] getSupportedArguments() {
@@ -98,7 +102,9 @@ public class Stf implements StfExtension {
 			ARG_JAVA_ARGS_EXECUTE_SECONDARY_INITIAL,
 			ARG_JAVA_ARGS_EXECUTE_SECONDARY,
 			ARG_JAVA_ARGS_EXECUTE_SECONDARY_COMMENT,
-			ARG_JAVA_ARGS_TEARDOWN
+			ARG_JAVA_ARGS_TEARDOWN,
+			ARG_RETAIN,
+			ARG_RETAIN_LIMIT
 		};
 	}
 
