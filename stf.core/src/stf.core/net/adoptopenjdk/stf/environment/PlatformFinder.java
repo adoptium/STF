@@ -203,6 +203,9 @@ public class PlatformFinder {
         } else if(osArch.contains("ppc64")) {
         	// if the current system is PPC64 use ppc as the osArch
             osArch = "ppc";    		 
+        } else if(osArch.contains("aarch64")) {
+                // if the current system is aarch64 use arm as the osArch
+            osArch = "arm";
         } else if (osArch.length() == 4
         	 && osArch.charAt(0) == 'i'
         	 && Character.isDigit(osArch.charAt(1))
