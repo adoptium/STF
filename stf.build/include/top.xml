@@ -91,17 +91,17 @@ limitations under the License.
 	<path id="log4j-2.3.class.path">
 		<pathelement location="${prereqs_root}/log4j-2.3/log4j-api-2.3.jar"/>
 		<pathelement location="${prereqs_root}/log4j-2.3/log4j-core-2.3.jar"/>
-	</path>   
+	</path>
 	<path id="project.class.path">
 		<path refid="junit.class.path" />
 		<path refid="log4j-2.3.class.path" />
-	</path>		
+	</path>
 
 	<!--
 		Target to check for prereqs.
 		Same as configure target except prereqs are not installed if missing.
 	-->
-	<target name="check-prereqs" depends="check-for-ant-1.10.1, print-ant-1.10.1-location, print-ant-1.10.1-error,
+	<target name="check-prereqs" depends="check-for-ant-1.10.2, print-ant-1.10.2-location, print-ant-1.10.2-error,
 										  check-for-junit-4.12, print-junit-4.12-location, print-junit-4.12-error,
 										  check-for-hamcrest-core-1.3, print-hamcrest-core-1.3-location, print-hamcrest-core-1.3-error,
 										  check-for-log4j-2.3, print-log4j-2.3-location, print-log4j-2.3-error,
@@ -115,7 +115,7 @@ limitations under the License.
 		All prereqs are installed under the same ${prereqs_root} directory.
 	-->
 	<target name="configure" depends="check-for-wget,
-									  check-for-ant-1.10.1, configure-ant-1.10.1, print-ant-1.10.1-location, print-ant-1.10.1-error,
+									  check-for-ant-1.10.2, configure-ant-1.10.2, print-ant-1.10.2-location, print-ant-1.10.2-error,
 									  check-for-junit-4.12, configure-junit-4.12, print-junit-4.12-location, print-junit-4.12-error,
 									  check-for-hamcrest-core-1.3, configure-hamcrest-core-1.3, print-hamcrest-core-1.3-location, print-hamcrest-core-1.3-error,
 									  check-for-log4j-2.3, configure-log4j-2.3, print-log4j-2.3-location, print-log4j-2.3-error,
@@ -123,26 +123,26 @@ limitations under the License.
 									  fail-if-error">
 	</target>
 
-	<!-- Target to check if ant 1.10.1 is available. -->
+	<!-- Target to check if ant 1.10.2 is available. -->
 	<!-- At the time of writing, the default apt-get ant version on Ubuntu is 1.9.6. -->
-	<!-- Building Java 9 applications requires 1.10.1. -->
-	<target name="check-for-ant-1.10.1">
-		<property name="ant_1.10.1_dir" location="${prereqs_root}/apache-ant-1.10.1"/>
-		<property name="ant_1.10.1_file" value="lib/ant-launcher.jar"/>
-		<property name="ant_1.10.1" location="${ant_1.10.1_dir}/${ant_1.10.1_file}"/>
-	    <available file="${ant_1.10.1}" property="ant_1.10.1_available"/>
+	<!-- Building Java 9 applications requires 1.10.2. -->
+	<target name="check-for-ant-1.10.2">
+		<property name="ant_1.10.2_dir" location="${prereqs_root}/apache-ant-1.10.2"/>
+		<property name="ant_1.10.2_file" value="lib/ant-launcher.jar"/>
+		<property name="ant_1.10.2" location="${ant_1.10.2_dir}/${ant_1.10.2_file}"/>
+	    <available file="${ant_1.10.2}" property="ant_1.10.2_available"/>
 	</target>
 
 	<!--
-		Target to get ant 1.10.1 from http://www-eu.apache.org/dist//ant/binaries/apache-ant-1.10.1-bin.zip
-		Unzip to PREREQS_ROOT/ant-1.10.1
+		Target to get ant 1.10.2 from http://www-eu.apache.org/dist//ant/binaries/apache-ant-1.10.2-bin.zip
+		Unzip to PREREQS_ROOT/ant-1.10.2
 	-->
-	<target name="configure-ant-1.10.1" unless="${ant_1.10.1_available}">
-		<download-file destdir="${java.io.tmpdir}/apache-ant-1.10.1" destfile="apache-ant-1.10.1-bin.zip" srcurl="http://www-eu.apache.org/dist//ant/binaries/apache-ant-1.10.1-bin.zip"/>
-		<!-- The ant 1.10.1 zip file includes a top level apache-ant-1.10.1 directory. -->
-		<unzip src="${java.io.tmpdir}/apache-ant-1.10.1/apache-ant-1.10.1-bin.zip" dest="${prereqs_root}"/>
-		<delete dir="${java.io.tmpdir}/apache-ant-1.10.1"/>
-	    <available file="${ant_1.10.1}" property="ant_1.10.1_available"/>
+	<target name="configure-ant-1.10.2" unless="${ant_1.10.2_available}">
+		<download-file destdir="${java.io.tmpdir}/apache-ant-1.10.2" destfile="apache-ant-1.10.2-bin.zip" srcurl="http://www-eu.apache.org/dist//ant/binaries/apache-ant-1.10.2-bin.zip"/>
+		<!-- The ant 1.10.2 zip file includes a top level apache-ant-1.10.2 directory. -->
+		<unzip src="${java.io.tmpdir}/apache-ant-1.10.2/apache-ant-1.10.2-bin.zip" dest="${prereqs_root}"/>
+		<delete dir="${java.io.tmpdir}/apache-ant-1.10.2"/>
+	    <available file="${ant_1.10.2}" property="ant_1.10.2_available"/>
 	</target>
 
 	<!-- Target to check if junit 4.12 is available. -->
@@ -220,7 +220,7 @@ limitations under the License.
 		<!-- We're just using the existence of pskill.exe to determine whether the tools are installed. -->
 	    <available file="${windows_sysinternals_dir}/pskill.exe" property="windows_sysinternals_available"/>
 	</target>
-	
+
 	<target name="set-download-windows-sysinternals-required">
 		<condition property="download_windows_sysinternals_required">
 			<and>
@@ -271,11 +271,11 @@ limitations under the License.
 				<arg value="@{destdir}/@{destfile}"/>
 				<arg value="@{srcurl}"/>
 			</exec>
-		</sequential>			
+		</sequential>
 	</macrodef>
 
-	<target name="print-ant-1.10.1-location" if="${ant_1.10.1_available}">
-		<echo message="Using ant-1.10.1 from ${ant_1.10.1}"/>
+	<target name="print-ant-1.10.2-location" if="${ant_1.10.2_available}">
+		<echo message="Using ant-1.10.2 from ${ant_1.10.2}"/>
 	</target>
 
 	<target name="print-junit-4.12-location" if="${junit_4.12_available}">
@@ -294,8 +294,8 @@ limitations under the License.
 		<echo message="Using windows sysinternals from from ${windows_sysinternals_dir}"/>
 	</target>
 
-	<target name="print-ant-1.10.1-error" unless="${ant_1.10.1_available}">
-		<echo message="ERROR: Cannot find ant_1.10.1 at ${ant_1.10.1}"/>
+	<target name="print-ant-1.10.2-error" unless="${ant_1.10.2_available}">
+		<echo message="ERROR: Cannot find ant_1.10.2 at ${ant_1.10.2}"/>
 		<property name="fail_run" value="true"/>
 	</target>
 
