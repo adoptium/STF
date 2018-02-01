@@ -591,14 +591,14 @@ sub output_banner {
     }
     
     # Create highlight string, with repeating '=' characters
-    my $highlight;
+    my $highlight="";
     my $i;
     for ($i=0; $i<$numHighlight; $i++) {
         $highlight = $highlight . "=";
     }
        
-	# Format the banner text. Capitalise and add spacing    
-    my $formattedBannerText;
+    # Format the banner text. Capitalise and add spacing    
+    my $formattedBannerText="";
     for ($i=0; $i<length $bannerText; $i++) {
         $formattedBannerText = $formattedBannerText . uc substr($bannerText, $i, 1);
         if ($i != (length $bannerText) -1) {
