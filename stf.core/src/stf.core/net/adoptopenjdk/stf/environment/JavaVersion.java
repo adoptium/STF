@@ -198,8 +198,15 @@ public class JavaVersion {
 	}
 	
 	/**
+	 * @return true if the JVM used for test execution is Java version 10. Otherwise false.
+	 */
+	public boolean isJava10() throws StfException {
+		return javaVersionOutput.startsWith("java version \"10");
+	}
+	
+	/**
 	 * @return the java version with the format as a single digit.
-	 * eg, 6, 7, 8 or 9, etc
+	 * eg, 6, 7, 8 or 9, 10 etc
 	 * @return int containing the java version number.
 	 * @throws StfException if an unknown JVM release has been found.
 	 */
@@ -212,12 +219,14 @@ public class JavaVersion {
 			return 8;
 		} else if (isJava9()) {
 			return 9;
+		} else if (isJava10()) {
+			return 10;
 		} else {
 			throw new StfException("Unknown JVM release: " + PlatformFinder.getPlatformAsString());
 		}
 	}
 	
-	// Return jvm version as 60, 70, 80 or 90, etc
+	// Return jvm version as 60, 70, 80 or 90, 100 etc
 	public String getJavaVersionCode() throws StfException {
 		return getJavaVersion() + "0";
 	}
