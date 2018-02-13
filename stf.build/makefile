@@ -168,9 +168,9 @@ ifeq (,$(ANT_JAVA_HOME))
 endif
 
 ifndef ANT_HOME
-  # Is there an ant in $(PREREQS_ROOT)$(D)apache-ant-1.10.2?
+  # Is there an ant in $(PREREQS_ROOT)$(D)apache-ant-1.10.1?
   # If not, try to find ant on the path and use that one
-  ANT_HOME:=$(PREREQS_ROOT)$(D)apache-ant-1.10.2
+  ANT_HOME:=$(PREREQS_ROOT)$(D)apache-ant-1.10.1
   $(warning ANT_HOME not set, looking in $(ANT_HOME))
   ifeq (file_exists,$(call file_exists,$(ANT_LAUNCHER)))
     $(warning Found $(ANT_LAUNCHER))
@@ -185,7 +185,7 @@ ifndef ANT_HOME
       ifneq (,$(ANT_BINDIR))
         ANT_HOME:=$(ANT_BINDIR)$(D)..
         $(warning ANT_HOME set to $(ANT_HOME))
-        $(warning Found $(ANT_BINDIR), will start build with $(ANT_LAUNCHER).  Run make configure to install the required ant version 1.10.2 or follow the prereq install instructions in build$(D)build.md)
+        $(warning Found $(ANT_BINDIR), will start build with $(ANT_LAUNCHER).  Run make configure to install the required ant version 1.10.1 or follow the prereq install instructions in build$(D)build.md)
       else
         $(error Unable to locate ant to start the build. Either add ant to PATH, set ANT_HOME or follow the prereq install instructions in build$(D)build.md)
       endif
@@ -198,7 +198,7 @@ ifndef ANT_HOME
         ANT_HOME:=$(abspath $(ANT_BINDIR)$(D)..$(D)..)
         $(warning ANT_BINDIR set to $(ANT_BINDIR))
         $(warning ANT_HOME set to $(ANT_HOME))
-        $(warning Found $(ANT_BINDIR), will start build with $(ANT_LAUNCHER).  Run make configure to install the required ant version 1.10.2 or follow the prereq install instructions in build$(D)build.md)
+        $(warning Found $(ANT_BINDIR), will start build with $(ANT_LAUNCHER).  Run make configure to install the required ant version 1.10.1 or follow the prereq install instructions in build$(D)build.md)
         ifeq (,$(wildcard $(ANT_LIB_PATH)))
         # On OSX if ant has been installed using homebrew cater for the ant-launcher.jar being in libexec/lib rather than lib.
         $(warning WARNING: Cannot find $(ANT_LIB_PATH) directory. Looking in libexec/lib.)
