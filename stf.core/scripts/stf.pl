@@ -700,8 +700,8 @@ sub check_free_space {
 	print "Retrieving amount of free space on drive containing " .  $results_root . "\n";
 	if ($^O eq 'MSWin32') {
 		# dir doesn't work with forward slashes or escaped backslashes, so remove any that are there.
-		$results_root =~ s/\//\\/g;
-		$results_root =~ s/\\\\/\\/g;
+		$results_root =~ s,/,\\,g;
+		$results_root =~ s,\\\\,\\,g;
 		$cmd = "dir $results_root";
 		@df_output = `$cmd 2>&1`;
 		foreach my $line ( @df_output ) {
