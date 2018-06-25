@@ -169,9 +169,7 @@ my $timestamp = sprintf '%04d%02d%02d-%02d%02d%02d', $year+1900, $mon+1, $mday, 
 my $results_root  = stfArguments::get_and_check_argument("results-root");
 my $retain_number = stfArguments::get_and_check_argument("retain");
 my $retain_limit  = stfArguments::get_and_check_argument("retain-limit");
-
 my $test_dir = $results_root . "/$timestamp-$test_name";
-
 my $debug_dir   = $test_dir . "/debug";
 my $results_dir = $test_dir . "/results";
 my $generation_dir = $test_dir . "/generation";
