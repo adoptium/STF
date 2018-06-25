@@ -169,7 +169,9 @@ my $timestamp = sprintf '%04d%02d%02d-%02d%02d%02d', $year+1900, $mon+1, $mday, 
 my $results_root  = stfArguments::get_and_check_argument("results-root");
 my $retain_number = stfArguments::get_and_check_argument("retain");
 my $retain_limit  = stfArguments::get_and_check_argument("retain-limit");
+
 my $test_dir = $results_root . "/$timestamp-$test_name";
+
 my $debug_dir   = $test_dir . "/debug";
 my $results_dir = $test_dir . "/results";
 my $generation_dir = $test_dir . "/generation";
@@ -339,6 +341,39 @@ if (defined $symlink_supported && $symlink_supported eq 1 && $createResultsSymLi
     my $new_link_name = $results_root . "/$test_name";
     unlink $new_link_name; 
 	symlink($test_dir, $new_link_name);
+}
+
+# On Windows, assign T: to the test directory.
+# Some tests (e.g. the JCK) have been known to create very long paths which can exceed the Win32 limit of 260 chars.
+# Using a substituted drive letter instead avoids the limit.
+if ($^O eq 'MSWin32') {
+    # subst might not work with forward slashes or escaped backslashes, so remove any that are there.
+    $test_dir =~ s,/,\\,g;
+    $test_dir =~ s,\\\\,\\,g;
+    print "Substituting test_dir $test_dir with T: to avoid long path lengths\n";
+
+    my $cmd = "subst T: /d";
+    print "Running $cmd\n";
+    my @subst_output = `$cmd 2>&1`;
+    my $rc = $?;
+    print "$cmd returned: $rc\n";
+    if ( $rc != 0 ) {
+        foreach my $line ( @subst_output ) {
+           print "$line";
+        }
+    }
+
+    $cmd = "subst T: $test_dir";
+    print "Running $cmd\n";
+    @subst_output = `$cmd 2>&1`;
+    $rc = $?;
+    print "$cmd returned: $rc\n";
+    if ( $rc != 0 ) {
+        foreach my $line ( @subst_output ) {
+           print "$line";
+        }
+    }
+    $test_dir = "T:/";
 }
 
 
@@ -700,8 +735,8 @@ sub check_free_space {
 	print "Retrieving amount of free space on drive containing " .  $results_root . "\n";
 	if ($^O eq 'MSWin32') {
 		# dir doesn't work with forward slashes or escaped backslashes, so remove any that are there.
-		$results_root =~ s/\//\\/g;
-		$results_root =~ s/\\\\/\\/g;
+		$results_root =~ s,/,\\,g;
+		$results_root =~ s,\\\\,\\,g;
 		$cmd = "dir $results_root";
 		@df_output = `$cmd 2>&1`;
 		foreach my $line ( @df_output ) {
