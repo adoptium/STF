@@ -341,6 +341,39 @@ if (defined $symlink_supported && $symlink_supported eq 1 && $createResultsSymLi
 	symlink($test_dir, $new_link_name);
 }
 
+# On Windows, assign T: to the test directory.
+# Some tests (e.g. the JCK) have been known to create very long paths which can exceed the Win32 limit of 260 chars.
+# Using a substituted drive letter instead avoids the limit.
+if ($^O eq 'MSWin32') {
+    # subst might not work with forward slashes or escaped backslashes, so remove any that are there.
+    $test_dir =~ s,/,\\,g;
+    $test_dir =~ s,\\\\,\\,g;
+    print "Substituting test_dir $test_dir with T: to avoid long path lengths\n";
+
+    my $cmd = "subst T: /d";
+    print "Running $cmd\n";
+    my @subst_output = `$cmd 2>&1`;
+    my $rc = $?;
+    print "$cmd returned: $rc\n";
+    if ( $rc != 0 ) {
+        foreach my $line ( @subst_output ) {
+           print "$line";
+        }
+    }
+
+    $cmd = "subst T: $test_dir";
+    print "Running $cmd\n";
+    @subst_output = `$cmd 2>&1`;
+    $rc = $?;
+    print "$cmd returned: $rc\n";
+    if ( $rc != 0 ) {
+        foreach my $line ( @subst_output ) {
+           print "$line";
+        }
+    }
+    $test_dir = "T:/";
+}
+
 
 # Check whether we have enough space available.  If not inform the user and fail the test.
 my $mb_free = check_free_space ($results_root);
