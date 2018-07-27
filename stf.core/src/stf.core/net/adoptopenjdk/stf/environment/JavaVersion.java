@@ -205,8 +205,15 @@ public class JavaVersion {
 	}
 	
 	/**
+	 * @return true if the JVM used for test execution is Java version 11. Otherwise false.
+	 */
+	public boolean isJava11() throws StfException {
+		return javaVersionOutput.trim().startsWith("java version \"11");
+	}
+	
+	/**
 	 * @return the java version with the format as a single digit.
-	 * eg, 6, 7, 8 or 9, 10 etc
+	 * eg, 6, 7, 8 or 9, 10, 11 etc
 	 * @return int containing the java version number.
 	 * @throws StfException if an unknown JVM release has been found.
 	 */
@@ -221,6 +228,8 @@ public class JavaVersion {
 			return 9;
 		} else if (isJava10()) {
 			return 10;
+		} else if (isJava11()) {
+			return 11;
 		} else {
 			throw new StfException("Unknown JVM release: " + PlatformFinder.getPlatformAsString());
 		}
