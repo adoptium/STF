@@ -25,8 +25,8 @@ import net.adoptopenjdk.stf.StfException;
 
 
 /**
- * This class creates a set of java dumps when running on an IBM JVM.
- * It has no effect when running on an Oracle JVM.
+ * This class creates a set of java dumps when running on an OpenJ9 based JVM.
+ * It has no effect when running on a hotspot based JVM.
  * 
  * The 'createDumps()' method should only be called when load test has had its first failure.
  */
@@ -41,7 +41,7 @@ public class FirstFailureDumper {
 
     // Dump methods accessed via reflection, so that this code can be compiled and 
     // executed on an Oracle JVM.
-    private final boolean isIBM;
+    private final boolean isJ9;
     private final Method heapDumpMethod;
     private final Method javaDumpMethod;
     private final Method systemDumpMethod;
@@ -55,8 +55,8 @@ public class FirstFailureDumper {
      */
     private FirstFailureDumper() throws StfException {
     	String jvmVendor = System.getProperty("java.vm.vendor");
-    	if (jvmVendor != null && jvmVendor.contains("IBM")) {
-    		this.isIBM = true;
+    	if (jvmVendor != null && ( jvmVendor.contains("IBM") || jvmVendor.contains("OpenJ9") ) ) {
+    		this.isJ9 = true;
 			try {
 				// Get a reference to the IBM only dump methods.
 				Class<?> dumpClass = Class.forName("com.ibm.jvm.Dump");
@@ -73,7 +73,7 @@ public class FirstFailureDumper {
 			}
 
     	} else {
-        	this.isIBM = false;
+        	this.isJ9 = false;
     		this.heapDumpMethod = null;
     		this.javaDumpMethod = null;
     		this.systemDumpMethod = null;
@@ -113,7 +113,7 @@ public class FirstFailureDumper {
         	return;
         }
 		
-        if (isIBM) {
+        if (isJ9) {
 			logger.info("First failure detected by thread: " + Thread.currentThread().getName() + ". Running test: " + test.toString() + ". Creating java dumps.");
 			createDump("heap", heapDumpMethod, HEAPDUMP_FILE_NAME);
 			createDump("java", javaDumpMethod, JAVADUMP_FILE_NAME);
