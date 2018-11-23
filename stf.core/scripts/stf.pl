@@ -735,7 +735,7 @@ sub check_free_space {
 		# dir doesn't work with forward slashes or escaped backslashes, so remove any that are there.
 		$results_root =~ s,/,\\,g;
 		$results_root =~ s,\\\\,\\,g;
-		$cmd = "dir $results_root";
+		$cmd = "cmd /c dir $results_root";
 		@df_output = `$cmd 2>&1`;
 		foreach my $line ( @df_output ) {
 			if ( $line =~ m/.*bytes\s+free.*/ ) {
@@ -850,7 +850,7 @@ sub findElement {
 sub deleteDirectory {
 	my $doomed_directory = shift;
 	if ( $^O eq 'MSWin32' ) {
-        	my $cmd = "rmdir /s /q \"$doomed_directory\"";
+        	my $cmd = "cmd /c rmdir /s /q \"$doomed_directory\"";
             `$cmd`;
             if ( $? ) {
                 die "Error running $cmd: $!";
