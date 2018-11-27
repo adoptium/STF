@@ -13,12 +13,13 @@
 EMPTY=
 
 # Environment variable OSTYPE is set to cygwin if running under cygwin.
-# When the shell is switched to cmd.exe OSTYPE is no longer set, so set a make
-# macro if running under cygwin.
+# Set our own macro to indicate we're running under cygwin.
+# Also Windows commands will need to be prefixed with cmd /c to run them in a Windows shell.
 ifndef CYGWIN
   OSTYPE?=$(shell echo $$OSTYPE)
   ifeq ($(OSTYPE),cygwin)
     CYGWIN:=1
+    CMD_PREFIX=cmd /c
   else
     CYGWIN:=0
   endif
@@ -27,13 +28,9 @@ endif
 
 # Use a macro to say whether we are running under Windows.
 # OS may not be set to Windows_NT under cygwin
-# If we're on Windows, set the shell for started processes to be cmd.exe, otherwise
-# if the Windows environment has a unix style shell on the path, make will invoke
-# that, and then Windows commands may not work as expected. 
 ifeq ($(OS),Windows_NT)
   ifneq ($(CYGWIN),1)
     WINDOWS:=1
-    SHELL=cmd.exe
   endif
 endif
 
@@ -73,17 +70,15 @@ else
   ifneq ($(WINDOWS),1)
     SOURCE_ROOT?=$(shell cd "$(MAKEFILE_ROOT_DIR)"; pwd)
   else
-    SOURCE_ROOT:=$(subst \,\,$(strip $(subst Directory of,,$(shell dir "$(subst \,$(D),$(MAKEFILE_ROOT_DIR))" | findstr $(D)C:"Directory of"))))
+    SOURCE_ROOT:=$(subst \,\,$(strip $(subst Directory of,,$(shell $(CMD_PREFIX) dir "$(subst \,$(D),$(MAKEFILE_ROOT_DIR))" | findstr $(D)C:"Directory of"))))
   endif
-
-  # If we are running under cygwin, turn the $(D)cygdrive style path into the real Windows path
-  # and then set the shell to cmd.exe.
+  # If we are running under cygwin, turn the $(D)cygdrive style path into the real Windows path.
   # The tests all expect to be running under real Windows.
   ifeq ($(CYGWIN),1)
     WINDOWS:=1
     #$(warning Running under cygwin)
     #$(warning Before cygpath SOURCE_ROOT set to $(SOURCE_ROOT))
-    SOURCE_ROOT:=$(shell cygpath -m '$(SOURCE_ROOT)')
+    SOURCE_ROOT:=$(shell $(CMD_PREFIX) cygpath -m '$(SOURCE_ROOT)')
   endif
 endif
 
@@ -97,13 +92,27 @@ ifeq ($(WINDOWS),1)
   EXE:=.exe
   BAT:=.bat
   TEMP?=C:\\TEMP
-  SHELL:=cmd.exe
   CAT:=type
-  WHICH=where
-  NULL=nul
-  EXPORT=set
-  dir_exists = $(shell if exist $(1) echo dir_exists)
-  file_exists = $(shell if exist $(1) echo file_exists)
+  WHICH:=where
+  NULL:=nul
+  EXPORT:=set
+  dir_exists = $(shell $(CMD_PREFIX) if exist $(1) echo dir_exists)
+  file_exists = $(shell $(CMD_PREFIX) if exist $(1) echo file_exists)
+  ifeq ($(CYGWIN),1)
+    EXPORT:=export
+    # If we are running under cygwin, the tests need to run with a Windows perl port (e.g. Strawberry perl) rather
+    # than the cygwin perl port. This assumes that version will be in a directory ending /perl/bin directory
+    # and the cygwin version will not. Once found, that version of perl is added ahead of cygwin perl in the PATH.
+    $(warning Running under cygwin, looking for Windows perl on path)
+    PERL:=$(shell which -a perl.exe | grep /perl/bin | sort | uniq)
+    ifeq (,$(PERL))
+      $(error Unable to find Windows perl e.g. Strawberry perl in a /perl/bin subdirectory on PATH.  Install perl or add to PATH and retry)
+    else
+      $(warning Found perl in $(PERL))
+    endif
+    PERL:=$(dir $(PERL))
+    export PATH:=$(PERL):$(PATH)
+  endif
 else
   ESC:=\$(EMPTY)
   ESC_DQ:=\"
@@ -130,7 +139,7 @@ TEST_PREREQS_ROOT:=$(PREREQS_ROOT)
 $(warning TEST_PREREQS_ROOT is $(TEST_PREREQS_ROOT))
 ifeq ($(CYGWIN),1)
   $(warning Running cygpath -m '$(TEST_PREREQS_ROOT)')
-  TEST_PREREQS_ROOT:=$(shell cygpath -m '$(TEST_PREREQS_ROOT)')
+  TEST_PREREQS_ROOT:=$(shell $(CMD_PREFIX) cygpath -m '$(TEST_PREREQS_ROOT)')
 else
   ifneq ($(WINDOWS),1)
     $(warning Running cd "$(TEST_PREREQS_ROOT)"; pwd)
@@ -139,11 +148,11 @@ else
     # On Windows 'dir' won't work with double back slashes
     TEST_PREREQS_ROOT:=$(subst $(D),\,$(TEST_PREREQS_ROOT))
     $(warning Running dir "$(TEST_PREREQS_ROOT)")
-    TEST_PREREQS_ROOT:=$(subst \,$(D),$(strip $(subst Directory of,,$(shell dir "$(subst $(D),\,$(TEST_PREREQS_ROOT))" | findstr $(D)C:"Directory of"))))
+    TEST_PREREQS_ROOT:=$(subst \,$(D),$(strip $(subst Directory of,,$(shell $(CMD_PREFIX) dir "$(subst $(D),\,$(TEST_PREREQS_ROOT))" | findstr $(D)C:"Directory of"))))
     $(warning TEST_PREREQS_ROOT is $(TEST_PREREQS_ROOT))
   endif
 endif
-ifeq (dir_exists,$(call dir_exists,$(PREREQS_ROOT)))
+ifneq (,$(findstring dir_exists,$(call dir_exists,$(PREREQS_ROOT))))
   PREREQS_ROOT:=$(TEST_PREREQS_ROOT)
 else
   ifneq (configure,$(MAKECMDGOALS))
@@ -156,7 +165,6 @@ PREREQS_ROOT_UNIX = $(subst \,$(D),$(PREREQS_ROOT))
 
 # To build to a different location specify TARGET_ROOT=<a directory> on the make command line
 TARGET_ROOT:=$(SOURCE_ROOT)
-
 
 ANT_LIB:=lib
 ANT_LIB_PATH=$(ANT_HOME)$(D)$(ANT_LIB)
@@ -179,8 +187,8 @@ ifndef ANT_HOME
     # On Windows run where ant.bat
     # On Unix run which ant, and use realpath to resolve symlinks (ant is likely to be symlinked e.g. to usr$(D)bin$(D)ant).
     ifeq ($(WINDOWS),1)
-      ANT_BINDIR:=$(dir $(firstword $(shell $(WHICH) ant$(BAT) 2>$(NULL))))
-      $(warning $(WHICH) ant$(BAT) 2>$(NULL) returned)
+      ANT_BINDIR:=$(dir $(firstword $(shell $(CMD_PREFIX) $(WHICH) ant$(BAT) 2>$(NULL))))
+      $(warning $(CMD_PREFIX) $(WHICH) ant$(BAT) 2>$(NULL) returned)
       $(warning $(ANT_BINDIR))
       ifneq (,$(ANT_BINDIR))
         ANT_HOME:=$(ANT_BINDIR)$(D)..
@@ -218,17 +226,18 @@ ifeq (1,$(ERROR))
   $(error Fix above errors and retry)
 endif
 
+$(warning JAVA_HOME is $(JAVA_HOME))
 JAVA:=$(JAVA_HOME)$(D)bin$(D)java$(EXE)
-JAVA_OUTPUT:=$(shell $(JAVA) -fullversion 2>&1)
-$(warning $(JAVA) -fullversion returned)
+JAVA_OUTPUT:=$(shell $(CMD_PREFIX) $(JAVA) -fullversion 2>&1)
+$(warning $(CMD_PREFIX) $(JAVA) -fullversion returned)
 $(warning $(JAVA_OUTPUT))
 
 ifneq (,$(JAVA8_HOME))
   $(warning JAVA8_HOME set to $(JAVA8_HOME))
   JAVA8:=$(JAVA8_HOME)$(D)bin$(D)java$(EXE)
   JAVAC8:=$(JAVA8_HOME)$(D)bin$(D)javac$(EXE)
-  JAVA8_OUTPUT:=$(shell $(JAVA8) -fullversion 2>&1)
-  $(warning $(JAVA8) -fullversion returned)
+  JAVA8_OUTPUT:=$(shell $(CMD_PREFIX) $(JAVA8) -fullversion 2>&1)
+  $(warning $(CMD_PREFIX) $(JAVA8) -fullversion returned)
   $(warning $(JAVA8_OUTPUT))
 else
   $(warning JAVA8_HOME not set, will use $(JAVA_HOME) as java8 compiler)
@@ -239,15 +248,15 @@ ifneq (,$(JAVA9_HOME))
   $(warning JAVA9_HOME set to $(JAVA9_HOME))
   JAVA9:=$(JAVA9_HOME)$(D)bin$(D)java$(EXE)
   JAVAC9:=$(JAVA9_HOME)$(D)bin$(D)javac$(EXE)
-  JAVA9_OUTPUT:=$(shell $(JAVA9) -fullversion 2>&1)
-  $(warning $(JAVA9) -fullversion returned)
+  JAVA9_OUTPUT:=$(shell $(CMD_PREFIX) $(JAVA9) -fullversion 2>&1)
+  $(warning $(CMD_PREFIX) $(JAVA9) -fullversion returned)
   $(warning $(JAVA9_OUTPUT))
 else
   $(warning JAVA9_HOME not set, will use $(JAVA_HOME) as java9 compiler)
   JAVA9_HOME:=$(JAVA_HOME)
 endif
 
-BUILD_COMMAND:=$(ANT_JAVA_HOME)$(D)bin$(D)java$(EXE) -classpath $(ANT_LAUNCHER) org.apache.tools.ant.launch.Launcher -buildfile $(TARGET_ROOT)$(D)stf.build$(D)build.xml -Dprereqs_root=$(PREREQS_ROOT)
+BUILD_COMMAND:=$(CMD_PREFIX) $(ANT_JAVA_HOME)$(D)bin$(D)java$(EXE) -classpath $(ANT_LAUNCHER) org.apache.tools.ant.launch.Launcher -buildfile $(TARGET_ROOT)$(D)stf.build$(D)build.xml -Dprereqs_root="$(PREREQS_ROOT)"
 BUILD_COMMAND:=$(BUILD_COMMAND) -Djava8_home=$(JAVA8_HOME)
 BUILD_COMMAND:=$(BUILD_COMMAND) -Djava9_home=$(JAVA9_HOME)
 
@@ -268,7 +277,7 @@ ifeq ($(RM_PASS),1)
     RM_PASS_ARG:=-rm-pass
 endif
 
-STF_COMMAND:=perl $(TARGET_ROOT)$(D)stf.core$(D)scripts$(D)stf.pl $(JAVA_ARGS_ARG) -systemtest-prereqs=$(PREREQS_ROOT) $(RM_PASS_ARG)
+STF_COMMAND:=$(CMD_PREFIX) perl $(TARGET_ROOT)$(D)stf.core$(D)scripts$(D)stf.pl $(JAVA_ARGS_ARG) -systemtest-prereqs=$(PREREQS_ROOT) $(RM_PASS_ARG)
 
 # Targets to run the samples
 SAMPLE_TARGETS:=test.list \
@@ -288,6 +297,8 @@ test.SampleSecondaryJvm \
 test.SampleSubTests \
 test.SampleValidateFileAbsence \
 test.SampleWriteFiletest
+
+NOT_JAVA8_TARGETS:=test.SampleRunJmod
 
 .PHONY: build configure clean refresh_source test $(SAMPLE_TARGETS)
 
@@ -312,7 +323,7 @@ endif
 .PHONY: $(SAMPLE_TARGETS)
 
 test: $(SAMPLE_TARGETS)
-
+test.java8: $(filter-out $(NOT_JAVA8_TARGETS),$(SAMPLE_TARGETS))
 test.list:
 	$(STF_COMMAND) -list
 test.help:

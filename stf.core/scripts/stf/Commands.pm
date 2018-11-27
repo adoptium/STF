@@ -706,7 +706,7 @@ sub kill_process {
 		if ( $powershell_flag == 0 ) {
 			info("Using powershell to kill " . $process->{uid});
 			$kill_type = "kill_powershell";
-			$kill_cmd = "powershell Stop-Process ${ppid}";
+			$kill_cmd = "cmd /c echo \n | powershell Stop-Process ${ppid}";
 		}
 		else {
 			info ("Using pskill to kill " . $process->{uid});
