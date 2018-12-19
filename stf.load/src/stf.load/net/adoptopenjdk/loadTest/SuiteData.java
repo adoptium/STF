@@ -119,7 +119,6 @@ public class SuiteData {
 		return maxThinkingTime;
 	}
 
-
 	/**
 	 * @return The next test to run, or null if it's time to finish load testing.
 	 */

@@ -287,6 +287,20 @@ public class LoadTestProcessDefinition implements ProcessDefinition {
 	}
 	
 	/**
+	 * Optional method which sets the flag to trigger core dumps to be generated after first failure
+	 * is detected in a load test run.
+	 * @param dumpRequested can be set to true (default is false) to trigger dump generation 
+	 * @return Updated load test process definition.
+	 */
+	public LoadTestProcessDefinition generateCoreDumpAtFirstLoadTestFailure(boolean dumpRequested) throws StfException {
+		checkAndUpdateLevel(Stage.LOAD_TEST_ARGS);
+		
+		javaProcessDefinition.addArg("-dumpRequested", Boolean.toString(dumpRequested));
+		
+		return this;
+	}
+	
+	/**
 	 * Optional method which controls how many test failures are reported in detail, with 
 	 * a description of the failing test case and a stack trace, etc.
 	 * Once the reporting limit is reached load test prints out a single line to say that a failure

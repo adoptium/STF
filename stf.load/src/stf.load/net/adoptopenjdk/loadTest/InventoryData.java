@@ -68,7 +68,8 @@ public class InventoryData {
 	// Lower values potentially use less memory, but will sometimes mean that the exact weightings
 	// cannot be honoured.
 	private static int MAX_WEIGHTING_LOOKUP_SIZE = 500000;
-	
+
+	private static boolean dumpRequested = false; 
 	
 	/**
 	 * Parse an XML test 'inventory' file (which lists the tests to be run for the
@@ -85,11 +86,12 @@ public class InventoryData {
 	 * The exclusion files are also specified as paths below the root directory.
 	 * @param verbose should be set to true for debug level progress reporting.
 	 */
-	InventoryData(ArrayList<DirectoryRef> testRoots, String inventoryFileRef, ArrayList<String> exclusionFiles, boolean countingOnly, boolean verbose) throws Exception {
+	InventoryData(ArrayList<DirectoryRef> testRoots, String inventoryFileRef, ArrayList<String> exclusionFiles, boolean countingOnly, boolean verbose, boolean dumpRequested) throws Exception {
 		this.inventoryFileRef = inventoryFileRef;
 		this.countingOnly = countingOnly;
 		this.verbose = verbose;
-
+		this.dumpRequested = dumpRequested; 
+		
 		// Read the inventory file and any which it includes
 		testList = readInventoryFile(testRoots, inventoryFileRef);
 		
@@ -169,7 +171,7 @@ public class InventoryData {
 					String mauveFullClassname = testNode.getAttributes().getNamedItem("class").getNodeValue();
 					BigDecimal weighting = parseWeighting(testNode, inventoryFileRef, nodeNumber);
 					
-					AdaptorInterface testcase = new MauveAdaptor(nextTestNum, mauveFullClassname, weighting);
+					AdaptorInterface testcase = new MauveAdaptor(nextTestNum, mauveFullClassname, weighting, dumpRequested);
 					tests.add(testcase);
 					nextTestNum++;
 						
@@ -187,7 +189,7 @@ public class InventoryData {
 					ArrayList<String> constructorArgs = parseArgumentList(testNode, "constructorArguments");
 					ArrayList<String> methodArgs = parseArgumentList(testNode, "methodArguments");
 					
-					AdaptorInterface testcase = new ArbitraryJavaAdaptor(nextTestNum, classname, constructorArgs, methodName, methodArgs, weighting, countingOnly);
+					AdaptorInterface testcase = new ArbitraryJavaAdaptor(nextTestNum, classname, constructorArgs, methodName, methodArgs, weighting, countingOnly, dumpRequested);
 					tests.add(testcase);
 					nextTestNum++;
 
@@ -201,7 +203,7 @@ public class InventoryData {
 					String junitClassName = testNode.getAttributes().getNamedItem("class").getNodeValue();
 					BigDecimal weighting = parseWeighting(testNode, inventoryFileRef, nodeNumber);
 					
-					AdaptorInterface testcase = new JUnitAdaptor(nextTestNum, junitClassName, weighting);
+					AdaptorInterface testcase = new JUnitAdaptor(nextTestNum, junitClassName, weighting, dumpRequested);
 					tests.add(testcase);
 					nextTestNum++;
 
@@ -335,7 +337,7 @@ public class InventoryData {
 		try {
 			ArrayList<String> exclusionFiles = LoadTestProcessDefinition.findExclusionFiles(testRoots, inventoryFileRef);
 			
-			InventoryData inventory = new InventoryData(testRoots, inventoryFileRef, exclusionFiles, true, false);
+			InventoryData inventory = new InventoryData(testRoots, inventoryFileRef, exclusionFiles, true, false, dumpRequested);
 			return inventory.getNumberOfTests();
 		} catch (Exception e) {
 			throw new StfException("Failed to parse inventory file", e);

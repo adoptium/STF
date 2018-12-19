@@ -30,12 +30,13 @@ public class MauveAdaptor extends LoadTestBase {
 	// if a Mauve test has passed or failed
 	private static byte[] PASS_INDICATOR = "PASS:".getBytes();
 	private static byte[] FAIL_INDICATOR = "FAIL:".getBytes();
-	
+	boolean dumpRequested; 
 
-	public MauveAdaptor(int testNum, String fullClassname, BigDecimal weighting) {
+	public MauveAdaptor(int testNum, String fullClassname, BigDecimal weighting, boolean dumpRequired) {
 		super(testNum, fullClassname, null, weighting);
 		
 		this.fullMauveClass = fullClassname;
+		this.dumpRequested = dumpRequired; 
 	}
 
 
@@ -95,7 +96,7 @@ public class MauveAdaptor extends LoadTestBase {
 		if (startsWith(output, off, len, PASS_INDICATOR)) {
 			resultStatus = ResultStatus.PASS;
 		} else if (startsWith(output, off, len, FAIL_INDICATOR)) {
-			FirstFailureDumper.instance().createDumpIfFirstFailure(this);
+			FirstFailureDumper.instance().createDumpIfFirstFailure(this, dumpRequested);
 			resultStatus = ResultStatus.FAIL;
 		}
 		
