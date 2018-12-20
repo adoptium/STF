@@ -59,13 +59,15 @@ class LoadTestRunner {
 	private final int maxSingleLogSize;
 	private final ArrayList<SuiteData> suites;
 	private final long reportingFrequency;
+	private boolean dumpRequested; 
 
 	
 	LoadTestRunner(File resultsDir, String resultsPrefix, boolean timeLimitedTest, long testEndTime, 
 				boolean abortIfOutOfMemory,
 				int reportFailureLimit, int abortAtFailureLimit,
 				long maxTotalLogFileSpace, int maxSingleLogSize,
-				ArrayList<SuiteData> suites) {
+				ArrayList<SuiteData> suites,
+				boolean dumpRequested) {
 		this.resultsDir = resultsDir;
 		this.resultsPrefix = resultsPrefix;
 		this.timeLimitedTest = timeLimitedTest;
@@ -76,6 +78,7 @@ class LoadTestRunner {
 		this.maxTotalLogFileSpace = maxTotalLogFileSpace;
 		this.maxSingleLogSize = maxSingleLogSize;
 		this.suites = suites;
+		this.dumpRequested = dumpRequested; 
 		
 		// Decide how frequency progress reports are to be made
 		String reportingFrequencyString = System.getenv(REPORTING_FREQUENCY_ENV_NAME);
@@ -197,9 +200,13 @@ class LoadTestRunner {
 								if (testPassed) {
 									numberPassingTests.incrementAndGet();
 								} else {
-									// Produce java dumps for only the first test failure 
+									// Produce java dumps for only the first test failure if flag for creating dump is set by user
 									long failureNum = numberFailingTests.incrementAndGet();
-									FirstFailureDumper.instance().createDumpIfFirstFailure((LoadTestBase) test);
+									
+									logger.info("suite.getInventory().getInventoryFileRef(): " + suite.getInventory().getInventoryFileRef());
+									logger.info("suite.isCreateDump() : " + dumpRequested);
+									
+									FirstFailureDumper.instance().createDumpIfFirstFailure((LoadTestBase) test, dumpRequested);
 									
 									// Get log4j to report the test failure
 									reportFailure(failureNum, executionTracker.getCapturedOutput(), test, suite, threadNum);
@@ -229,7 +236,8 @@ class LoadTestRunner {
 
 								// Produce java dumps if this is the first test error
 								long failureNum = numberFailingTests.incrementAndGet();
-								FirstFailureDumper.instance().createDumpIfFirstFailure((LoadTestBase) test);
+								
+								FirstFailureDumper.instance().createDumpIfFirstFailure((LoadTestBase) test, dumpRequested);
 								
 								// Report exception to process output
 								reportFailure(failureNum, executionTracker.getCapturedOutput(), test, suite, threadNum);

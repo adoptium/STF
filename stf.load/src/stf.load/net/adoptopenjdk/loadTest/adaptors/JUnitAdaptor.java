@@ -33,12 +33,13 @@ import net.adoptopenjdk.stf.environment.PlatformFinder;
  */
 public class JUnitAdaptor extends LoadTestBase {
 	private final String testClass;
+	private boolean dumpRequested; 
 
-
-	public JUnitAdaptor(int testNum, String testClass, BigDecimal weighting) {
+	public JUnitAdaptor(int testNum, String testClass, BigDecimal weighting, boolean dumpRequested) {
 		super(testNum, testClass, null, weighting);
 		
 		this.testClass = testClass;
+		this.dumpRequested = dumpRequested; 
 	}
 
 
@@ -81,7 +82,7 @@ public class JUnitAdaptor extends LoadTestBase {
         		}
         	}
         	public void testFailure(Failure failure) throws Exception {
-        		FirstFailureDumper.instance().createDumpIfFirstFailure(test);
+        		FirstFailureDumper.instance().createDumpIfFirstFailure(test, dumpRequested);
         		reportProgress("testFailure: " + failure);
         		failures.add(failure.getException());
         		failure.getException().printStackTrace(System.out);
@@ -89,7 +90,7 @@ public class JUnitAdaptor extends LoadTestBase {
        			awaitingResult = false;
         	}
 			public void testAssumptionFailure(Failure failure) {
-				FirstFailureDumper.instance().createDumpIfFirstFailure(test);
+        		FirstFailureDumper.instance().createDumpIfFirstFailure(test, dumpRequested);
 				reportProgress("testAssumptionFailure: " + failure);
         		failures.add(failure.getException());
        			addResult("fail", platform, failure.getDescription(), failure.getMessage(), failure.getException());

@@ -108,19 +108,23 @@ public class FirstFailureDumper {
      * It should be called when load test has its first failure.
      * @throws StfException if a dump method could not be called.
      */
-    public synchronized void createDumpIfFirstFailure(LoadTestBase test) {
+    public synchronized void createDumpIfFirstFailure(LoadTestBase test, boolean dumpRequested) {
         if (haveCreatedFirstFailureDumps) { 
         	return;
         }
 		
-        if (isJ9) {
+        if (isJ9 && dumpRequested) {
 			logger.info("First failure detected by thread: " + Thread.currentThread().getName() + ". Running test: " + test.toString() + ". Creating java dumps.");
 			createDump("heap", heapDumpMethod, HEAPDUMP_FILE_NAME);
 			createDump("java", javaDumpMethod, JAVADUMP_FILE_NAME);
 			createDump("system", systemDumpMethod, SYSTEMDUMP_FILE_NAME);
 			
 		} else {
-			logger.info("First failure detected by thread: " + Thread.currentThread().getName() + ". Not creating dumps as not running on an IBM JVM");
+			if (!dumpRequested) {
+				logger.info("First failure detected by thread: " + Thread.currentThread().getName() + ". Not creating dumps as no dump generation is requested for this load test");
+			} else { 
+				logger.info("First failure detected by thread: " + Thread.currentThread().getName() + ". Not creating dumps as not running on an IBM JVM");
+			}
 		}
 		
 		haveCreatedFirstFailureDumps = true;

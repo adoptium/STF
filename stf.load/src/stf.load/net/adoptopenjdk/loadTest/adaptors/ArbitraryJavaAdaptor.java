@@ -36,10 +36,10 @@ public class ArbitraryJavaAdaptor extends LoadTestBase {
 	private Object[] constructorArgs;
 	private Method javaMethod;
 	private Object[] methodArgs;
-	
+	private boolean dumpRequested; 
 	
 	public ArbitraryJavaAdaptor(int testNum, String testClassName, ArrayList<String> constructorArgValues, 
-					String testMethodName, ArrayList<String> methodArgValues, BigDecimal weighting, boolean countingOnly) 
+					String testMethodName, ArrayList<String> methodArgValues, BigDecimal weighting, boolean countingOnly, boolean dumpRequired) 
 				throws ClassNotFoundException, NoSuchMethodException, SecurityException, StfException {
 		super(testNum, testClassName, testMethodName, weighting);
 
@@ -51,7 +51,8 @@ public class ArbitraryJavaAdaptor extends LoadTestBase {
 		
 		this.testClassName = testClassName;
 		this.testMethodName = testMethodName;
-
+		this.dumpRequested = dumpRequired; 
+		
 		javaClass = Class.forName(testClassName);
 		
 		// Find a constructor which is compatible with the supplied constructor arguments
@@ -101,11 +102,11 @@ public class ArbitraryJavaAdaptor extends LoadTestBase {
 			javaMethod.invoke(instance, methodArgs);
 		} catch (InvocationTargetException e) {
 			// Test will be marked as a failure
-			FirstFailureDumper.instance().createDumpIfFirstFailure(this);
+			FirstFailureDumper.instance().createDumpIfFirstFailure(this, dumpRequested);
 			throw e.getCause();
 		} catch (Throwable t) {
 			// Test will be marked as a failure
-			FirstFailureDumper.instance().createDumpIfFirstFailure(this);
+			FirstFailureDumper.instance().createDumpIfFirstFailure(this, dumpRequested);
 			throw t;
 		}
 		

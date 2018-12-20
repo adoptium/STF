@@ -60,6 +60,9 @@ public class LoadTest {
 	// LoadTest behaviour on OMM controllable through argument
 	private boolean abortIfOutOfMemory = true; 
 	
+	// This flag indicates whether or not to create core dumps on the event of first load test failure 
+	private boolean dumpRequested = false; 
+	
 	// Error reporting control
 	private int reportFailureLimit = 10; 
 	private int abortAtFailureLimit = 25;
@@ -151,7 +154,7 @@ public class LoadTest {
 				abortIfOutOfMemory,
 				reportFailureLimit, abortAtFailureLimit,
 				maxTotalLogFileSpace, maxSingleLogSize,
-				suites);
+				suites, dumpRequested);
 		return loadTestRunner.run();
 	}
 
@@ -193,6 +196,10 @@ public class LoadTest {
 			} else if (argName.equals("-abortIfOutOfMemory")) {
 				String abortValue = getArgValue(args, i++);
 				this.abortIfOutOfMemory = Boolean.parseBoolean(abortValue);
+			
+			} else if (argName.equals("-dumpRequested")) {
+				String dumpReq = getArgValue(args, i++);
+				this.dumpRequested = Boolean.parseBoolean(dumpReq);
 				
 			} else if (argName.equals("-reportFailureLimit")) {
 				this.reportFailureLimit = Integer.parseInt(getArgValue(args, i++));
@@ -458,7 +465,7 @@ public class LoadTest {
 		// (workspace root and test root).
 		ArrayList<DirectoryRef> inventoryRootArray = new ArrayList<DirectoryRef>();
 		inventoryRootArray.add(inventoryRoot);
-		InventoryData inventory = new InventoryData(inventoryRootArray, inventoryFileOffset, excludeFiles, false, true);
+		InventoryData inventory = new InventoryData(inventoryRootArray, inventoryFileOffset, excludeFiles, false, true, dumpRequested);
 
 		return new SuiteData(suiteNum, numThreads, seed, inventory, numberTests, repeatCount, minThinkingTime, maxThinkingTime, selection);
 	}
