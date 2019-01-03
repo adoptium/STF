@@ -44,14 +44,14 @@ import net.adoptopenjdk.loadTest.reporting.OutputFilter;
 class LoadTestRunner {
     private static final Logger logger = LogManager.getLogger(LoadTestRunner.class.getName());
     
-	private static final String REPORTING_FREQUENCY_ENV_NAME = "LT_REPORTING_FREQUENCY";
-	private static final long INACTIVITY_LIMIT = 15 * 60 * 1000; // 15 minutes
+	private static final String REPORTING_FREQUENCY_ENV_NAME = "LT_REPORTING_FREQUENCY";	
 	private static final long HUNG_MESSAGE_REPEAT_TIME = 5 * 1000; 
 	
 	private final File resultsDir;
 	private final String resultsPrefix;
 	private final boolean timeLimitedTest;
 	private final long testEndTime;
+	private final long testInactivityLimit; 
 	private final boolean abortIfOutOfMemory;
 	private final int reportFailureLimit;
 	private final int abortAtFailureLimit;
@@ -63,6 +63,7 @@ class LoadTestRunner {
 
 	
 	LoadTestRunner(File resultsDir, String resultsPrefix, boolean timeLimitedTest, long testEndTime, 
+			    long testInactivityLimit,
 				boolean abortIfOutOfMemory,
 				int reportFailureLimit, int abortAtFailureLimit,
 				long maxTotalLogFileSpace, int maxSingleLogSize,
@@ -72,6 +73,7 @@ class LoadTestRunner {
 		this.resultsPrefix = resultsPrefix;
 		this.timeLimitedTest = timeLimitedTest;
 		this.testEndTime = testEndTime;
+		this.testInactivityLimit = testInactivityLimit; 
 		this.abortIfOutOfMemory = abortIfOutOfMemory;
 		this.reportFailureLimit = reportFailureLimit;
 		this.abortAtFailureLimit = abortAtFailureLimit;
@@ -295,7 +297,7 @@ class LoadTestRunner {
 		
 		// Data used to detect a 'hung' load test
 		long numTestsExecuted = 0;
-		long activityDeadline = System.currentTimeMillis() + INACTIVITY_LIMIT;
+		long activityDeadline = System.currentTimeMillis() + this.testInactivityLimit;
 		
 		// Wait for all worker threads to complete
 		while (!es.isTerminated()) {
@@ -324,7 +326,7 @@ class LoadTestRunner {
 			if (newNumTestsExecuted > numTestsExecuted) {
 				// At least 1 test has completed since last time. Reset the deadline.
 				numTestsExecuted = newNumTestsExecuted;
-				activityDeadline = System.currentTimeMillis() + INACTIVITY_LIMIT;
+				activityDeadline = System.currentTimeMillis() + this.testInactivityLimit;
 			} else if (System.currentTimeMillis() > activityDeadline) {
 			    logger.error("**POSSIBLE HANG DETECTED**");
 			    activityDeadline = System.currentTimeMillis() + HUNG_MESSAGE_REPEAT_TIME;

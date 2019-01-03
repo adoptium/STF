@@ -57,6 +57,11 @@ public class LoadTest {
 	private String timeLimitString;
 	private long testEndTime;
 	
+	// If set, test will fail due to inactivity after the provided duration of 
+	// inactivity in a live test is encountered 
+	private String inactivityLimitString; 
+	private long inactivityLimit = 15 * 60 * 1000; // By default, set to 15 minutes; 
+	
 	// LoadTest behaviour on OMM controllable through argument
 	private boolean abortIfOutOfMemory = true; 
 	
@@ -150,7 +155,7 @@ public class LoadTest {
 		FirstFailureDumper.createInstance();
 		
 		LoadTestRunner loadTestRunner = new LoadTestRunner(resultsDir, resultsPrefix, 
-				timeLimitedTest, testEndTime, 
+				timeLimitedTest, testEndTime, inactivityLimit, 
 				abortIfOutOfMemory,
 				reportFailureLimit, abortAtFailureLimit,
 				maxTotalLogFileSpace, maxSingleLogSize,
@@ -192,6 +197,12 @@ public class LoadTest {
 				this.timeLimitString = getArgValue(args, i++);
 				long timeLimitSeconds = TimeParser.parseTimeSpecification(timeLimitString).getSeconds();
 				this.testEndTime = System.currentTimeMillis() + (timeLimitSeconds * 1000);
+
+			} else if (argName.equals("-inactivityLimit")) {
+				this.timeLimitedTest = true;
+				this.inactivityLimitString = getArgValue(args, i++);
+				long inactivityLimitSeconds = TimeParser.parseTimeSpecification(inactivityLimitString).getSeconds();
+				this.inactivityLimit = System.currentTimeMillis() + (inactivityLimitSeconds * 1000);
 
 			} else if (argName.equals("-abortIfOutOfMemory")) {
 				String abortValue = getArgValue(args, i++);

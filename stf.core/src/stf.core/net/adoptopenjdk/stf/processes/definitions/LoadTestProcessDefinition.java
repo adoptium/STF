@@ -268,6 +268,21 @@ public class LoadTestProcessDefinition implements ProcessDefinition {
 		
 		return this;
 	}
+	
+	/**
+	 * Optional method which sets a maximum acceptable duration of inactivity 
+	 * other than the default which is 15 minutes.
+	 * If set, test will fail after it remains inactive for more than the given limit.
+	 * @param limitSpec a String describing the limit. Supports h,m,s units. eg, '45s' or '5m30s' or '1h30m', etc
+	 * @return Updated load test process definition.
+	 */
+	public LoadTestProcessDefinition setInactivityLimit(String limitSpec) throws StfException {
+		checkAndUpdateLevel(Stage.LOAD_TEST_ARGS);
+		
+		javaProcessDefinition.addArg("-inactivityLimit", limitSpec);
+		
+		return this;
+	}
 
 	/**
 	 * Optional method which sets the policy when an OutOfMemoryError is detected.
