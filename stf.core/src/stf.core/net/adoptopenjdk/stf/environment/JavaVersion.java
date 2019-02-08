@@ -213,7 +213,7 @@ public class JavaVersion {
 
 	/**
 	 * @param version int value of version to check if matches
-	 * @return true if the JVM used for test execution matches input param version. Otherwise false.
+	 * @return true if the JVM used for test execution matches input param version for 10+. Otherwise false.
 	 */
 	public boolean isJavaVersion(int version) {
 		return javaVersionOutput.trim().startsWith("java version \"" + version);
