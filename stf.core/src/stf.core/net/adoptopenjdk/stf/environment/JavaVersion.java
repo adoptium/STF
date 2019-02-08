@@ -232,31 +232,17 @@ public class JavaVersion {
 
 	/**
 	 * @return the java version with the format as a single int.
-	 * eg, 6, 7, 8 or 9, 10, 11 etc
+	 * eg, 6, 7, 8 or 9, 10, 11+ etc
 	 * @return int containing the java version number.
 	 * @throws StfException if an unknown JVM release has been found.
 	 */
 	public int getJavaVersion() throws StfException {
-		if (isJava6()) {
-			return 6;
-		}
-		if (isJava7()) {
-			return 7;
-		} 
-		 if (isJava8()) {
-			return 8;
-		} 
-		if (isJava9()) {
-			return 9;
-		} 
-		// from 10 and up, format can be checked with version number directly
-		// format will be "openjdk version XX"
-		int lowver = 10;
+		int lowver = 6;
 		int highver = 99;
 		for (int version=lowver; version < highver; version++) {
 			if (isJavaVersion(version)) return version;
 		}	
-		throw new StfException("Unknown JVM release: " + PlatformFinder.getPlatformAsString());
+		throw new StfException("Unknown JVM release and version: " + PlatformFinder.getPlatformAsString() + "\n" + javaVersionOutput);
 	}
 	
 	// Return jvm version as 60, 70, 80 or 90, 100 etc
