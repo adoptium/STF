@@ -131,7 +131,7 @@ public class JavaVersion {
 	/**
 	 * @return true if the JVM used for test execution is Java version 9. Otherwise false.
 	 */
-	public boolean isJava9() throws StfException {
+	public boolean isJava9() {
 		// Sample IBM output:
 		//
 		//java version "1.9.0"
@@ -161,7 +161,7 @@ public class JavaVersion {
 	/**
 	 * @return true if the JVM used for test execution is Java version 8. Otherwise false.
 	 */
-	public boolean isJava8() throws StfException {
+	public boolean isJava8() {
 		// Sample IBM output:
 		//
 		//java version "1.8.0"
@@ -186,28 +186,28 @@ public class JavaVersion {
 	/**
 	 * @return true if the JVM used for test execution is Java version 7. Otherwise false.
 	 */
-	public boolean isJava7() throws StfException {
+	public boolean isJava7() {
 		return javaVersionOutput.startsWith("java version \"1.7.");
 	}
 	
 	/**
 	 * @return true if the JVM used for test execution is Java version 6. Otherwise false.
 	 */
-	public boolean isJava6() throws StfException {
+	public boolean isJava6() {
 		return javaVersionOutput.startsWith("java version \"1.6.");
 	}
 	
 	/**
 	 * @return true if the JVM used for test execution is Java version 10. Otherwise false.
 	 */
-	public boolean isJava10() throws StfException {
+	public boolean isJava10() {
 		return javaVersionOutput.startsWith("java version \"10");
 	}
 	
 	/**
 	 * @return true if the JVM used for test execution is Java version 11. Otherwise false.
 	 */
-	public boolean isJava11() throws StfException {
+	public boolean isJava11() {
 		return javaVersionOutput.trim().startsWith("java version \"11");
 	}
 
