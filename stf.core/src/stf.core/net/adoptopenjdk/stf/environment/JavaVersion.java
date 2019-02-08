@@ -216,11 +216,8 @@ public class JavaVersion {
 	 * @return true if the JVM used for test execution matches input param version. Otherwise false.
 	 */
 	public boolean isJavaVersion(int version) {
-		String brand = "openjdk";
+		String brand = "java";
 		String stringifiedVersion = Integer.toString(version);
-		if (version < 12) {
-			brand = "java";
-		}
 		if (version < 9) {
 			stringifiedVersion = "1." + version;
 		}
