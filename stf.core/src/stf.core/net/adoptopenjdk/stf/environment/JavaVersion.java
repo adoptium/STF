@@ -210,9 +210,17 @@ public class JavaVersion {
 	public boolean isJava11() throws StfException {
 		return javaVersionOutput.trim().startsWith("java version \"11");
 	}
-	
+
 	/**
-	 * @return the java version with the format as a single digit.
+	 * @param version int value of version to check if matches
+	 * @return true if the JVM used for test execution matches input param version. Otherwise false.
+	 */
+	public boolean isJavaVersion(int version) {
+		return javaVersionOutput.trim().startsWith("java version \"" + version);
+	}
+
+	/**
+	 * @return the java version with the format as a single int.
 	 * eg, 6, 7, 8 or 9, 10, 11 etc
 	 * @return int containing the java version number.
 	 * @throws StfException if an unknown JVM release has been found.
@@ -220,19 +228,24 @@ public class JavaVersion {
 	public int getJavaVersion() throws StfException {
 		if (isJava6()) {
 			return 6;
-		} else if (isJava7()) {
-			return 7;
-		} else if (isJava8()) {
-			return 8;
-		} else if (isJava9()) {
-			return 9;
-		} else if (isJava10()) {
-			return 10;
-		} else if (isJava11()) {
-			return 11;
-		} else {
-			throw new StfException("Unknown JVM release: " + PlatformFinder.getPlatformAsString());
 		}
+		if (isJava7()) {
+			return 7;
+		} 
+		 if (isJava8()) {
+			return 8;
+		} 
+		if (isJava9()) {
+			return 9;
+		} 
+		// from 10 and up, format can be checked with version number directly
+		// format will be "java version XX"
+		int lowver = 10;
+		int highver = 99;
+		for (int version=lowver; version < highver; version++) {
+			if (isJavaVersion(version)) return version;
+		}	
+		throw new StfException("Unknown JVM release: " + PlatformFinder.getPlatformAsString());
 	}
 	
 	// Return jvm version as 60, 70, 80 or 90, 100 etc
