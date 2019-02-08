@@ -213,10 +213,21 @@ public class JavaVersion {
 
 	/**
 	 * @param version int value of version to check if matches
-	 * @return true if the JVM used for test execution matches input param version for 10+. Otherwise false.
+	 * @return true if the JVM used for test execution matches input param version. Otherwise false.
 	 */
 	public boolean isJavaVersion(int version) {
-		return javaVersionOutput.trim().startsWith("java version \"" + version);
+		String brand = "openjdk";
+		String stringifiedVersion = Integer.toString(version);
+		if (version < 12) {
+			brand = "java";
+		}
+		if (version < 9) {
+			stringifiedVersion = "1." + version;
+		}
+		if (version == 9) {
+			return isJava9();
+		}
+		return javaVersionOutput.trim().startsWith(brand + " version \"" + stringifiedVersion);
 	}
 
 	/**
@@ -239,7 +250,7 @@ public class JavaVersion {
 			return 9;
 		} 
 		// from 10 and up, format can be checked with version number directly
-		// format will be "java version XX"
+		// format will be "openjdk version XX"
 		int lowver = 10;
 		int highver = 99;
 		for (int version=lowver; version < highver; version++) {
