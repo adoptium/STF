@@ -131,7 +131,7 @@ public class JavaVersion {
 	/**
 	 * @return true if the JVM used for test execution is Java version 9. Otherwise false.
 	 */
-	public boolean isJava9() throws StfException {
+	public boolean isJava9() {
 		// Sample IBM output:
 		//
 		//java version "1.9.0"
@@ -161,7 +161,7 @@ public class JavaVersion {
 	/**
 	 * @return true if the JVM used for test execution is Java version 8. Otherwise false.
 	 */
-	public boolean isJava8() throws StfException {
+	public boolean isJava8() {
 		// Sample IBM output:
 		//
 		//java version "1.8.0"
@@ -186,53 +186,60 @@ public class JavaVersion {
 	/**
 	 * @return true if the JVM used for test execution is Java version 7. Otherwise false.
 	 */
-	public boolean isJava7() throws StfException {
+	public boolean isJava7() {
 		return javaVersionOutput.startsWith("java version \"1.7.");
 	}
 	
 	/**
 	 * @return true if the JVM used for test execution is Java version 6. Otherwise false.
 	 */
-	public boolean isJava6() throws StfException {
+	public boolean isJava6() {
 		return javaVersionOutput.startsWith("java version \"1.6.");
 	}
 	
 	/**
 	 * @return true if the JVM used for test execution is Java version 10. Otherwise false.
 	 */
-	public boolean isJava10() throws StfException {
+	public boolean isJava10() {
 		return javaVersionOutput.startsWith("java version \"10");
 	}
 	
 	/**
 	 * @return true if the JVM used for test execution is Java version 11. Otherwise false.
 	 */
-	public boolean isJava11() throws StfException {
+	public boolean isJava11() {
 		return javaVersionOutput.trim().startsWith("java version \"11");
 	}
-	
+
 	/**
-	 * @return the java version with the format as a single digit.
-	 * eg, 6, 7, 8 or 9, 10, 11 etc
+	 * @param version int value of version to check if matches
+	 * @return true if the JVM used for test execution matches input param version. Otherwise false.
+	 */
+	public boolean isJavaVersion(int version) {
+		String brand = "java";
+		String stringifiedVersion = Integer.toString(version);
+		if (version < 9) {
+			stringifiedVersion = "1." + version;
+		}
+		if (version == 9) {
+			return isJava9();
+		}
+		return javaVersionOutput.trim().startsWith(brand + " version \"" + stringifiedVersion);
+	}
+
+	/**
+	 * @return the java version with the format as a single int.
+	 * eg, 6, 7, 8 or 9, 10, 11+ etc
 	 * @return int containing the java version number.
 	 * @throws StfException if an unknown JVM release has been found.
 	 */
 	public int getJavaVersion() throws StfException {
-		if (isJava6()) {
-			return 6;
-		} else if (isJava7()) {
-			return 7;
-		} else if (isJava8()) {
-			return 8;
-		} else if (isJava9()) {
-			return 9;
-		} else if (isJava10()) {
-			return 10;
-		} else if (isJava11()) {
-			return 11;
-		} else {
-			throw new StfException("Unknown JVM release: " + PlatformFinder.getPlatformAsString());
-		}
+		int lowver = 6;
+		int highver = 99;
+		for (int version=lowver; version < highver; version++) {
+			if (isJavaVersion(version)) return version;
+		}	
+		throw new StfException("Unknown JVM release and version: " + PlatformFinder.getPlatformAsString() + "\n" + javaVersionOutput);
 	}
 	
 	// Return jvm version as 60, 70, 80 or 90, 100 etc
