@@ -29,59 +29,23 @@ limitations under the License.
     </condition>
 
 	<!--
-		Some interoperability tests may involve running two javas of different versions.
-		The test classes will need to be built using the earliest of the two versions.
-		To facilitiate this, the test project build.xml files say explicitly which compiler
-		to version to use via a javax_home property (java8_home, java9_home, etc.)
-		If no values are provided for the javax_home properties, the java running ant
-		will be used for the compiles.
-		The following targets set all this up.
-	-->
-	<!--
-		Properties are also set for the location of the directories containing JDK tools (jar, javac, idlj etc.)
+		Set a property for the location of javac.
+		If the user did not set the property java_home, use the ant java.home property.
 		On IBM zOS java and Java 9, the ant property java.home points at JAVA_HOME.
 		On pre Java 9 non IBM zOS java, the ant property java.home points at JAVA_HOME/jre.
 	-->
-	<target name="setup-java-homes" depends="setup_java8_home, setup_java9_home">
-	</target>
-	<target name="setup_java8_home">
-		<condition property="java8_home" value="${java.home}">
+	<target name="setup-java-home">
+		<condition property="java_home" value="${java.home}">
 			<not>
-				<available file="${java8_home}"/>
+				<available file="${java_home}"/>
 			</not>
 		</condition>
-		<available file="${java8_home}/bin/javac${exe_suffix}" property="java8_bindir" value="${java8_home}/bin"/>
-		<available file="${java8_home}/../bin/javac${exe_suffix}" property="java8_bindir" value="${java8_home}/../bin"/>
-		<property name="java8_compiler" location="${java8_bindir}/javac${exe_suffix}"/>
-		<echo message="java8_home set to ${java8_home}"/>
-		<echo message="java8_compiler set to ${java8_compiler}"/>
+		<available file="${java_home}/bin/javac${exe_suffix}" property="java_bindir" value="${java_home}/bin"/>
+		<available file="${java_home}/../bin/javac${exe_suffix}" property="java_bindir" value="${java_home}/../bin"/>
+		<property name="java_compiler" location="${java_bindir}/javac${exe_suffix}"/>
+		<echo message="java_home set to ${java_home}"/>
+		<echo message="java_compiler set to ${java_compiler}"/>
 	</target>
-	<target name="setup_java9_home">
-		<condition property="java9_home" value="${java.home}">
-			<not>
-				<available file="${java9_home}"/>
-			</not>
-		</condition>
-		<available file="${java9_home}/bin/javac${exe_suffix}" property="java9_bindir" value="${java9_home}/bin"/>
-		<available file="${java9_home}/../bin/javac${exe_suffix}" property="java9_bindir" value="${java9_home}/../bin"/>
-		<property name="java9_compiler" location="${java9_bindir}/javac${exe_suffix}"/>
-		<echo message="java9_home set to ${java9_home}"/>
-		<echo message="java9_compiler set to ${java9_compiler}"/>
-	</target>
-
-	<!--
-		Set properties which point at the directory containing tools (jar, javac, idlj etc.)
-		On IBM zOS java and Java 9, the ant property java.home points at JAVA_HOME
-		On pre Java 9 non IBM zOS java, the ant property java.home points at JAVA_HOME/jre
-	-->
-	<!--
-	<available file="${java.home}/bin/javac" property="java_bindir" value="${java.home}/bin"/>
-	<available file="${java.home}/bin/javac.exe" property="java_bindir" value="${java.home}/bin"/>
-	<available file="${java.home}/../bin/javac" property="java_bindir" value="${java.home}/../bin"/>
-	<available file="${java.home}/../bin/javac.exe" property="java_bindir" value="${java.home}/../bin"/>
-
-	<property name="java_compiler" location="${java_bindir}/javac.exe"/>
-	-->
 
 	<!-- Set up classpaths for prereqs. -->
 	<path id="junit.class.path">
@@ -107,7 +71,7 @@ limitations under the License.
 										  check-for-log4j-2.3, print-log4j-2.3-location, print-log4j-2.3-error,
 										  check-for-windows-sysinternals, print-windows-sysinternals-location, print-windows-sysinternals-error,
 										  fail-if-error,
-										  setup-java-homes">
+										  setup-java-home">
 	</target>
 
 	<!--
