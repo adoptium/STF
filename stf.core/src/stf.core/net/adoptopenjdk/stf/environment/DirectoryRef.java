@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import net.adoptopenjdk.stf.StfConstants;
 import net.adoptopenjdk.stf.StfException;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * This class represents a directory, as known to a specific test case.
@@ -57,25 +59,29 @@ public class DirectoryRef {
 			}
 		}
 		
-		// Make file names more readable by converting '/x/y/..' to '/x' where possible.
-		if (this.fileName.endsWith("/..")) {
-			//Throw an exception if we're attempting to go "up" the path from root.
-			if( this.fileName.equals("/..") || this.fileName.substring(1).equals(":/..") ) {
-				this.fileName = this.fileName.substring(0, this.fileName.length() - 3);
-				throw new StfException("Directory " + this.fileName	+ " does not have a parent directory,"
-								+ " so " + this.fileName + "/.. will not work. Setting to " + this.fileName);
+		// Normailze paths that contain ".." where possible 
+		if (this.fileName.contains("..")) { 
+			if (this.fileName.endsWith("/..")) {
+				// Throw an exception if we're attempting to go "up" the path from root.
+				if( this.fileName.equals("/..") || this.fileName.substring(1).equals(":/..") ) {
+					this.fileName = this.fileName.substring(0, this.fileName.length() - 3);
+					throw new StfException("Directory " + this.fileName	+ " does not have a parent directory,"
+									+ " so " + this.fileName + "/.. will not work. Setting to " + this.fileName);
+				}
 			}
-			
-			//If it's a relative directory, we can't be sure if it does/does not exist 
-			//until we're ready to check if it exists, so ignore the ..'s.
-			if(this.fileName.startsWith("./..")) {
+			// If it's a relative directory, we can't be sure if it does/does not exist 
+			// until we're ready to check if it exists, so ignore the ..'s.
+			else if(this.fileName.startsWith("./..")) {
 				return;
+			// Make file names more readable by converting '/a/b/../../c/d/e/f/../..' to '/c/d', etc, where possible.
+			} else {
+				Path p1 = Paths.get(this.fileName);
+				String normalizedPath = p1.normalize().toString();
+				if (normalizedPath.length() > 0) {
+					this.fileName = normalizedPath; 
+				}			
 			}
-			
-			//Otherwise go up a directory and continue
-			String fileNameWithoutDotDot = this.fileName.substring(0, this.fileName.length()-3);
-			this.fileName = fileNameWithoutDotDot.substring(0, fileNameWithoutDotDot.lastIndexOf("/"));
-		}
+		}		
 	}
 
 	
