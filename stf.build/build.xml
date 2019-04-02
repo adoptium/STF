@@ -16,18 +16,22 @@ limitations under the License.
 
 <project name="stf.build" default="build">
 
+	<echo message="Executing stf.build/build.xml"/>
+
 	<!-- Set default for source_root.  -->
 	<property name="source_root" location=".."/>
 
+	<property name="stf_root" location="${source_root}/../stf"/>
+
 	<!-- Import settings used by multiple projects.  -->
-	<import file="${source_root}/stf.build/include/top.xml"/>
+	<import file="${stf_root}/stf.build/include/top.xml"/>
 
 	<!-- Build dependencies of this project.  -->
 	<!-- dir must be set on the ant task otherwise the basedir property is not set to a new value in the subant task. -->
-	<target name="build-dependencies">
-		<ant antfile="${source_root}/stf.core/build.xml" dir="${source_root}/stf.core" inheritAll="false"/>
-		<ant antfile="${source_root}/stf.load/build.xml" dir="${source_root}/stf.load" inheritAll="false"/>
-		<ant antfile="${source_root}/stf.samples/build.xml" dir="${source_root}/stf.samples" inheritAll="false"/>
+	<target name="build-dependencies" depends="check-prereqs">
+		<ant antfile="${stf_root}/stf.core/build.xml" dir="${stf_root}/stf.core" inheritAll="true"/>
+		<ant antfile="${stf_root}/stf.load/build.xml" dir="${stf_root}/stf.load" inheritAll="true"/>
+		<ant antfile="${stf_root}/stf.samples/build.xml" dir="${stf_root}/stf.samples" inheritAll="true"/>
 	</target>
 
 	<!-- Target to build all projects in the STF repository.  -->
@@ -35,9 +39,9 @@ limitations under the License.
 	</target>
 
 	<target name="clean">
-		<ant antfile="${source_root}/stf.core/build.xml" target="clean" dir="${source_root}/stf.core" inheritAll="false"/>
-		<ant antfile="${source_root}/stf.load/build.xml" target="clean" dir="${source_root}/stf.load" inheritAll="false"/>
-		<ant antfile="${source_root}/stf.samples/build.xml" target="clean" dir="${source_root}/stf.samples" inheritAll="false"/>
+		<ant antfile="${stf_root}/stf.core/build.xml" target="clean" dir="${stf_root}/stf.core" inheritAll="true"/>
+		<ant antfile="${stf_root}/stf.load/build.xml" target="clean" dir="${stf_root}/stf.load" inheritAll="true"/>
+		<ant antfile="${stf_root}/stf.samples/build.xml" target="clean" dir="${stf_root}/stf.samples" inheritAll="true"/>
 	</target>
 
 </project>

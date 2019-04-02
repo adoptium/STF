@@ -4,9 +4,7 @@
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
-
      http://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,35 +14,39 @@ limitations under the License.
 
 <project name="stf.core" default="build">
 
+	<echo message="Executing stf.core/build.xml"/>
+
 	<!-- Set default for source_root.  -->
 	<property name="source_root" location=".."/>
 
+	<property name="stf_root" location="${source_root}/../stf"/>
+
 	<!-- Import settings used by multiple projects.  -->
-	<import file="${source_root}/stf.build/include/top.xml"/>
+	<import file="${stf_root}/stf.build/include/top.xml"/>
 
 	<!-- For modularity you need a directory above the package structure to hold the module.java file -->
         
-	<property name="module" value="stf.core" />
-	<property name="src_dir" value="src/${module}" />
-	<property name="test_dir" value="test/${module}" />
-	<property name="bin_dir" value="bin" />
+	<property name="stf_core_module" value="stf.core" />
+	<property name="stf_core_src_dir" value="src/${stf_core_module}" />
+	<property name="stf_core_test_dir" value="test/${stf_core_module}" />
+	<property name="stf_core_bin_dir" value="bin" />
 
-	<property name="jar_file" value="${bin_dir}/${module}.jar" />
+	<property name="stf_core_jar_file" value="${stf_core_bin_dir}/${stf_core_module}.jar" />
 
 	<!-- Projects which need to be built before this one. -->
 	<!-- dir must be set on the ant task otherwise the basedir property is not set to a new value in the subant task. -->
 	<target name="build-dependencies">
 	</target>
 
-	<target name="build" depends="build-no-natives, build-natives">
+	<target name="build" depends="check-prereqs, build-no-natives, build-natives">
 	</target>
 
 	<!-- dir must be set otherwise the basedir property is not set to a new value in the subant task. -->
-	<target name="build-no-natives" depends="build-dependencies, check-prereqs, build-archives, copy-log4j2-config">
+	<target name="build-no-natives" depends="check-prereqs, build-dependencies, build-archives, copy-log4j2-config">
 	</target>
 
 	<!-- dir must be set otherwise the basedir property is not set to a new value in the subant task. -->
-	<target name="build-natives" depends="build-dependencies, check-prereqs, copy-log4j2-config">
+	<target name="build-natives" depends="check-prereqs, build-dependencies, copy-log4j2-config">
 	</target>
 
 	<!-- <target name="build-archives" depends="switch-to-target-dir,build-jar, build-jmod, build-jimage"> -->
@@ -53,12 +55,12 @@ limitations under the License.
 
 	<!-- Log4j config needs to be in the bin directory so that is on stf's classpath --> 
 	<target name="copy-log4j2-config">
-		<copy file="${src_dir}/log4j2.xml" tofile="${bin_dir}/log4j2.xml" />
+		<copy file="${stf_core_src_dir}/log4j2.xml" tofile="${stf_core_bin_dir}/log4j2.xml" />
 	</target>
 
 	<target name="build-jar" depends="build-java, create-bin-dir">
-		<jar destfile="${jar_file}">
-			<fileset dir="${bin_dir}" includes="**/*.class" />
+		<jar destfile="${stf_core_jar_file}">
+			<fileset dir="${stf_core_bin_dir}" includes="**/*.class" />
 		</jar>
 	</target>
 
@@ -67,16 +69,19 @@ limitations under the License.
 		      so fails to recompile in situations such as the signatures of a dependent method changing.
 		      The depend target checks the dependencies and deletes any .class files older than the files
 		      which depend on them, thereby ensuring recompilation.  -->
-		<depend srcdir="${src_dir}" destdir="${bin_dir}" classpathref="project.class.path">
+		<!--
+		Commented out because depend appears to be evaluating class files as always out of date with jdk11 (at 28/03/2019)
+		<depend srcdir="${stf_core_src_dir}:${stf_core_test_dir}" destdir="${stf_core_bin_dir}" classpathref="project.class.path">
 			<include name="**/*.java"/>
 		</depend>
+		-->
 	    <!-- STF can be built using Java 7 or later.  -->
 	    <!-- Build STF itself.  -->
-		<javac srcdir="${src_dir}"
-			   destdir="${bin_dir}"
+		<javac srcdir="${stf_core_src_dir}"
+			   destdir="${stf_core_bin_dir}"
 			   debug="true"
 			   fork="true"
-			   executable="${java8_compiler}"
+			   executable="${java_compiler}"
 			   classpathref="project.class.path"
 			    encoding="${src-encoding}"
 			   includeantruntime="false"
@@ -84,11 +89,11 @@ limitations under the License.
 			<include name="**/*.java"/>
 		</javac>
 	    <!-- Build test cases which verify STF.  -->
-		<javac srcdir="${test_dir}"
-			   destdir="${bin_dir}"
+		<javac srcdir="${stf_core_test_dir}"
+			   destdir="${stf_core_bin_dir}"
 			   debug="true"
 			   fork="true"
-			   executable="${java8_compiler}"
+			   executable="${java_compiler}"
 			   classpathref="project.class.path"
 			   encoding="${src-encoding}"
 			   includeantruntime="false"
@@ -98,11 +103,11 @@ limitations under the License.
 	</target>
 
 	<target name="create-bin-dir">
-		<mkdir dir="${bin_dir}"/>
+		<mkdir dir="${stf_core_bin_dir}"/>
 	</target>
 
 	<target name="clean">
-		<delete dir="${bin_dir}"/>
+		<delete dir="${stf_core_bin_dir}"/>
 	</target>
 
 </project>
