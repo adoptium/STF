@@ -79,6 +79,10 @@ public class DirectoryRef {
 				String normalizedPath = p1.normalize().toString();
 				if (normalizedPath.length() > 0) {
 					this.fileName = normalizedPath; 
+					if (PlatformFinder.isWindows()) {
+						// Replace all of the windows file separators with the linux equivalent.
+						this.fileName = this.fileName.replaceAll("\\\\", "/");   
+					}
 				}			
 			}
 		}		
