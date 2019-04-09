@@ -248,7 +248,7 @@ public class JavaVersion {
 	}
 	
 	public boolean isIBMJvm() throws StfException {
-		return (javaVersionOutput.contains("IBM") | javaVersionOutput.contains("OpenJ9"));
+		return javaVersionOutput.contains("IBM");
 	}
 
 	public boolean isOracleJvm() throws StfException {
