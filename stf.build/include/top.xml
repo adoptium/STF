@@ -113,8 +113,8 @@ limitations under the License.
 	<path id="tools.class.path">
 		<pathelement location="${prereqs_root}/tools/tools.jar"/>
 	</path>
-	<path id="asm.7.0.class.path">
-		<pathelement location="${prereqs_root}/asm-7.0/asm-7.0.jar"/>
+	<path id="asm.7.1.class.path">
+		<pathelement location="${prereqs_root}/asm-7.1/asm-7.1.jar"/>
 	</path>
 	<path id="stf.class.path">
 		<pathelement location="${stf_root}/stf.core/bin/stf.core.jar"/>
@@ -137,7 +137,7 @@ limitations under the License.
 										  check-for-junit-4.12, print-junit-4.12-location, print-junit-4.12-error,
 										  check-for-hamcrest-core-1.3, print-hamcrest-core-1.3-location, print-hamcrest-core-1.3-error,
 										  check-for-log4j-2.3, print-log4j-2.3-location, print-log4j-2.3-error,
-										  check-for-asm-7.0, print-asm-7.0-location, print-asm-7.0-error,
+										  check-for-asm-7.1, print-asm-7.1-location, print-asm-7.1-error,
 										  check-for-tools-jar, print-tools-jar-location, print-tools-jar-error,
 										  check-for-windows-sysinternals, print-windows-sysinternals-location, print-windows-sysinternals-error,
 										  fail-if-error">
@@ -152,7 +152,7 @@ limitations under the License.
 									  check-for-junit-4.12, configure-junit-4.12, print-junit-4.12-location, print-junit-4.12-error,
 									  check-for-hamcrest-core-1.3, configure-hamcrest-core-1.3, print-hamcrest-core-1.3-location, print-hamcrest-core-1.3-error,
 									  check-for-log4j-2.3, configure-log4j-2.3, print-log4j-2.3-location, print-log4j-2.3-error,
-									  check-for-asm-7.0, configure-asm-7.0, print-asm-7.0-location, print-asm-7.0-error,
+									  check-for-asm-7.1, configure-asm-7.1, print-asm-7.1-location, print-asm-7.1-error,
 									  check-for-tools-jar, configure-tools-jar, print-tools-jar-location, print-tools-jar-error,
 									  check-for-windows-sysinternals, set-download-windows-sysinternals-required, configure-windows-sysinternals, print-windows-sysinternals-location, print-windows-sysinternals-error,
 									  fail-if-error">
@@ -318,20 +318,20 @@ limitations under the License.
 		<available file="${tools_jar_dir}/${tools_jar_file}" property="tools_jar_correct"/>
 	</target>
 
-	<!-- Target to check if there is an asm-7.0.jar already copied to PREREQS_ROOT/asm-7.0 -->
-	<target name="check-for-asm-7.0">
-		<property name="asm_7.0_dir" location="${prereqs_root}/asm-7.0"/>
-		<property name="asm_7.0_file" value="asm-7.0.jar"/>
-		<property name="asm_7.0" value="${asm_7.0_dir}/${asm_7.0_file}"/>
-		<available file="${asm_7.0_dir}/${asm_7.0_file}" property="asm_7.0_available"/>
+	<!-- Target to check if there is an asm-7.1.jar already copied to PREREQS_ROOT/asm-7.1 -->
+	<target name="check-for-asm-7.1">
+		<property name="asm_7.1_dir" location="${prereqs_root}/asm-7.1"/>
+		<property name="asm_7.1_file" value="asm-7.1.jar"/>
+		<property name="asm_7.1" value="${asm_7.1_dir}/${asm_7.1_file}"/>
+		<available file="${asm_7.1_dir}/${asm_7.1_file}" property="asm_7.1_available"/>
 	</target>
 
-	<target name="configure-asm-7.0" unless="asm_7.0_available">
+	<target name="configure-asm-7.1" unless="asm_7.1_available">
 		<!-- Fetch asm from https://repository.ow2.org/etc. -->
-		<delete dir="${prereqs_root}/asm-7.0" failonerror="false"/>
-		<download-file destdir="${asm_7.0_dir}" destfile="${asm_7.0_file}" srcurl="https://repository.ow2.org/nexus/content/repositories/releases/org/ow2/asm/asm/7.0/asm-7.0.jar"/>
-		<property name="asm_7.0" value="${asm_7.0_dir}/${asm_7.0_file}"/>
-		<available file="${asm_7.0}" property="asm_7.0_available"/>
+		<delete dir="${prereqs_root}/asm-7.1" failonerror="false"/>
+		<download-file destdir="${asm_7.1_dir}" destfile="${asm_7.1_file}" srcurl="https://repository.ow2.org/nexus/content/repositories/releases/org/ow2/asm/asm/7.1/asm-7.1.jar"/>
+		<property name="asm_7.1" value="${asm_7.1_dir}/${asm_7.1_file}"/>
+		<available file="${asm_7.1}" property="asm_7.1_available"/>
 	</target>
 
 	<target name="check-for-download-tool" depends="check-for-wget, check-for-curl">
@@ -426,8 +426,8 @@ limitations under the License.
 		<echo message="Using tools.jar from ${tools_jar}"/>
 	</target>
 	
-	<target name="print-asm-7.0-location" if="asm_7.0_available">
-		<echo message="Using ${asm_7.0_file} from ${asm_7.0}"/>
+	<target name="print-asm-7.1-location" if="asm_7.1_available">
+		<echo message="Using ${asm_7.1_file} from ${asm_7.1}"/>
 	</target>
 
 	<target name="print-ant-1.10.2-error" unless="ant_1.10.2_available">
@@ -450,8 +450,8 @@ limitations under the License.
 		<property name="fail_run" value="true"/>
 	</target>
 	
-	<target name="print-asm-7.0-error" unless="asm_7.0_available">
-		<echo message="ERROR: Cannot find ${asm_7.0_file} at ${asm_7.0}"/>
+	<target name="print-asm-7.1-error" unless="asm_7.1_available">
+		<echo message="ERROR: Cannot find ${asm_7.1_file} at ${asm_7.1}"/>
 		<property name="fail_run" value="true"/>
 	</target>
 
