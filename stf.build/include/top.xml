@@ -381,6 +381,10 @@ limitations under the License.
 	<condition property="download-tool-srcfile-option" value="-o" else="-O">
 		<isset property="isZOS"/>
 	</condition>
+	
+	<condition property="MAKE" value="gmake" else="make">
+	    <equals arg1="${os.name}" arg2="AIX"/>
+	</condition>
 
 	<macrodef name="download-file" description="Use ${download-tool} to download a file">
 		<attribute name="srcurl" description="URL of file to download"/>
