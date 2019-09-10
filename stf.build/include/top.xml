@@ -383,7 +383,10 @@ limitations under the License.
 	</condition>
 	
 	<condition property="MAKE" value="gmake" else="make">
-	    <equals arg1="${os.name}" arg2="AIX"/>
+	    <or>
+	        <equals arg1="${os.name}" arg2="AIX"/>
+	        <contains string="${os.name}" substring="BSD"/>
+	    </or>
 	</condition>
 
 	<macrodef name="download-file" description="Use ${download-tool} to download a file">
@@ -569,6 +572,11 @@ limitations under the License.
 			<condition property="@{property}" value="sol">
 				<and>
 					<contains string="@{osname}" substring="Solaris"/>
+				</and>
+			</condition>
+			<condition property="@{property}" value="bsd">
+				<and>
+					<contains string="@{osname}" substring="BSD"/>
 				</and>
 			</condition>
 			<fail unless="@{property}" message="java os.name property value @{osname} not recognised.  Update the get-platform-prefix macrodef in stf.build/include/top.xml"/>
