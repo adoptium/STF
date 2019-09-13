@@ -1459,6 +1459,24 @@ public class StfCoreExtension implements StfExtension {
 					+ "Actual Java arguments for this stage are \"" + convertToString(actualArgs) + "\"");
 		}
 	}
+	
+	
+	/**
+	 * Checks if that java processes using the primary JVM contains the given JVM option
+	 * 
+	 * @param stage is the stage whose arguments should be checked.
+	 * @param argToCheck contains 1 java arguments.
+	 */
+	public boolean isJavaArgPresent(Stage stage, String argToCheck) throws StfException {
+		if (stage == Stage.INITIALISATION) {
+			throw new StfException("Java argument verification is not valid for the initialisation stage.");
+		}
+
+		// Get hold of the mandatory and actual java arguments
+		ArrayList<String> actualArgs = getActiveJavaArgs(stage);
+		Set<String> actualArgsSet = new LinkedHashSet<String>(actualArgs);
+		return actualArgsSet.contains(argToCheck);
+	}
 
 
 	/**
