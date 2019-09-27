@@ -32,6 +32,7 @@ public class PlatformFinder {
 		WINDOWS("win"),
 		AIX("aix"),
 		ZOS("zos"),
+		BSD("bsd"),
 		OSX("osx");
 		
 		private String shortName;
@@ -156,7 +157,7 @@ public class PlatformFinder {
 	 * @return a string containing the string without a platform suffix.
 	 */
 	public static String removePlatformSuffix(String str) {
-		return str.replaceAll(".linux$|.win$|.aix$|.zos$|.osx$", "");
+		return str.replaceAll(".linux$|.win$|.aix$|.zos$|.osx$|.bsd$", "");
 	}
 
 
@@ -183,6 +184,11 @@ public class PlatformFinder {
         if (osName.contains("mac")) {
             osShortName = "osx";
         }   
+
+        // if we are on BSD use bsd as the shortname
+        if (osName.contains("bsd")) {
+            osShortName = "bsd";
+        }
                 
         return osShortName;
     }

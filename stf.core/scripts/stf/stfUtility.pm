@@ -208,23 +208,26 @@ sub getPathSeparator {
 #  my $platform = stf::stfUtility->getPlatform;
 #
 # Returns:
-#  win, linux, zos or aix
+#  win, linux, zos, aix, osx, or bsd
 #------------------------------------------------------------#
 sub getPlatform {
 	if ($^O eq 'MSWin32') {
 		return "win";
 	}
 	elsif ($^O eq 'linux') {
-		return "linux";	
+		return "linux";
 	}
 	elsif ($^O eq 'os390') {
-		return "zos";	
+		return "zos";
 	}
 	elsif ($^O eq 'aix') {
-		return "aix";	
+		return "aix";
 	}
-        elsif ($^O eq 'darwin') {
-		return "osx";	
+	elsif ($^O eq 'darwin') {
+		return "osx";
+	}
+	elsif ($^O =~ 'bsd') {
+		return "bsd";
 	}
 	else {
 		die "Platform $^O is not yet supported";
@@ -256,23 +259,27 @@ sub getPlatformArch {
 			return "ppcle";
 		}
 		elsif ($Config{archname} =~ 'powerpc') {
-			return "ppc";	
+			return "ppc";
 		}
 		elsif ($Config{archname} =~ '390') {
-			return "390";	
+			return "390";
 		}
 		elsif ($Config{archname} =~ 'arm') {
-			return "arm";	
+			return "arm";
 		}
 		else {
 			die "Platform arch $Config{archname} is not yet supported";
 		}
 	}
 	elsif ($platform eq 'zos') {
-		return "390";	
+		return "390";
 	}
 	elsif ($platform eq 'aix') {
-		return "ppc";	
+		return "ppc";
+	}
+	elsif ($platform eq 'bsd') {
+		# This should be expanded per Linux to handle powerpc64 and aarch64
+		 return "x86";
 	}
 	else {
 		die "Platform arch for $platform is not yet supported";
@@ -1205,6 +1212,9 @@ sub parseJavaVersionInfo {
 		elsif ( $Config{osname} =~ /Win/ ) {
 			$os = 'w';
 		}
+		elsif ( $Config{osname} =~ /BSD/ ) {
+			$os = 'b';
+		}
 		else {
 			stf::stfUtility->logMsg ( message => "stf::stfUtility->parseJavaVersionInfo: add code for Oracle Java running on osname " . $Config{osname} );
 		}
@@ -1234,6 +1244,7 @@ sub parseJavaVersionInfo {
 	if ( $os eq 'w' ) { $java_platform = 'win_'; }
 	if ( $os eq 'a' ) { $java_platform = 'aix_'; }
 	if ( $os eq 'm' ) { $java_platform = 'zos_'; }
+	if ( $os eq 'b' ) { $java_platform = 'bsd_'; }
 	if ( $arch eq 'a' ) { $java_platform .= 'x86-'; }
 	if ( $arch eq 'i' ) { $java_platform .= 'x86-'; }
 	if ( $arch eq 'l' ) { $java_platform .= 'ppcle-'; }
