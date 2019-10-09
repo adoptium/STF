@@ -41,10 +41,6 @@ limitations under the License.
 	<condition property="download-tool" value="curl" else="wget">
 		<isset property="isZOS"/>
 	</condition>
-	
-	<condition property="src-encoding" value="IBM-1047" else="UTF-8">
-		<isset property="isZOS"/>
-	</condition>
 
 	<!--
 		Determine the java version being used for the build and set properties for use by build.xml files.
@@ -167,7 +163,7 @@ limitations under the License.
 									  check-for-asm-7.1, configure-asm-7.1, print-asm-7.1-location, print-asm-7.1-error,
 									  check-for-tools-jar, configure-tools-jar, print-tools-jar-location, print-tools-jar-error,
 									  check-for-windows-sysinternals, set-download-windows-sysinternals-required, configure-windows-sysinternals, print-windows-sysinternals-location, print-windows-sysinternals-error,
-									  print-src-file-encoding, fail-if-error">
+									  fail-if-error">
 	</target>
 
 	<!-- Target to check if ant 1.10.2 is available. -->
@@ -408,10 +404,6 @@ limitations under the License.
 			</exec>
 		</sequential>
 	</macrodef>
-	
-	<target name="print-src-file-encoding">
-		<echo message="Using src-encoding: ${src-encoding}"/>
-	</target>
 	
 	<target name="print-ant-1.10.2-location" if="${ant_1.10.2_available}">
 		<echo message="Using ant-1.10.2 from ${ant_1.10.2}"/>
