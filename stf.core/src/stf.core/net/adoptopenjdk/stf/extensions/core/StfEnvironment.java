@@ -150,6 +150,28 @@ public class StfEnvironment {
 		return environmentCore.getDebugDir();
 	}
 	
+	
+	/**
+	 * Creates a DirectoryRef.
+	 * @param fileName      The directory path.
+	 * @return              A DirectoryRef for the directory.
+	 * @throws StfException
+	 */
+	public DirectoryRef createDirectoryRef(String fileName) throws StfException {
+		return environmentCore.createDirectoryRef(fileName);
+	}
+	
+	/**
+	 * Creates a FileRef.
+	 * @param fileName      The file path.
+	 * @return              A FileRef for the file.
+	 * @throws StfException
+	 */
+	public FileRef createFileRef(String fileName) throws StfException {
+		return environmentCore.createFileRef(fileName);
+	}
+
+	
 	/**
 	 * @return a string containing the platform name, eg 'linux_x86-64'
 	 * @throws StfException if there was a problem interpreting the current platform.
