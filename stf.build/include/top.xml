@@ -374,7 +374,7 @@ limitations under the License.
 		<isset property="isZOS"/>
 	</condition>
 	
-	<condition property="download-tool-security-options" value="-k" else="--no-check-certificate">
+	<condition property="download-tool-security-options" value="-kL" else="--no-check-certificate">
 		<isset property="isZOS"/>
 	</condition>
 	
