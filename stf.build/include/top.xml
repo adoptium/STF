@@ -401,6 +401,7 @@ limitations under the License.
 			<fail unless="downloadtool_available" message="Cannot find ${download-tool} on PATH, needed to download @{srcurl}. Either install ${download-tool} or add it to PATH and retry.  If you are running the build from the Ant view in Eclipse, add ${download-tool} to your PATH before starting Eclipse."/>
 			<mkdir dir="@{destdir}"/>
 			<exec executable="${download-tool}">
+				<env key="_ENCODE_FILE_NEW" value="UNTAGGED"/>
 				<arg value="${download-tool-security-options}"/>
 				<arg value="${download-tool-srcfile-option}"/>
 				<arg value="@{destdir}/@{destfile}"/>
