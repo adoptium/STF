@@ -169,7 +169,7 @@ public class PerlCodeGenerator {
 		outputLine("use warnings;");
 		outputLine("use strict;");
 		outputEmptyLine();
-		outputLine("use lib \"" + scriptDir.getSpec() + "\";");
+		outputLine("use lib '" + scriptDir.getSpec() + "';");
 		outputEmptyLine();
 		outputLine("use FindBin qw($Bin);");
 		outputLine("use File::Path qw(mkpath rmtree);");
@@ -220,7 +220,7 @@ public class PerlCodeGenerator {
 			outputLine("info('');");
 			outputLine("info('Java version');");
 			outputLine("info('Running: " + javaVersionCommand + "');");
-			outputLine("system(\"" + javaVersionCommand + "\");");
+			outputLine("system('" + javaVersionCommand + "');");
 		}
 		
 		// Make sure that any core dumps are created in the results directory
