@@ -33,6 +33,9 @@ limitations under the License.
 	<condition property="isOpenJ9" value="true" else="false" >
 		<contains string="${java_java_vm_vendor}" substring="J9"/>
 	</condition>
+	
+	<!--Specifry ASM version to be used-->
+	<property name="asm-version" value="7.3.1"/>
 
 	<!--
 		Determine the java version being used for the build and set properties for use by build.xml files.
@@ -113,8 +116,8 @@ limitations under the License.
 	<path id="tools.class.path">
 		<pathelement location="${prereqs_root}/tools/tools.jar"/>
 	</path>
-	<path id="asm.7.3.class.path">
-		<pathelement location="${prereqs_root}/asm-7.3/asm-7.3.jar"/>
+	<path id="asm.class.path">
+		<pathelement location="${prereqs_root}/asm-${asm-version}/asm-${asm-version}.jar"/>
 	</path>
 	<path id="stf.class.path">
 		<pathelement location="${stf_root}/stf.core/bin/stf.core.jar"/>
@@ -137,7 +140,7 @@ limitations under the License.
 										  check-for-junit-4.12, print-junit-4.12-location, print-junit-4.12-error,
 										  check-for-hamcrest-core-1.3, print-hamcrest-core-1.3-location, print-hamcrest-core-1.3-error,
 										  check-for-log4j-2.3, print-log4j-2.3-location, print-log4j-2.3-error,
-										  check-for-asm-7.3, print-asm-7.3-location, print-asm-7.3-error,
+										  check-for-asm, print-asm-location, print-asm-error,
 										  check-for-tools-jar, print-tools-jar-location, print-tools-jar-error,
 										  check-for-windows-sysinternals, print-windows-sysinternals-location, print-windows-sysinternals-error,
 										  fail-if-error">
@@ -152,7 +155,7 @@ limitations under the License.
 									  check-for-junit-4.12, configure-junit-4.12, print-junit-4.12-location, print-junit-4.12-error,
 									  check-for-hamcrest-core-1.3, configure-hamcrest-core-1.3, print-hamcrest-core-1.3-location, print-hamcrest-core-1.3-error,
 									  check-for-log4j-2.3, configure-log4j-2.3, print-log4j-2.3-location, print-log4j-2.3-error,
-									  check-for-asm-7.3, configure-asm-7.3, print-asm-7.3-location, print-asm-7.3-error,
+									  check-for-asm, configure-asm, print-asm-location, print-asm-error,
 									  check-for-tools-jar, configure-tools-jar, print-tools-jar-location, print-tools-jar-error,
 									  check-for-windows-sysinternals, set-download-windows-sysinternals-required, configure-windows-sysinternals, print-windows-sysinternals-location, print-windows-sysinternals-error,
 									  fail-if-error">
@@ -318,20 +321,20 @@ limitations under the License.
 		<available file="${tools_jar_dir}/${tools_jar_file}" property="tools_jar_correct"/>
 	</target>
 
-	<!-- Target to check if there is an asm-7.3.jar already copied to PREREQS_ROOT/asm-7.3 -->
-	<target name="check-for-asm-7.3">
-		<property name="asm_7.3_dir" location="${prereqs_root}/asm-7.3"/>
-		<property name="asm_7.3_file" value="asm-7.3.jar"/>
-		<property name="asm_7.3" value="${asm_7.3_dir}/${asm_7.3_file}"/>
-		<available file="${asm_7.3_dir}/${asm_7.3_file}" property="asm_7.3_available"/>
+	<!-- Target to check if there is an asm-${asm-version}.jar already copied to PREREQS_ROOT/asm-${asm-version} -->
+	<target name="check-for-asm">
+		<property name="asm_dir" location="${prereqs_root}/asm-${asm-version}"/>
+		<property name="asm_file" value="asm-${asm-version}.jar"/>
+		<property name="asm" value="${asm_dir}/${asm_file}"/>
+		<available file="${asm_dir}/${asm_file}" property="asm_available"/>
 	</target>
 
-	<target name="configure-asm-7.3" unless="asm_7.3_available">
+	<target name="configure-asm" unless="asm_available">
 		<!-- Fetch asm from https://repository.ow2.org/etc. -->
-		<delete dir="${prereqs_root}/asm-7.3" failonerror="false"/>
-		<download-file destdir="${asm_7.3_dir}" destfile="${asm_7.3_file}" srcurl="https://repository.ow2.org/nexus/content/repositories/releases/org/ow2/asm/asm/7.3/asm-7.3.jar"/>
-		<property name="asm_7.3" value="${asm_7.3_dir}/${asm_7.3_file}"/>
-		<available file="${asm_7.3}" property="asm_7.3_available"/>
+		<delete dir="${prereqs_root}/asm-${asm-version}" failonerror="false"/>
+		<download-file destdir="${asm_dir}" destfile="${asm_file}" srcurl="https://repository.ow2.org/nexus/content/repositories/releases/org/ow2/asm/asm/${asm-version}/asm-${asm-version}.jar"/>
+		<property name="asm" value="${asm_dir}/${asm_file}"/>
+		<available file="${asm}" property="asm_available"/>
 	</target>
 
 	<target name="check-for-download-tool" depends="check-for-wget, check-for-curl">
@@ -434,8 +437,8 @@ limitations under the License.
 		<echo message="Using tools.jar from ${tools_jar}"/>
 	</target>
 	
-	<target name="print-asm-7.3-location" if="asm_7.3_available">
-		<echo message="Using ${asm_7.3_file} from ${asm_7.3}"/>
+	<target name="print-asm-location" if="asm_available">
+		<echo message="Using ${asm_file} from ${asm}"/>
 	</target>
 
 	<target name="print-ant-1.10.2-error" unless="ant_1.10.2_available">
@@ -458,8 +461,8 @@ limitations under the License.
 		<property name="fail_run" value="true"/>
 	</target>
 	
-	<target name="print-asm-7.3-error" unless="asm_7.3_available">
-		<echo message="ERROR: Cannot find ${asm_7.3_file} at ${asm_7.3}"/>
+	<target name="print-asm-error" unless="asm_available">
+		<echo message="ERROR: Cannot find ${asm_file} at ${asm}"/>
 		<property name="fail_run" value="true"/>
 	</target>
 
