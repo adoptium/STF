@@ -229,20 +229,12 @@ public class PlatformFinder {
 
     private static String calcArchType() {
         // get the architecture name and the architecture type (32, 64)
-        // change 32 to 31 if we are on 390
         String osArchType = System.getProperty("sun.arch.data.model");
         String osArch = System.getProperty("os.arch");
            
         // if no Sun classes, use IBM one instead
         if (osArchType == null) {
             osArchType = System.getProperty("com.ibm.vm.bitmode");
-        }
-        
-        // if the current system is a 390 machine use 390 as the osArch    	 
-        if (((osArch.length() >= 4 && osArch.substring(0, 4).equals("s390")) || 
-             (osArch.length() >= 3 && osArch.substring(0, 3).equals("390"))) && 
-             (osArchType.equals("32"))) {
-         osArchType = "31";    		 
         }
         
         return osArchType;
