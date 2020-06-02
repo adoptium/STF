@@ -425,8 +425,8 @@ my ($now, $date, $time) = stf::stfUtility->getNow(date => $TRUE, time => $TRUE);
     # Build the command to run RunTestRunner - to generate the setup, execute and teardown scripts.
     # The generation step needs a custom class loader so that classes used by the plugin can be loaded.
     my $sep = stf::stfUtility->getPathSeparator;
-    my $log4j_core_dir = findElement($prereqs_root, "/log4j-2.3/log4j-core-2.3.jar");
-    my $log4j_api_dir = findElement($prereqs_root, "/log4j-2.3/log4j-api-2.3.jar");
+    my $log4j_core_dir = findElement($prereqs_root, "/log4j-2.13.3/log4j-core-2.13.3.jar");
+    my $log4j_api_dir = findElement($prereqs_root, "/log4j-2.13.3/log4j-api-2.13.3.jar");
     my $cmd = "$javahome_generation/bin/java " .
               "$java_debug_settings" .
               " -Dlog4j.skipJansi=true" .  # Suppress warning on Windows
