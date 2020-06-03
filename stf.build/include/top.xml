@@ -109,9 +109,9 @@ limitations under the License.
 		<pathelement location="${prereqs_root}/junit-4.12/junit-4.12.jar"/>
 		<pathelement location="${prereqs_root}/junit-4.12/hamcrest-core-1.3.jar"/>
 	</path>
-	<path id="log4j-2.3.class.path">
-		<pathelement location="${prereqs_root}/log4j-2.3/log4j-api-2.3.jar"/>
-		<pathelement location="${prereqs_root}/log4j-2.3/log4j-core-2.3.jar"/>
+	<path id="log4j-2.13.3.class.path">
+		<pathelement location="${prereqs_root}/log4j-2.13.3/log4j-api-2.13.3.jar"/>
+		<pathelement location="${prereqs_root}/log4j-2.13.3/log4j-core-2.13.3.jar"/>
 	</path>
 	<path id="tools.class.path">
 		<pathelement location="${prereqs_root}/tools/tools.jar"/>
@@ -125,7 +125,7 @@ limitations under the License.
 	</path>
 	<path id="project.class.path">
 		<path refid="junit.class.path" />
-		<path refid="log4j-2.3.class.path" />
+		<path refid="log4j-2.13.3.class.path" />
 	</path>
 
 	<!--
@@ -139,7 +139,7 @@ limitations under the License.
 	<target name="run-check-prereqs" depends="check-for-ant-1.10.2, print-ant-1.10.2-location, print-ant-1.10.2-error,
 										  check-for-junit-4.12, print-junit-4.12-location, print-junit-4.12-error,
 										  check-for-hamcrest-core-1.3, print-hamcrest-core-1.3-location, print-hamcrest-core-1.3-error,
-										  check-for-log4j-2.3, print-log4j-2.3-location, print-log4j-2.3-error,
+										  check-for-log4j-2.13.3, print-log4j-2.13.3-location, print-log4j-2.13.3-error,
 										  check-for-asm, print-asm-location, print-asm-error,
 										  check-for-tools-jar, print-tools-jar-location, print-tools-jar-error,
 										  check-for-windows-sysinternals, print-windows-sysinternals-location, print-windows-sysinternals-error,
@@ -154,7 +154,7 @@ limitations under the License.
 									  check-for-ant-1.10.2, configure-ant-1.10.2, print-ant-1.10.2-location, print-ant-1.10.2-error,
 									  check-for-junit-4.12, configure-junit-4.12, print-junit-4.12-location, print-junit-4.12-error,
 									  check-for-hamcrest-core-1.3, configure-hamcrest-core-1.3, print-hamcrest-core-1.3-location, print-hamcrest-core-1.3-error,
-									  check-for-log4j-2.3, configure-log4j-2.3, print-log4j-2.3-location, print-log4j-2.3-error,
+									  check-for-log4j-2.13.3, configure-log4j-2.13.3, print-log4j-2.13.3-location, print-log4j-2.13.3-error,
 									  check-for-asm, configure-asm, print-asm-location, print-asm-error,
 									  check-for-tools-jar, configure-tools-jar, print-tools-jar-location, print-tools-jar-error,
 									  check-for-windows-sysinternals, set-download-windows-sysinternals-required, configure-windows-sysinternals, print-windows-sysinternals-location, print-windows-sysinternals-error,
@@ -217,35 +217,35 @@ limitations under the License.
 		<available file="${hamcrest_core_1.3}" property="hamcrest_core_1.3_available"/>
 	</target>
 
-	<!-- Target to check if log4j 2.3 is available. -->
-	<target name="check-for-log4j-2.3" unless="check_prereqs_run">
-		<property name="log4j_2.3_dir" location="${prereqs_root}/log4j-2.3"/>
-		<property name="log4j_api_2.3_file" value="log4j-api-2.3.jar"/>
-		<property name="log4j_core_2.3_file" value="log4j-core-2.3.jar"/>
-		<property name="log4j_api_2.3" location="${log4j_2.3_dir}/${log4j_api_2.3_file}"/>
-		<property name="log4j_core_2.3" location="${log4j_2.3_dir}/${log4j_core_2.3_file}"/>
-		<condition property="log4j_2.3_available">
+	<!-- Target to check if log4j 2.13.3 is available. -->
+	<target name="check-for-log4j-2.13.3" unless="check_prereqs_run">
+		<property name="log4j_2.13.3_dir" location="${prereqs_root}/log4j-2.13.3"/>
+		<property name="log4j_api_2.13.3_file" value="log4j-api-2.13.3.jar"/>
+		<property name="log4j_core_2.13.3_file" value="log4j-core-2.13.3.jar"/>
+		<property name="log4j_api_2.13.3" location="${log4j_2.13.3_dir}/${log4j_api_2.13.3_file}"/>
+		<property name="log4j_core_2.13.3" location="${log4j_2.13.3_dir}/${log4j_core_2.13.3_file}"/>
+		<condition property="log4j_2.13.3_available">
 			<and>
-				<available file="${log4j_api_2.3}"/>
-				<available file="${log4j_core_2.3}"/>
+				<available file="${log4j_api_2.13.3}"/>
+				<available file="${log4j_core_2.13.3}"/>
 			</and>
 		</condition>
 	</target>
 
 	<!--
-		Target to get log4j 2.3 from https://archive.apache.org/dist/logging/log4j/2.3/apache-log4j-2.3-bin.zip
-		Copy to PREREQS_ROOT/log4j-2.3/log4j-api-2.3.jar and PREREQS_ROOT/log4j-2.3/log4j-core-2.3.jar
+		Target to get log4j 2.13.3 from https://archive.apache.org/dist/logging/log4j/2.13.3/apache-log4j-2.13.3-bin.zip
+		Copy to PREREQS_ROOT/log4j-2.13.3/log4j-api-2.13.3.jar and PREREQS_ROOT/log4j-2.13.3/log4j-core-2.13.3.jar
 	-->
-	<target name="configure-log4j-2.3" unless="log4j_2.3_available">
-		<download-file destdir="${java.io.tmpdir}/log4j-2.3" destfile="apache-log4j-2.3-bin.zip" srcurl="https://archive.apache.org/dist/logging/log4j/2.3/apache-log4j-2.3-bin.zip"/>
-		<unzip src="${java.io.tmpdir}/log4j-2.3/apache-log4j-2.3-bin.zip" dest="${java.io.tmpdir}/log4j-2.3"/>
-		<copy file="${java.io.tmpdir}/log4j-2.3/apache-log4j-2.3-bin/log4j-api-2.3.jar" tofile="${log4j_api_2.3}"/>
-		<copy file="${java.io.tmpdir}/log4j-2.3/apache-log4j-2.3-bin/log4j-core-2.3.jar" tofile="${log4j_core_2.3}"/>
-		<delete dir="${java.io.tmpdir}/log4j-2.3"/>
-		<condition property="log4j_2.3_available">
+	<target name="configure-log4j-2.13.3" unless="log4j_2.13.3_available">
+		<download-file destdir="${java.io.tmpdir}/log4j-2.13.3" destfile="apache-log4j-2.13.3-bin.zip" srcurl="https://archive.apache.org/dist/logging/log4j/2.13.3/apache-log4j-2.13.3-bin.zip"/>
+		<unzip src="${java.io.tmpdir}/log4j-2.13.3/apache-log4j-2.13.3-bin.zip" dest="${java.io.tmpdir}/log4j-2.13.3"/>
+		<copy file="${java.io.tmpdir}/log4j-2.13.3/apache-log4j-2.13.3-bin/log4j-api-2.13.3.jar" tofile="${log4j_api_2.13.3}"/>
+		<copy file="${java.io.tmpdir}/log4j-2.13.3/apache-log4j-2.13.3-bin/log4j-core-2.13.3.jar" tofile="${log4j_core_2.13.3}"/>
+		<delete dir="${java.io.tmpdir}/log4j-2.13.3"/>
+		<condition property="log4j_2.13.3_available">
 			<and>
-				<available file="${log4j_api_2.3}"/>
-				<available file="${log4j_core_2.3}"/>
+				<available file="${log4j_api_2.13.3}"/>
+				<available file="${log4j_core_2.13.3}"/>
 			</and>
 		</condition>
 	</target>
@@ -425,8 +425,8 @@ limitations under the License.
 		<echo message="Using hamcrest-core-1.3 from ${hamcrest_core_1.3}"/>
 	</target>
 
-	<target name="print-log4j-2.3-location" if="log4j_2.3_available">
-		<echo message="Using log4j-api-2.3 from ${log4j_api_2.3} and log4j-core-2.3 from ${log4j_core_2.3}"/>
+	<target name="print-log4j-2.13.3-location" if="log4j_2.13.3_available">
+		<echo message="Using log4j-api-2.13.3 from ${log4j_api_2.13.3} and log4j-core-2.13.3 from ${log4j_core_2.13.3}"/>
 	</target>
 
 	<target name="print-windows-sysinternals-location" if="windows_sysinternals_available">
@@ -456,8 +456,8 @@ limitations under the License.
 		<property name="fail_run" value="true"/>
 	</target>
 
-	<target name="print-log4j-2.3-error" unless="log4j_2.3_available">
-		<echo message="ERROR: Cannot find log4j-api-2.3 at ${log4j_api_2.3} and / or log4j-core-2.3 at ${log4j_core_2.3}"/>
+	<target name="print-log4j-2.13.3-error" unless="log4j_2.13.3_available">
+		<echo message="ERROR: Cannot find log4j-api-2.13.3 at ${log4j_api_2.13.3} and / or log4j-core-2.13.3 at ${log4j_core_2.13.3}"/>
 		<property name="fail_run" value="true"/>
 	</target>
 	
