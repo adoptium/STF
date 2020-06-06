@@ -617,7 +617,7 @@ limitations under the License.
 				</and>
 			</condition>
 			<condition property="@{property}" value="sparc">
-				<and>
+				<and> 
 					<contains string="@{arch}" substring="sparc"/>
 				</and>
 			</condition>
@@ -634,6 +634,11 @@ limitations under the License.
 			<condition property="@{property}" value="ia">
 				<and>
 					<contains string="@{arch}" substring="IA64"/>
+				</and>
+			</condition>
+			<condition property="@{property}" value="riscv">
+				<and>
+					<contains string="@{arch}" substring="riscv"/>
 				</and>
 			</condition>
 			<fail unless="@{property}" message="java os.arch property value @{arch} not recognised.  Update the get-platform-arch macrodef in stf.build/include/top.xml"/>

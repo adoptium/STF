@@ -85,7 +85,7 @@ public class PlatformFinder {
 		}
 
 		// Validate the architecture value
-		String osArchRegex = "390|x86|ppc|x86|arm";
+		String osArchRegex = "390|x86|ppc|x86|arm|riscv";
 		if (!osArch.matches(osArchRegex)) {
 			throw new StfException("Unknown architecture value: '" + osArch + "'. Expected one of '" + osArchRegex + "'");
 		}
@@ -202,16 +202,18 @@ public class PlatformFinder {
         
         if (osArch.length() >= 4 && osArch.substring(0, 4).equals("s390")) {
         	// if the current system is a 390 machine use 390 as the osArch    	 
-            osArch = "390";    		 
+            osArch = "390";
         } else if (osArch.equals("amd64")) {
         	// if the current system is AMD64 use x86 as the osArch
-            osArch = "x86";    		 
+            osArch = "x86";
         } else if(osArch.contains("ppc64")) {
         	// if the current system is PPC64 use ppc as the osArch
-            osArch = "ppc";    		 
+            osArch = "ppc";
         } else if(osArch.contains("aarch64")) {
                 // if the current system is aarch64 use arm as the osArch
             osArch = "arm";
+        } else if(osArch.contains("riscv")) {
+            osArch = "riscv";
         } else if (osArch.length() == 4
         	 && osArch.charAt(0) == 'i'
         	 && Character.isDigit(osArch.charAt(1))
