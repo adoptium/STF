@@ -375,9 +375,10 @@ if (defined $symlink_supported && $symlink_supported eq 1 && $createResultsSymLi
 #}
 
 
-# Check whether we have enough space available.  If not inform the user and fail the test.
+# Check whether we have enough space available. If not inform the user and fail the test, 
+# unless we are on z/OS, where may be on a dynamic, growable file system, like ZFS.
 my $mb_free = check_free_space ($results_root);
-if ( $mb_free < 3072 ) {
+if ( $mb_free < 3072 && stf::stfUtility::getPlatform() ne "zos") {
 	print "
 Test machine has only $mb_free Mb free on drive containing $results_root.\n
 There must be at least 3Gb (3072Mb) free to be sure of capturing diagnostics
