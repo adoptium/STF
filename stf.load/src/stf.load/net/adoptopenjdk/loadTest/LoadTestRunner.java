@@ -211,11 +211,7 @@ class LoadTestRunner {
 									FirstFailureDumper.instance().createDumpIfFirstFailure((LoadTestBase) test, dumpRequested);
 									
 									// Get log4j to report the test failure
-									try {
-										reportFailure(failureNum, executionTracker.getCapturedOutput(), test, suite, threadNum);
-									} catch (MauveTestFailureException e) {
-										throw e;
-									}
+									reportFailure(failureNum, executionTracker.getCapturedOutput(), test, suite, threadNum);
 								}
 								
 								// Inter test thinking time
@@ -246,11 +242,7 @@ class LoadTestRunner {
 								FirstFailureDumper.instance().createDumpIfFirstFailure((LoadTestBase) test, dumpRequested);
 								
 								// Report exception to process output
-								try { 
-									reportFailure(failureNum, executionTracker.getCapturedOutput(), test, suite, threadNum);
-								} catch (MauveTestFailureException e) {
-									e.printStackTrace();
-								}
+								reportFailure(failureNum, executionTracker.getCapturedOutput(), test, suite, threadNum);
 								
 								// Out of memory exceptions are regarded as fatal for the JVM
 								if (t instanceof OutOfMemoryError && abortIfOutOfMemory) {
@@ -275,7 +267,7 @@ class LoadTestRunner {
 
 
 					private void reportFailure(long failureNum, ByteArrayOutputStream capturedOutput,
-							AdaptorInterface test, final SuiteData suite, final int threadNum) throws MauveTestFailureException {
+							AdaptorInterface test, final SuiteData suite, final int threadNum) {
 						if (reportFailureLimit == -1 || failureNum <= reportFailureLimit) {
 							logger.error("Test failed"
 								+ "\n  Failure num.  = " + failureNum
@@ -286,7 +278,6 @@ class LoadTestRunner {
 								+ "\n>>> Captured test output >>>\n"
 								+ capturedOutput.toString().trim()
 								+ "\n<<<\n");
-							throw new MauveTestFailureException(capturedOutput.toString().trim()); 
 						} else {
 							logger.error("Test failed. Details recorded in execution log.");
 						}

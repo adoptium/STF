@@ -12,7 +12,7 @@
 * limitations under the License.
 *******************************************************************************/
 
-package net.adoptopenjdk.loadTest;
+package net.adoptopenjdk.loadTest.reporting;
 
 public class MauveTestFailureException extends Exception {
 	
