@@ -17,6 +17,7 @@ package net.adoptopenjdk.loadTest.reporting;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import net.adoptopenjdk.loadTest.reporting.MauveTestFailureException;
 import net.adoptopenjdk.loadTest.adaptors.AdaptorInterface;
 import net.adoptopenjdk.loadTest.adaptors.AdaptorInterface.ResultStatus;
 import net.adoptopenjdk.loadTest.reporting.ExecutionRecord.Action;
@@ -87,7 +88,7 @@ public class ExecutionTracker {
 	}
 	
 	
-	public synchronized void checkTestOutput(byte[] buff, int off, int len) {
+	public synchronized void checkTestOutput(byte[] buff, int off, int len) throws MauveTestFailureException {
 		// Store this piece of output, incase the test fails and it's needed for debugging
 		outputCapture.write(buff, off, len);
 		
@@ -96,6 +97,9 @@ public class ExecutionTracker {
 		
 		// Update result state
 		testResult = determineNewStatus(testResult, outputScanResult);
+		if (!testResult.testPassed()) {
+			throw new MauveTestFailureException("Mauve test failure detected"); 
+		}
 	}
 
 	

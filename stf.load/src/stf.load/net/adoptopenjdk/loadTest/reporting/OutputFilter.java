@@ -53,8 +53,12 @@ public class OutputFilter extends PrintStream {
 		ExecutionTracker executionTracker = ExecutionTracker.instance();
 
 		if (executionTracker.isRunningTest()) {
-			// Allow the test adaptor to examine the output, and decide if test is passing/failing
-			executionTracker.checkTestOutput(buf, off, len);
+			try {
+				// Allow the test adaptor to examine the output, and decide if test is passing/failing
+				executionTracker.checkTestOutput(buf, off, len);
+			} catch (MauveTestFailureException e) {
+				e.printStackTrace();
+			}
 
 			if (echoToOriginal) {
 				// Write to the original stdout/stderr
