@@ -56,9 +56,7 @@ public class OutputFilter extends PrintStream {
 			try {
 				// Allow the test adaptor to examine the output, and decide if test is passing/failing
 				executionTracker.checkTestOutput(buf, off, len);
-			} catch (MauveTestFailureException e) {
-				e.printStackTrace();
-			}
+			} catch (MauveTestFailureException e) {}
 
 			if (echoToOriginal) {
 				// Write to the original stdout/stderr
