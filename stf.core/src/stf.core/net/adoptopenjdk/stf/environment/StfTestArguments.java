@@ -65,7 +65,22 @@ public class StfTestArguments {
 				if (singleValue.length != 2) {
 					throw new StfError("Failed to parse test specific arguments as name/value pairs. Value: '" + nameValuePair + "'");
 				}
-				testArgs.put(singleValue[0], singleValue[1]);
+				
+				// This is a special case for JCK where we may supply multiple sub-folders to run
+				if( singleValue[1].contains(";")) {
+					String [] tests = singleValue[1].split(";");
+					String finalTarget = "";
+					for (int i = 0; i < tests.length; i++) {
+						finalTarget = finalTarget + tests[i]; 
+						if (i+1 < tests.length) {
+							// JCK harness expects tests to be listed with a single space
+							finalTarget = finalTarget + " "; 
+						}
+					}
+					testArgs.put(singleValue[0], finalTarget);
+				} else { 
+					testArgs.put(singleValue[0], singleValue[1]);
+				}
 			}
 		}
 		
