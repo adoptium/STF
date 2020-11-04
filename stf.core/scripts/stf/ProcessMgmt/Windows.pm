@@ -33,6 +33,8 @@ use Time::Local;
 
 use stf::ProcessMgmt::Result;
 
+use Config;
+
 #Function prototypes
 sub _open_file;
 
@@ -281,9 +283,16 @@ sub start {
 	open (STDOUT, '>>&STDOUT_OLD');
 	open (STDERR, '>>&STDERR_OLD');
 
-
 	if ($result) {
-		my ( $handle, $pid ) = unpack "Lx4L", $ProcessInformation;
+
+		my $handle;
+		my $pid;
+		if($Config{ptrsize} == 8) {
+			( $handle, $pid ) = unpack "Qx8L", $ProcessInformation;
+		}
+		else {
+			( $handle, $pid ) = unpack "Lx4L", $ProcessInformation;
+		}
 
 		$self->{handle} = $handle;
 		$self->{pid}    = $pid;
