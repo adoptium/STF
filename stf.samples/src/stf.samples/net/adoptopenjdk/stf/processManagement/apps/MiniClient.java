@@ -26,6 +26,18 @@ public class MiniClient {
 	
 	public static void main(String[] args) {
 		log("Client started");
+		long sleepTime = 2500L;
+		if (args.length > 1) {
+			// Sleep for the supplied value
+			sleepTime = Long.parseLong(args[1]);
+			log("Client sleeping for " + sleepTime + " milliseconds");
+			try {
+				Thread.sleep(sleepTime);
+			} catch (InterruptedException e) {
+				log("Client interrupted");
+				e.printStackTrace();
+			}
+		}
 		if (args.length > 0) {
 			// Exit the client using the supplied exit value
 			int exitValue = Integer.parseInt(args[0]);
@@ -33,11 +45,14 @@ public class MiniClient {
 			System.exit(exitValue);
 		}
 		
-		try {
-			Thread.sleep(2500);
-		} catch (InterruptedException e) {
-			log("Client interrupted");
-			e.printStackTrace();
+		// If no arguments were supplied just exit after a short interval.
+		if (args.length == 0) {
+			try {
+				Thread.sleep(sleepTime);
+			} catch (InterruptedException e) {
+				log("Client interrupted");
+				e.printStackTrace();
+			}
 		}
 
 		log("Client completed normally");
