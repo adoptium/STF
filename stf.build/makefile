@@ -316,6 +316,8 @@ test.SampleEchoFile:
 	$(STF_COMMAND) -test=SampleEchoFile
 test.SampleJUnitTestRun:
 	$(STF_COMMAND) -test=SampleJUnitTestRun
+test.SampleOverrunProcess:
+	$(STF_COMMAND) -test=SampleOverrunProcess
 test.SampleRunJDKTool:
 	$(STF_COMMAND) -test=SampleRunJDKTool
 test.SampleRunJmod:
