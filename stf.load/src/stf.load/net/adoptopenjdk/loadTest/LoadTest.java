@@ -199,7 +199,6 @@ public class LoadTest {
 				this.testEndTime = System.currentTimeMillis() + (timeLimitSeconds * 1000);
 
 			} else if (argName.equals("-inactivityLimit")) {
-				this.timeLimitedTest = true;
 				this.inactivityLimitString = getArgValue(args, i++);
 				long inactivityLimitSeconds = TimeParser.parseTimeSpecification(inactivityLimitString).getSeconds();
 				this.inactivityLimit = System.currentTimeMillis() + (inactivityLimitSeconds * 1000);
