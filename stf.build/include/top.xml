@@ -28,7 +28,7 @@ limitations under the License.
 	     which is assumed to be where the make configure prereqs are installed. -->
 	<property name="prereqs_root" location="${source_root}/../../systemtest_prereqs"/>
 		
-	<loadresource property="first_prereqs_root" encoding=""UTF-8">
+	<loadresource property="first_prereqs_root" encoding="UTF-8">
 		<concat>${prereqs_root}</concat>
 		<filterchain>
 			<replaceregex pattern="([^\;]*).*" replace="\1" />
