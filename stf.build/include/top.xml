@@ -27,12 +27,17 @@ limitations under the License.
 	     Here the property first_prereqs_root is set containing just the first path in prereqs_root
 	     which is assumed to be where the make configure prereqs are installed. -->
 	<property name="prereqs_root" location="${source_root}/../../systemtest_prereqs"/>
+	
+	<echo message="debug: prereqs_root: ==${prereqs_root}=="/>
+	
 	<loadresource property="first_prereqs_root">
 		<concat>${prereqs_root}</concat>
 		<filterchain>
 			<replaceregex pattern="([^\;]*).*" replace="\1" />
 		</filterchain>
 	</loadresource>
+	
+	<echo message="debug: first_prereqs_root: ==${first_prereqs_root}=="/>
 
 	<!-- Platform dependent settings.  -->
 	<condition property="exe_suffix" value=".exe" else="" >
