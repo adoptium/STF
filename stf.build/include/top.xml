@@ -26,8 +26,7 @@ limitations under the License.
 	<!-- Test specific prereqs may have been added to prereqs-root (in path1;path2;path3 notation).
 	     Here the property first_prereqs_root is set containing just the first path in prereqs_root
 	     which is assumed to be where the make configure prereqs are installed. -->
-	<property name="prereqs_root" location="${source_root}/../../systemtest_prereqs"/>
-		
+	<property name="prereqs_root" location="${source_root}/../../systemtest_prereqs"/>		
 	<loadresource property="first_prereqs_root" encoding="UTF-8">
 		<concat>${prereqs_root}</concat>
 		<filterchain>
