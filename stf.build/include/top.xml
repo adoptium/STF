@@ -27,10 +27,18 @@ limitations under the License.
 	     Here the property first_prereqs_root is set containing just the first path in prereqs_root
 	     which is assumed to be where the make configure prereqs are installed. -->
 	<property name="prereqs_root" location="${source_root}/../../systemtest_prereqs"/>
+		
+	<condition property="isZOS" value="true">
+			<equals arg1="${os.name}" arg2="z/OS"/>
+	</condition>
+		
+	<condition property="src-encoding" value="IBM-1047" else="UTF-8">
+		<isset property="isZOS"/>
+	</condition>
 	
 	<echo message="debug: prereqs_root: ==${prereqs_root}=="/>
 	
-	<loadresource property="first_prereqs_root">
+	<loadresource property="first_prereqs_root" encoding="${src-encoding}">
 		<concat>${prereqs_root}</concat>
 		<filterchain>
 			<replaceregex pattern="([^\;]*).*" replace="\1" />
@@ -38,6 +46,14 @@ limitations under the License.
 	</loadresource>
 	
 	<echo message="debug: first_prereqs_root: ==${first_prereqs_root}=="/>
+	
+	<loadresource property="first_prereqs_root2" encoding="UTF-8">
+		<concat>${prereqs_root}</concat>
+		<filterchain>
+			<replaceregex pattern="([^\;]*).*" replace="\1" />
+		</filterchain>
+	</loadresource>
+	<echo message="debug: first_prereqs_root2: ==${first_prereqs_root2}=="/>
 
 	<!-- Platform dependent settings.  -->
 	<condition property="exe_suffix" value=".exe" else="" >
@@ -380,14 +396,6 @@ limitations under the License.
 		<echo message="Looking for curl on PATH"/>
 		<available file="curl" filepath="${env.PATH}" property="curl_available"/>
 	</target>
-	
-	<condition property="isZOS" value="true">
-			<equals arg1="${os.name}" arg2="z/OS"/>
-	</condition>
-		
-	<condition property="src-encoding" value="IBM-1047" else="UTF-8">
-		<isset property="isZOS"/>
-	</condition>
 
 	<condition property="download-tool" value="curl" else="wget">
 		<isset property="isZOS"/>
