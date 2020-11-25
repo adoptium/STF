@@ -85,7 +85,7 @@ public class PlatformFinder {
 		}
 
 		// Validate the architecture value
-		String osArchRegex = "390|x86|ppc|x86|arm";
+		String osArchRegex = "390|x86|ppc|x86|arm|riscv";
 		if (!osArch.matches(osArchRegex)) {
 			throw new StfException("Unknown architecture value: '" + osArch + "'. Expected one of '" + osArchRegex + "'");
 		}

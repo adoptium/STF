@@ -647,6 +647,11 @@ limitations under the License.
 					<contains string="@{arch}" substring="IA64"/>
 				</and>
 			</condition>
+			<condition property="@{property}" value="riscv">
+				<and>
+					<contains string="@{arch}" substring="riscv"/>
+				</and>
+			</condition>
 			<fail unless="@{property}" message="java os.arch property value @{arch} not recognised.  Update the get-platform-arch macrodef in stf.build/include/top.xml"/>
 		</sequential>
 	</macrodef>
