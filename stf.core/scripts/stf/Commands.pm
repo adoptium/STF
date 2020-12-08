@@ -693,52 +693,15 @@ sub kill_process {
 	$process->{killed} = $FALSE;
         
 	unless ($process->poll()) {
-		info("  o Process $process->{uid} is not running");
-		
+		info("  o Process $process->{uid} pid $ppid is not running");
 		return;
 	}
 
-	# On Windows use powershell to kill the process if it's present, otherwise use pskill.
-	if ($^O eq 'MSWin32') {
-		my $kill_type = "";
-		my $kill_cmd = "";
-		my $powershell_flag = `where powershell.exe`;
-		if ( $powershell_flag == 0 ) {
-			info("Using powershell to kill " . $process->{uid});
-			$kill_type = "kill_powershell";
-			$kill_cmd = "cmd /c echo \n | powershell Stop-Process ${ppid}";
-		}
-		else {
-			info ("Using pskill to kill " . $process->{uid});
-			$kill_type = "kill_pskill";
-			my $sysinternals_dir =  $ENV{'WINDOWS_SYSINTERNALS_ROOT'};
-			$kill_cmd = catfile("$sysinternals_dir", "pskill")." -t ${ppid}";
-		}
-		
-		$rc = $self->start_process(
-			mnemonic => "KILL",
-			logName  => $process->{logdir} . $delimiter . $kill_type,
-			command  => $kill_cmd
-		);
-
-		if ($rc != 0) {
-			debug("$kill_cmd ran without error");
-		}
-		else {
-			debug("$kill_cmd exited with a $rc return code");
-		}
-
-		sleep 2;
-	}
-	else {
-		debug("Process $process->{uid} stop()");
-		
-		$process->stop();
-	}
+	info("  o Process $process->{uid} pid $ppid stop()");
+	$process->stop();
 
 	if($process->poll()) {
-		debug("Process $process->{uid} terminate()");
-		
+		info("  o Process $process->{uid} pid $ppid terminate()");
 		$process->terminate();
 	}
 
@@ -748,7 +711,7 @@ sub kill_process {
 			if ($process->poll()) {
 				sleep(5); # The kill -K doesn't work unless you give it some time after a kill -9. See the Z/OS documentation.
 				
-				debug("kill -9 didn't work. Trying kill -K");
+				info("  o kill -9 didn't work. Trying kill -K");
 				
 				my $kill_command = "kill -K $ppid";
 
@@ -760,14 +723,13 @@ sub kill_process {
 				);
 			}
 		}
-		else {
-			debug("Process $process->{uid} terminate() didn't work, manual cleanup required");				
-		}
 	}
 
-	unless ($process->poll()) {
-		info("  o Process $process->{uid} killed");
-
+	if($process->poll()) {
+		info("  o Process $process->{uid} terminate() pid $ppid didn't work, manual cleanup required");
+	}
+	else {
+		info("  o Process $process->{uid} pid $ppid killed");
 		$process->{killed} = $TRUE;
 	}
 
