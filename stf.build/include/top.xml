@@ -46,7 +46,7 @@ limitations under the License.
 	</condition>
 	
 	<!--Specifry ASM version to be used-->
-	<property name="asm-version" value="7.3.1"/>
+	<property name="asm-version" value="9.0"/>
 
 	<!--
 		Determine the java version being used for the build and set properties for use by build.xml files.
