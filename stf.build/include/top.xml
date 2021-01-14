@@ -45,8 +45,12 @@ limitations under the License.
 		<contains string="${java_java_vm_vendor}" substring="J9"/>
 	</condition>
 	
-	<!--Specifry ASM version to be used-->
+	<!--Following are the systemtest prereq jar versions currently in use-->
 	<property name="asm-version" value="9.0"/>
+	<property name="ant-version" value="1.10.2"/>
+	<property name="log4j-version" value="2.13.3"/>
+	<property name="junit-version" value="4.12"/>
+	<property name="hamcrest-version" value="1.3"/> 
 
 	<!--
 		Determine the java version being used for the build and set properties for use by build.xml files.
@@ -117,18 +121,18 @@ limitations under the License.
 
 	<!-- Set up classpaths for prereqs. -->
 	<path id="junit.class.path">
-		<pathelement location="${first_prereqs_root}/junit-4.12/junit-4.12.jar"/>
-		<pathelement location="${first_prereqs_root}/junit-4.12/hamcrest-core-1.3.jar"/>
+		<pathelement location="${first_prereqs_root}/junit/junit.jar"/>
+		<pathelement location="${first_prereqs_root}/junit/hamcrest-core.jar"/>
 	</path>
-	<path id="log4j-2.13.3.class.path">
-		<pathelement location="${first_prereqs_root}/log4j-2.13.3/log4j-api-2.13.3.jar"/>
-		<pathelement location="${first_prereqs_root}/log4j-2.13.3/log4j-core-2.13.3.jar"/>
+	<path id="log4j.class.path">
+		<pathelement location="${first_prereqs_root}/log4j/log4j-api.jar"/>
+		<pathelement location="${first_prereqs_root}/log4j/log4j-core.jar"/>
 	</path>
 	<path id="tools.class.path">
 		<pathelement location="${first_prereqs_root}/tools/tools.jar"/>
 	</path>
 	<path id="asm.class.path">
-		<pathelement location="${first_prereqs_root}/asm-${asm-version}/asm-${asm-version}.jar"/>
+		<pathelement location="${first_prereqs_root}/asm/asm.jar"/>
 	</path>
 	<path id="stf.class.path">
 		<pathelement location="${stf_root}/stf.core/bin/stf.core.jar"/>
@@ -136,7 +140,7 @@ limitations under the License.
 	</path>
 	<path id="project.class.path">
 		<path refid="junit.class.path" />
-		<path refid="log4j-2.13.3.class.path" />
+		<path refid="log4j.class.path" />
 	</path>
 
 	<!--
@@ -147,14 +151,14 @@ limitations under the License.
 		<ant target="run-check-prereqs" inheritAll="true"/>
 		<property name="check_prereqs_run" value="true"/>
 	</target>
-	<target name="run-check-prereqs" depends="check-for-ant-1.10.2, print-ant-1.10.2-location, print-ant-1.10.2-error,
-										  check-for-junit-4.12, print-junit-4.12-location, print-junit-4.12-error,
-										  check-for-hamcrest-core-1.3, print-hamcrest-core-1.3-location, print-hamcrest-core-1.3-error,
-										  check-for-log4j-2.13.3, print-log4j-2.13.3-location, print-log4j-2.13.3-error,
+	<target name="run-check-prereqs" depends="check-for-ant, print-ant-location, print-ant-error,
+										  check-for-junit, print-junit-location, print-junit-error,
+										  check-for-hamcrest-core, print-hamcrest-core-location, print-hamcrest-core-error,
+										  check-for-log4j, print-log4j-location, print-log4j-error,
 										  check-for-asm, print-asm-location, print-asm-error,
 										  check-for-tools-jar, print-tools-jar-location, print-tools-jar-error,
 										  check-for-windows-sysinternals, print-windows-sysinternals-location, print-windows-sysinternals-error,
-										  fail-if-error">
+										  fail-if-error, print-all-prereq-versions">
 	</target>
 
 	<!--
@@ -162,101 +166,102 @@ limitations under the License.
 		All prereqs are installed under the same ${first_prereqs_root} directory.
 	-->
 	<target name="configure" depends="check-for-download-tool,
-									  check-for-ant-1.10.2, configure-ant-1.10.2, print-ant-1.10.2-location, print-ant-1.10.2-error,
-									  check-for-junit-4.12, configure-junit-4.12, print-junit-4.12-location, print-junit-4.12-error,
-									  check-for-hamcrest-core-1.3, configure-hamcrest-core-1.3, print-hamcrest-core-1.3-location, print-hamcrest-core-1.3-error,
-									  check-for-log4j-2.13.3, configure-log4j-2.13.3, print-log4j-2.13.3-location, print-log4j-2.13.3-error,
+									  check-for-ant, configure-ant, print-ant-location, print-ant-error,
+									  check-for-junit, configure-junit, print-junit-location, print-junit-error,
+									  check-for-hamcrest-core, configure-hamcrest-core, print-hamcrest-core-location, print-hamcrest-core-error,
+									  check-for-log4j, configure-log4j, print-log4j-location, print-log4j-error,
 									  check-for-asm, configure-asm, print-asm-location, print-asm-error,
 									  check-for-tools-jar, configure-tools-jar, print-tools-jar-location, print-tools-jar-error,
 									  check-for-windows-sysinternals, set-download-windows-sysinternals-required, configure-windows-sysinternals, print-windows-sysinternals-location, print-windows-sysinternals-error,
-									  fail-if-error">
+									  fail-if-error, print-all-prereq-versions">
 	</target>
 
-	<!-- Target to check if ant 1.10.2 is available. -->
+	<!-- Target to check if ant is available. -->
 	<!-- At the time of writing, the default apt-get ant version on Ubuntu is 1.9.6. -->
 	<!-- Building Java 9 applications requires 1.10.2. -->
-	<target name="check-for-ant-1.10.2">
-		<property name="ant_1.10.2_dir" location="${first_prereqs_root}/apache-ant-1.10.2"/>
-		<property name="ant_1.10.2_file" value="lib/ant-launcher.jar"/>
-		<property name="ant_1.10.2" location="${ant_1.10.2_dir}/${ant_1.10.2_file}"/>
-	    <available file="${ant_1.10.2}" property="ant_1.10.2_available"/>
+	<target name="check-for-ant">
+		<property name="ant_dir" location="${first_prereqs_root}/apache-ant"/>
+		<property name="ant_file" value="lib/ant-launcher.jar"/>
+		<property name="ant" location="${ant_dir}/${ant_file}"/>
+	    <available file="${ant}" property="ant_available"/>
 	</target>
 
 	<!--
-		Target to get ant 1.10.2 from http://archive.apache.org/dist/ant/binaries/apache-ant-1.10.2-bin.zip
-		Unzip to PREREQS_ROOT/ant-1.10.2
+		Target to get ant from http://archive.apache.org/dist/ant/binaries/apache-ant-bin.zip
+		Unzip to PREREQS_ROOT/ant
 	-->
-	<target name="configure-ant-1.10.2" unless="ant_1.10.2_available">
-		<download-file destdir="${java.io.tmpdir}/apache-ant-1.10.2" destfile="apache-ant-1.10.2-bin.zip" srcurl="http://archive.apache.org/dist/ant/binaries/apache-ant-1.10.2-bin.zip"/>
-		<!-- The ant 1.10.2 zip file includes a top level apache-ant-1.10.2 directory. -->
-		<unzip src="${java.io.tmpdir}/apache-ant-1.10.2/apache-ant-1.10.2-bin.zip" dest="${first_prereqs_root}"/>
-		<delete dir="${java.io.tmpdir}/apache-ant-1.10.2"/>
-	    <available file="${ant_1.10.2}" property="ant_1.10.2_available"/>
+	<target name="configure-ant" unless="ant_available">
+		<download-file destdir="${java.io.tmpdir}/apache-ant" destfile="apache-ant-bin.zip" srcurl="http://archive.apache.org/dist/ant/binaries/apache-ant-${ant-version}-bin.zip"/>
+		<!-- The ant zip file includes a top level apache-ant directory. -->
+		<unzip src="${java.io.tmpdir}/apache-ant/apache-ant-bin.zip" dest="${java.io.tmpdir}/apache-ant"/>
+		<copydir src="${java.io.tmpdir}/apache-ant/apache-ant-${ant-version}" dest="${first_prereqs_root}/apache-ant"/>
+		<delete dir="${java.io.tmpdir}/apache-ant"/>
+	    <available file="${ant}" property="ant_available"/>
 	</target>
 
-	<!-- Target to check if junit 4.12 is available. -->
-	<target name="check-for-junit-4.12" unless="check_prereqs_run">
-		<property name="junit_4.12_dir" location="${first_prereqs_root}/junit-4.12"/>
-		<property name="junit_4.12_file" value="junit-4.12.jar"/>
-		<property name="junit_4.12" location="${junit_4.12_dir}/${junit_4.12_file}"/>
-		<available file="${junit_4.12}" property="junit_4.12_available"/>
+	<!-- Target to check if junit is available. -->
+	<target name="check-for-junit" unless="check_prereqs_run">
+		<property name="junit_dir" location="${first_prereqs_root}/junit"/>
+		<property name="junit_file" value="junit.jar"/>
+		<property name="junit" location="${junit_dir}/${junit_file}"/>
+		<available file="${junit}" property="junit_available"/>
 	</target>
 
 	<!--
-		Target to get junit from https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar
-		Copy to ${first_prereqs_root}/junit-4.12/junit-4.12.jar
+		Target to get junit from https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit.jar
+		Copy to ${first_prereqs_root}/junit/junit.jar
 	-->
-	<target name="configure-junit-4.12" unless="junit_4.12_available">
-		<download-file destdir="${first_prereqs_root}/junit-4.12" destfile="junit-4.12.jar" srcurl="https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar"/>
-		<available file="${junit_4.12}" property="junit_4.12_available"/>
+	<target name="configure-junit" unless="junit_available">
+		<download-file destdir="${first_prereqs_root}/junit" destfile="junit.jar" srcurl="https://search.maven.org/remotecontent?filepath=junit/junit/${junit-version}/junit-${junit-version}.jar"/>
+		<available file="${junit}" property="junit_available"/>
 	</target>
 
-	<!-- Target to check if hamcrest core 1.3 (required by junit) is available. -->
-	<target name="check-for-hamcrest-core-1.3" unless="check_prereqs_run">
-		<property name="hamcrest_core_1.3_dir" location="${first_prereqs_root}/junit-4.12"/>
-		<property name="hamcrest_core_1.3_file" value="hamcrest-core-1.3.jar"/>
-		<property name="hamcrest_core_1.3" location="${hamcrest_core_1.3_dir}/${hamcrest_core_1.3_file}"/>
-		<available file="${hamcrest_core_1.3}" property="hamcrest_core_1.3_available"/>
+	<!-- Target to check if hamcrest core (required by junit) is available. -->
+	<target name="check-for-hamcrest-core" unless="check_prereqs_run">
+		<property name="hamcrest_core_dir" location="${first_prereqs_root}/junit"/>
+		<property name="hamcrest_core_file" value="hamcrest-core.jar"/>
+		<property name="hamcrest_core" location="${hamcrest_core_dir}/${hamcrest_core_file}"/>
+		<available file="${hamcrest_core}" property="hamcrest_core_available"/>
 	</target>
 
 	<!--
-		Target to get hamcrest core from https://search.maven.org/remotecontent?filepath=org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar
-		Copy to PREREQS_ROOT/junit-4.12/hamcrest-core-1.3.jar
+		Target to get hamcrest core from https://search.maven.org/remotecontent?filepath=org/hamcrest/hamcrest-core/${hamcrest-version}/hamcrest-core.jar
+		Copy to PREREQS_ROOT/junit/hamcrest-core.jar
 	-->
-	<target name="configure-hamcrest-core-1.3" unless="hamcrest_core_1.3_available">
-		<download-file destdir="${first_prereqs_root}/junit-4.12" destfile="hamcrest-core-1.3.jar" srcurl="https://search.maven.org/remotecontent?filepath=org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"/>
-		<available file="${hamcrest_core_1.3}" property="hamcrest_core_1.3_available"/>
+	<target name="configure-hamcrest-core" unless="hamcrest_core_available">
+		<download-file destdir="${first_prereqs_root}/junit" destfile="hamcrest-core.jar" srcurl="https://search.maven.org/remotecontent?filepath=org/hamcrest/hamcrest-core/${hamcrest-version}/hamcrest-core-${hamcrest-version}.jar"/>
+		<available file="${hamcrest_core}" property="hamcrest_core_available"/>
 	</target>
 
-	<!-- Target to check if log4j 2.13.3 is available. -->
-	<target name="check-for-log4j-2.13.3" unless="check_prereqs_run">
-		<property name="log4j_2.13.3_dir" location="${first_prereqs_root}/log4j-2.13.3"/>
-		<property name="log4j_api_2.13.3_file" value="log4j-api-2.13.3.jar"/>
-		<property name="log4j_core_2.13.3_file" value="log4j-core-2.13.3.jar"/>
-		<property name="log4j_api_2.13.3" location="${log4j_2.13.3_dir}/${log4j_api_2.13.3_file}"/>
-		<property name="log4j_core_2.13.3" location="${log4j_2.13.3_dir}/${log4j_core_2.13.3_file}"/>
-		<condition property="log4j_2.13.3_available">
+	<!-- Target to check if log4j is available. -->
+	<target name="check-for-log4j" unless="check_prereqs_run">
+		<property name="log4j_dir" location="${first_prereqs_root}/log4j"/>
+		<property name="log4j_api_file" value="log4j-api.jar"/>
+		<property name="log4j_core_file" value="log4j-core.jar"/>
+		<property name="log4j_api" location="${log4j_dir}/${log4j_api_file}"/>
+		<property name="log4j_core" location="${log4j_dir}/${log4j_core_file}"/>
+		<condition property="log4j_available">
 			<and>
-				<available file="${log4j_api_2.13.3}"/>
-				<available file="${log4j_core_2.13.3}"/>
+				<available file="${log4j_api}"/>
+				<available file="${log4j_core}"/>
 			</and>
 		</condition>
 	</target>
 
 	<!--
-		Target to get log4j 2.13.3 from https://archive.apache.org/dist/logging/log4j/2.13.3/apache-log4j-2.13.3-bin.zip
-		Copy to PREREQS_ROOT/log4j-2.13.3/log4j-api-2.13.3.jar and PREREQS_ROOT/log4j-2.13.3/log4j-core-2.13.3.jar
+		Target to get log4j from https://archive.apache.org/dist/logging/log4j/${log4j-version}/log4j-bin.zip
+		Copy to PREREQS_ROOT/log4j/log4j-api.jar and PREREQS_ROOT/log4j/log4j-core.jar
 	-->
-	<target name="configure-log4j-2.13.3" unless="log4j_2.13.3_available">
-		<download-file destdir="${java.io.tmpdir}/log4j-2.13.3" destfile="apache-log4j-2.13.3-bin.zip" srcurl="https://archive.apache.org/dist/logging/log4j/2.13.3/apache-log4j-2.13.3-bin.zip"/>
-		<unzip src="${java.io.tmpdir}/log4j-2.13.3/apache-log4j-2.13.3-bin.zip" dest="${java.io.tmpdir}/log4j-2.13.3"/>
-		<copy file="${java.io.tmpdir}/log4j-2.13.3/apache-log4j-2.13.3-bin/log4j-api-2.13.3.jar" tofile="${log4j_api_2.13.3}"/>
-		<copy file="${java.io.tmpdir}/log4j-2.13.3/apache-log4j-2.13.3-bin/log4j-core-2.13.3.jar" tofile="${log4j_core_2.13.3}"/>
-		<delete dir="${java.io.tmpdir}/log4j-2.13.3"/>
-		<condition property="log4j_2.13.3_available">
+	<target name="configure-log4j" unless="log4j_available">
+		<download-file destdir="${java.io.tmpdir}/log4j" destfile="apache-log4j-bin.zip" srcurl="https://archive.apache.org/dist/logging/log4j/${log4j-version}/apache-log4j-${log4j-version}-bin.zip"/>
+		<unzip src="${java.io.tmpdir}/log4j/apache-log4j-bin.zip" dest="${java.io.tmpdir}/log4j"/>
+		<copy file="${java.io.tmpdir}/log4j/apache-log4j-${log4j-version}-bin/log4j-api-${log4j-version}.jar" tofile="${log4j_api}"/>
+		<copy file="${java.io.tmpdir}/log4j/apache-log4j-${log4j-version}-bin/log4j-core-${log4j-version}.jar" tofile="${log4j_core}"/>
+		<delete dir="${java.io.tmpdir}/log4j"/>
+		<condition property="log4j_available">
 			<and>
-				<available file="${log4j_api_2.13.3}"/>
-				<available file="${log4j_core_2.13.3}"/>
+				<available file="${log4j_api}"/>
+				<available file="${log4j_core}"/>
 			</and>
 		</condition>
 	</target>
@@ -334,15 +339,15 @@ limitations under the License.
 
 	<!-- Target to check if there is an asm-${asm-version}.jar already copied to PREREQS_ROOT/asm-${asm-version} -->
 	<target name="check-for-asm">
-		<property name="asm_dir" location="${first_prereqs_root}/asm-${asm-version}"/>
-		<property name="asm_file" value="asm-${asm-version}.jar"/>
+		<property name="asm_dir" location="${first_prereqs_root}/asm"/>
+		<property name="asm_file" value="asm.jar"/>
 		<property name="asm" value="${asm_dir}/${asm_file}"/>
 		<available file="${asm_dir}/${asm_file}" property="asm_available"/>
 	</target>
 
 	<target name="configure-asm" unless="asm_available">
 		<!-- Fetch asm from https://repository.ow2.org/etc. -->
-		<delete dir="${first_prereqs_root}/asm-${asm-version}" failonerror="false"/>
+		<delete dir="${first_prereqs_root}/asm" failonerror="false"/>
 		<download-file destdir="${asm_dir}" destfile="${asm_file}" srcurl="https://repository.ow2.org/nexus/content/repositories/releases/org/ow2/asm/asm/${asm-version}/asm-${asm-version}.jar"/>
 		<property name="asm" value="${asm_dir}/${asm_file}"/>
 		<available file="${asm}" property="asm_available"/>
@@ -424,20 +429,20 @@ limitations under the License.
 		</sequential>
 	</macrodef>
 	
-	<target name="print-ant-1.10.2-location" if="${ant_1.10.2_available}">
-		<echo message="Using ant-1.10.2 from ${ant_1.10.2}"/>
+	<target name="print-ant-location" if="${ant_available}">
+		<echo message="Using ant from ${ant}"/>
 	</target>
 
-	<target name="print-junit-4.12-location" if="junit_4.12_available">
-		<echo message="Using junit-4.12 from ${junit_4.12}"/>
+	<target name="print-junit-location" if="junit_available">
+		<echo message="Using junit from ${junit}"/>
 	</target>
 
-	<target name="print-hamcrest-core-1.3-location" if="hamcrest_core_1.3_available">
-		<echo message="Using hamcrest-core-1.3 from ${hamcrest_core_1.3}"/>
+	<target name="print-hamcrest-core-location" if="hamcrest_core_available">
+		<echo message="Using hamcrest-core from ${hamcrest_core}"/>
 	</target>
 
-	<target name="print-log4j-2.13.3-location" if="log4j_2.13.3_available">
-		<echo message="Using log4j-api-2.13.3 from ${log4j_api_2.13.3} and log4j-core-2.13.3 from ${log4j_core_2.13.3}"/>
+	<target name="print-log4j-location" if="log4j_available">
+		<echo message="Using log4j-api from ${log4j_api} and log4j-core from ${log4j_core}"/>
 	</target>
 
 	<target name="print-windows-sysinternals-location" if="windows_sysinternals_available">
@@ -452,23 +457,23 @@ limitations under the License.
 		<echo message="Using ${asm_file} from ${asm}"/>
 	</target>
 
-	<target name="print-ant-1.10.2-error" unless="ant_1.10.2_available">
-		<echo message="ERROR: Cannot find ant_1.10.2 at ${ant_1.10.2}"/>
+	<target name="print-ant-error" unless="ant_available">
+		<echo message="ERROR: Cannot find ant at ${ant}"/>
 		<property name="fail_run" value="true"/>
 	</target>
 
-	<target name="print-junit-4.12-error" unless="junit_4.12_available">
-		<echo message="ERROR: Cannot find junit-4.12 at ${junit_4.12}"/>
+	<target name="print-junit-error" unless="junit_available">
+		<echo message="ERROR: Cannot find junit at ${junit}"/>
 		<property name="fail_run" value="true"/>
 	</target>
 
-	<target name="print-hamcrest-core-1.3-error" unless="hamcrest_core_1.3_available">
-		<echo message="ERROR: Cannot find hamcrest-core-1.3 at ${hamcrest_core_1.3}"/>
+	<target name="print-hamcrest-core-error" unless="hamcrest_core_available">
+		<echo message="ERROR: Cannot find hamcrest-core at ${hamcrest_core}"/>
 		<property name="fail_run" value="true"/>
 	</target>
 
-	<target name="print-log4j-2.13.3-error" unless="log4j_2.13.3_available">
-		<echo message="ERROR: Cannot find log4j-api-2.13.3 at ${log4j_api_2.13.3} and / or log4j-core-2.13.3 at ${log4j_core_2.13.3}"/>
+	<target name="print-log4j-error" unless="log4j_available">
+		<echo message="ERROR: Cannot find log4j-api at ${log4j_api} and / or log4j-core at ${log4j_core}"/>
 		<property name="fail_run" value="true"/>
 	</target>
 	
@@ -504,6 +509,14 @@ limitations under the License.
 	<!-- <target name="fail-if-error" if="${fail_run}"> -->
 	<target name="fail-if-error" if="fail_run">
 		<fail message="Cannot find one or more prereqs.  See the above error messages.  Running 'make configure' or the ant configure target may get all the missing prereqs.  See the appropriate stf.build/docs/build.md or openjdk.build/docs/build.md for more details."/>
+	</target>
+	
+	<target name="print-all-prereq-versions">
+		<echo message="Ant version in use     : ${ant-version}"/>
+		<echo message="log4j version in use   : ${log4j-version}"/>
+		<echo message="ASM version in use     : ${asm-version}"/>
+		<echo message="junit version in use   : ${junit-version}"/>
+		<echo message="hamcrest version in use: ${hamcrest-version}"/>
 	</target>
 
 	<macrodef name="set-platform-properties" description="Sets various properties for the java at the provided java_home location">

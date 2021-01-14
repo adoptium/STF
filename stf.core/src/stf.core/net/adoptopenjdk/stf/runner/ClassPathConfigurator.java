@@ -214,7 +214,7 @@ public class ClassPathConfigurator {
 				// But it's not fine for STF. It decides that the workspace root is the
 				// parent directory of 'stf.core/scripts/stf.pl'. This takes it to the root of
 				// the project that contains the stf code but there is then no sign of 
-				// jar references such as say '/systemtest_prereqs/log4j-2.13.3/log4j-api-2.13.3.jar'.
+				// jar references such as say '/systemtest_prereqs/log4j/log4j-api.jar'.
 				// In such cases the full path to the jar is created found by replacing the first
 				// part with the relevant systemtest-prereqs root.
 				//
