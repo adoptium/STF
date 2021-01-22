@@ -612,7 +612,7 @@ the 'j9output' kind. For example the following stfclasspath.xml could be created
 &lt;classpath&gt;
 	&lt;classpathentry kind="src" path="src/openjdk.test.modularity"/&gt;
 	&lt;classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/&gt;
-	&lt;classpathentry exported="true" kind="lib" path="/systemtest_prereqs/junit-4.12/junit-4.12.jar"/&gt;
+	&lt;classpathentry exported="true" kind="lib" path="/systemtest_prereqs/junit/junit.jar"/&gt;
 	&lt;classpathentry combineaccessrules="false" kind="src" path="/stf.core"/&gt;
 	&lt;classpathentry kind="output" path="bin"/&gt;
 	&lt;classpathentry kind="j9output" path="bin/common-mods/displayService"/&gt;

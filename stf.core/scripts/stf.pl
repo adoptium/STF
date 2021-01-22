@@ -68,7 +68,7 @@ stfArguments::set_argument_data($stf_personal_properties, $stf_defaults);
 # Get the value for -systemtest-prereqs which may have been overridden on the command line, and validate it.
 my $prereqs_root = stfArguments::get_argument("systemtest-prereqs");
 # The existence of this directory inside one (or more) of the prereq roots proves their validity.
-my $prereqs_root_validator = "/junit-4.12";
+my $prereqs_root_validator = "/junit";
 
 # Here we ensure the systemtest-prereqs environment variable is equal to the command line option.
 # This way any test code can use whichever is the most convenient.
@@ -426,8 +426,8 @@ my ($now, $date, $time) = stf::stfUtility->getNow(date => $TRUE, time => $TRUE);
     # Build the command to run RunTestRunner - to generate the setup, execute and teardown scripts.
     # The generation step needs a custom class loader so that classes used by the plugin can be loaded.
     my $sep = stf::stfUtility->getPathSeparator;
-    my $log4j_core_dir = findElement($prereqs_root, "/log4j-2.13.3/log4j-core-2.13.3.jar");
-    my $log4j_api_dir = findElement($prereqs_root, "/log4j-2.13.3/log4j-api-2.13.3.jar");
+    my $log4j_core_dir = findElement($prereqs_root, "/log4j/log4j-core.jar");
+    my $log4j_api_dir = findElement($prereqs_root, "/log4j/log4j-api.jar");
     my $cmd = "$javahome_generation/bin/java " .
               "$java_debug_settings" .
               " -Dlog4j.skipJansi=true" .  # Suppress warning on Windows
@@ -791,7 +791,7 @@ sub check_free_space {
 # presence of an inner directory in at least one of the paths. 
 # Note: inner directory must either begin with a slash, or be left blank.
 
-# E.g. make_paths_absolute("systemtest-prereqs","/tmp/p1;/tmp/p2","/junit-4.12");
+# E.g. make_paths_absolute("systemtest-prereqs","/tmp/p1;/tmp/p2","/junit");
 # or make_paths_absolute("test-roots","/tmp/p1","");
 
 sub make_paths_absolute { 
