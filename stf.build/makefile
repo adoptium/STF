@@ -176,9 +176,9 @@ ifeq (,$(ANT_JAVA_HOME))
 endif
 
 ifndef ANT_HOME
-  # Is there an ant in $(PREREQS_ROOT)$(D)apache-ant-1.10.2?
+  # Is there an ant in $(PREREQS_ROOT)$(D)apache-ant?
   # If not, try to find ant on the path and use that one
-  ANT_HOME:=$(PREREQS_ROOT)$(D)apache-ant-1.10.2
+  ANT_HOME:=$(PREREQS_ROOT)$(D)apache-ant
   $(warning ANT_HOME not set, looking in $(ANT_HOME))
   ifeq (file_exists,$(call file_exists,$(ANT_LAUNCHER)))
     $(warning Found $(ANT_LAUNCHER))
