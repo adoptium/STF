@@ -909,8 +909,9 @@ sub create_dumps {
 #----------------------------------------------------------------------------------#
 # generate_process_diagnostics
 # 
-# This subroutine generates process diagnostics. On Windows it uses procdump to
-# generate .DMP files and for the other platforms uses kill signals to generate
+# This subroutine generates process diagnostics.
+# On Windows it uses jcmd for J9 jdks if it is available, otherwise procdump,
+# to generate .DMP files. For the other platforms it uses kill signals to generate
 # javacore/core files.
 #
 # Usage:
@@ -923,54 +924,86 @@ sub generate_process_diagnostics {
     my ($self, $process) = @_;
 	my $platform = stf::stfUtility->getPlatform();
 
-	# If we on Windows, use procdump.exe to generate .DMP files
-	# else try generating javacores using kill signals.
+	# If on Windows and running an OpenJ9 jdk, use jcmd to generate .DMP files,
+	# otherwise use procdump.exe.
+	# If not on Windows try generating javacores using kill signals.
+	
 	if ($platform eq "win") {
-		# procdump.exe only works on Vista or later
-		# Best way to work this out appears to be the build number
-		# Vista is 6000, so look for something smaller
-		#   C:\WINNT\system32>wmic os get BuildNumber
-		#   BuildNumber
-		#   3790
-		my $output = `echo foo | wmic os get BuildNumber 2>&1`;
-		if ($output =~ /BuildNumber[^0-9]+(\d+)/s) {
-			my $buildNumber = $1;
-			if ($buildNumber < 6000) {
-				info("Not able to generate javacores/core files on Windows builds earlier than Vista");
-				return;
-			}
-		}
-
-		# Determine it we need to run the 32 or 64 bit version by looking at the java build
-		# Assumes the java running is the first on the PATH
 		my $java;
+		my $jcmd;
 		FIND_JAVA: foreach my $dir (split(/;/,$ENV{PATH})) {
 			$java = catfile($dir, 'java.exe');
+			$jcmd = catfile($dir, 'jcmd.exe');
 			if (-e $java) {
 				last FIND_JAVA;
 			}
 		}
-	
-		# if the first java on the PATH has a jre/lib/AMD64 directory then run the 64bit version
-		my $bits = '';
-		my $amd64_dir = catfile($java, '..', '..', 'lib', 'amd64');
-		if (-e $amd64_dir) {
-			$bits='64';
-		}
+		
+		my %getJavaProperties_options = ();
+		$getJavaProperties_options{'PATH'} = $command_line_options{$java};
+		%java_properties = stf::stfUtility->getJavaProperties(%getJavaProperties_options);
 
-		my $sysinternals_dir = $ENV{'WINDOWS_SYSINTERNALS_ROOT'};
-		my $command 	 = catfile("$sysinternals_dir", "procdump" . $bits . ".exe" );
-		my $dump_args 	 = ["-accepteula", "-ma", $process->{pid}];
-		my $output_file  = $process->{logName} . ".jvmdump";
+		if (-f $jcmd && $java_properties{'java.vm.name'} =~ /J9/ ) {
+			# Use jcmd to generate dumps
+			info("Using jcmd.exe to generate .DMP files");
+			my $command = catfile("$sysinternals_dir", "procdump" . $bits . ".exe" );
+			my $output_file = $process->{logName} . ".jvmdump";
+
+			my $dump_args = [$process->{pid}, "Dump.java"];
+			$self->start_process(
+				mnemonic => "JCMD1",
+				command  => $jcmd,
+				args     => $dump_args,
+				echo	 => $TRUE,
+				logName  => $output_file
+			);
+
+			$dump_args = [$process->{pid}, "Dump.system"];
+			$self->start_process(
+				mnemonic => "JCMD2",
+				command  => $jcmd,
+				args     => $dump_args,
+				echo	 => $TRUE,
+				logName  => $output_file
+			);
+		} else {
+			# Use procdump to generate dumps
+			# procdump.exe only works on Vista or later
+			# Best way to work this out appears to be the build number
+			# Vista is 6000, so look for something smaller
+			#   C:\WINNT\system32>wmic os get BuildNumber
+			#   BuildNumber
+			#   3790
+			my $output = `echo foo | wmic os get BuildNumber 2>&1`;
+			if ($output =~ /BuildNumber[^0-9]+(\d+)/s) {
+				my $buildNumber = $1;
+				if ($buildNumber < 6000) {
+					info("Not able to generate javacores/core files on Windows builds earlier than Vista");
+					return;
+				}
+			}
+			# Determine if we need to run the 32 or 64 bit version by looking at the java build
+			# if the first java on the PATH has a jre/lib/AMD64 directory then run the 64bit version
+			my $bits = '';
+			my $amd64_dir = catfile($java, '..', '..', 'lib', 'amd64');
+			if (-e $amd64_dir) {
+				$bits='64';
+			}
+
+			my $sysinternals_dir = $ENV{'WINDOWS_SYSINTERNALS_ROOT'};
+			my $command 	 = catfile("$sysinternals_dir", "procdump" . $bits . ".exe" );
+			my $dump_args 	 = ["-accepteula", "-ma", $process->{pid}];
+			my $output_file  = $process->{logName} . ".jvmdump";
 	
-		info("Using procdump.exe to generate .DMP files");
-		$self->start_process(
-			mnemonic => "PROC",
-			command  => $command,
-			args     => $dump_args,
-			echo	 => $TRUE,
-			logName  => $output_file
-		);
+			info("Using procdump.exe to generate .DMP files");
+			$self->start_process(
+				mnemonic => "PROC",
+				command  => $command,
+				args     => $dump_args,
+				echo	 => $TRUE,
+				logName  => $output_file
+			);
+		}
 	} else {
   		info("Sending SIG 3 to the java process to generate a javacore");
   		$self->send_signal($process, 3);     

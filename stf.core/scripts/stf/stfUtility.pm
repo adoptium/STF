@@ -1330,4 +1330,111 @@ sub strip_zos_unable_to_switch_to_IFA_processor_message {
 	
 }
 
+#----------------------------------------------------------------------------------#
+# getJavaProperties
+#
+# Usage:
+#
+#  %java_details = stf::stfUtility->getJavaVersionInfo(JAVA_HOME => 1);
+#  %java_details = stf::stfUtility->getJavaVersionInfo();
+# - Gets details for the Java at JAVA_HOME
+#
+#  %java_details = stf::stfUtility->getJavaVersionInfo(PATH => 1);
+# - Gets details for the Java on the PATH
+#
+#  %java_details = stf::stfUtility->getJavaVersionInfo(PATH => <path>);
+# - Gets details for the Java at <path>
+#----------------------------------------------------------------------------------#
+sub getJavaProperties {
+
+	my ($self, %options) = @_;
+
+	my $valid_input = 1;
+	foreach my $key (sort keys %options) {
+		if ( $key ne 'PATH' &&
+		     $key ne 'JAVA_HOME' ) {
+			stf::stfUtility->logMsg ( message => "stf::stfUtility->getJavaProperties: Received unrecognised option $key\n" );
+			$valid_input = 0;
+		}
+	}
+	
+	my %java_properties;
+	 
+    my $tempInst;
+    if ($^O eq "MSWin32" ) {
+		$tempInst = File::Temp::tempdir(CLEANUP => 1);
+	} else { 
+		$tempInst="/tmp";
+	}
+	
+	my $propertieslog = catfile($tempInst,"java_properties");
+	debug("stf::stfUtility->getJavaProperties: propertieslog is $propertieslog");
+
+	my $path_to_java = "";
+
+	if ( $valid_input == 1 ) {
+		if ( defined $options{'PATH'} ) {
+			if ( $options{'PATH'} eq '1' ) {
+				$path_to_java = "";
+			}
+			else {
+				$path_to_java = "$options{'PATH'}/bin/";
+			}
+		}
+		elsif ( !defined $ENV{'JAVA_HOME'} || $ENV{'JAVA_HOME'} eq "" ) {
+			stf::stfUtility->logMsg ( message => "stf::stfUtility->getJavaProperties: Environment variable JAVA_HOME is not set, unable to retrieve Java properties");
+			$valid_input = 0;
+		}
+		else {
+			$path_to_java = "$ENV{'JAVA_HOME'}/bin/";
+		}
+	}
+
+	if ( $valid_input == 1 ) {
+		my $command = $path_to_java . "java";
+		# stdout goes to $propertieslog.stdout
+		# stderr goes to $propertieslog.stderr
+		my ($rc, $process) = stf::Commands->run_process(mnemonic => "stf::stfUtility->getJavaProperties", command => "$command", args => "-XshowSettings:properties -version", logName => $propertieslog, echo => 0);
+	
+	    if ($rc != 0) {
+			stf::stfUtility->logMsg( message => "stf::stfUtility->getJavaProperties: $command did not complete with rc = 0");
+	    }
+	    my $lines = $self->readFileIntoArray("$propertieslog.stderr");
+
+	    # Strip out messages relating to zOS file permissions, because we may be on an NFS mount on zOS
+	    $lines = $self->strip_zos_unable_to_switch_to_IFA_processor_message($lines);
+	    
+	    my $property = "";
+	    my $value = "";
+		foreach my $line (@{$lines}) {
+			if ( $line =~ /=/ ) {
+				if ( $property ne "" ) {
+					$property =~ s/\s+$//;
+					$property =~ s/^\s+//;
+					$value =~ s/^\s+//;
+					$value =~ s/\s+$//;
+					$java_properties{$property} = $value;
+				}
+				($property, $value) = $line =~ /(.*)\=(.*)/;
+			}
+			else {
+				$line =~ s/^\s+//;
+				$line =~ s/\s+$//;
+				$value = "$value $line";
+			}
+		}
+
+		if ( $property ne "" ) {
+			$property =~ s/\s+$//;
+			$property =~ s/^\s+//;
+			$value =~ s/^\s+//;
+			$value =~ s/\s+$//;
+			$java_properties{$property} = $value;
+		}
+
+	}
+
+    return %java_properties;
+}
+
 1;
