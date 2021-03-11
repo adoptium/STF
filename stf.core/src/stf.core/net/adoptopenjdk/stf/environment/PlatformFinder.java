@@ -137,6 +137,10 @@ public class PlatformFinder {
     	PlatformFinder pf = getInstance();
         return pf.osShortName + "_" + pf.osArch + pf.osEndian + "-" + pf.osArchType;     	     	 
     }
+    
+    public static String getPlatformSimple() throws StfException {
+    	return calcOSShortName();
+    }
 
 	public static Platform getPlatform() throws StfException {
 		return PlatformFinder.getInstance().platform;
