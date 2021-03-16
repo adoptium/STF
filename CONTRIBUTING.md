@@ -1,4 +1,4 @@
-# Contributing to jenkins-helper
+# Contributing to STF
 
 Thanks for your interest in this project.
 
