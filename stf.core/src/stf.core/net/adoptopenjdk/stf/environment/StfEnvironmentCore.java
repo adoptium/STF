@@ -398,6 +398,10 @@ public class StfEnvironmentCore {
 	public String getPlatform() throws StfException {
 		return PlatformFinder.getPlatformAsString();  //TODO: convert to enumeration
 	}
+	
+	public String getPlatformSimple() throws StfException {
+		return PlatformFinder.getPlatformSimple();
+	}
 
 	
 	/** 

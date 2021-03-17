@@ -170,7 +170,6 @@ public class StfEnvironment {
 	public FileRef createFileRef(String fileName) throws StfException {
 		return environmentCore.createFileRef(fileName);
 	}
-
 	
 	/**
 	 * @return a string containing the platform name, eg 'linux_x86-64'
@@ -178,6 +177,14 @@ public class StfEnvironment {
 	 */
 	public String getPlatform() throws StfException {
 		return environmentCore.getPlatform();
+	}
+	
+	/**
+	 * @return a simple name for platform e.g. win, osx, zos etc
+	 * @throws StfException if there was a problem interpreting the current platform.
+	 */
+	public String getPlatformSimple() throws StfException {
+		return environmentCore.getPlatformSimple();
 	}
 	
 	/**
