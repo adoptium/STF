@@ -351,7 +351,7 @@ public class StfCoreExtension implements StfExtension {
 	 */
 	public void doChmod(String comment, FileRef targetFile, String modeBits) throws StfException {
 		generator.startNewCommand(comment, "chmod", "Change file permission", "targetFile:", targetFile.getSpec(), "modeBits:", modeBits);
-		if (PlatformFinder.isLinux() || PlatformFinder.isAix() || PlatformFinder.isZOS() || PlatformFinder.isOSX()) {
+		if (PlatformFinder.isLinux() || PlatformFinder.isAix() || PlatformFinder.isZOS() || PlatformFinder.isOSX() || PlatformFinder.isSolaris()) {
 			 String command = "system('" + "chmod";
 			 command = command + " " + modeBits  + " \"" + targetFile+ "\"" + "')";
 			 generator.outputLine("$rc = " + command + ";");

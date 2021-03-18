@@ -760,6 +760,9 @@ sub check_free_space {
 		if ( $df_header =~ m/.*Filesystem\s+1K-blocks.*/ ) {
 			( $kb_free ) = $df_body =~ /[^\s]*\s+\d+\s+\d+\s+(\d+).*/;
 		}
+		elsif ( $df_header =~ m/.*Filesystem\s+kbytes.*/ ) {
+			( $kb_free ) = $df_body =~ /[^\s]*\s+\d+\s+\d+\s+(\d+).*/;
+		}
 		elsif ( $df_header =~ m/.*Filesystem\s+1024-blocks.*/ ) {
 			( $kb_free ) = $df_body =~ /[^\s]*\s+\d+\s+(\d+).*/;
 		}
