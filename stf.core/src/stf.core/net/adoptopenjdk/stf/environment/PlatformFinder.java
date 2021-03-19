@@ -33,7 +33,8 @@ public class PlatformFinder {
 		AIX("aix"),
 		ZOS("zos"),
 		BSD("bsd"),
-		OSX("osx");
+		OSX("osx"),
+		SOLARIS("solaris");
 		
 		private String shortName;
 		private Platform(String shortName) { this.shortName = shortName; }
@@ -193,6 +194,11 @@ public class PlatformFinder {
         if (osName.contains("bsd")) {
             osShortName = "bsd";
         }
+        
+        // if we are on sunos use solaris as the shortname
+        if (osName.contains("sunos")) {
+            osShortName = "solaris";
+        }
                 
         return osShortName;
     }
@@ -280,5 +286,9 @@ public class PlatformFinder {
 	
 	public static boolean isOSX() throws StfException {
 		return getPlatform() == Platform.OSX;
+	}
+	
+	public static boolean isSolaris() throws StfException {
+		return getPlatform() == Platform.SOLARIS;
 	}
 }

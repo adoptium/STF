@@ -415,6 +415,7 @@ public class StfEnvironmentCore {
 		case LINUX:   return "linux";
 		case ZOS :    return "zos";
 		case OSX :    return "macosx";
+		case SOLARIS :    return "solaris";
 		default:      throw new StfException("Unknown platform for osgi.os: " + PlatformFinder.getPlatformAsString());
 		}
 	}

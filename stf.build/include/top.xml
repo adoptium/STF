@@ -602,6 +602,11 @@ limitations under the License.
 					<contains string="@{osname}" substring="Solaris"/>
 				</and>
 			</condition>
+			<condition property="@{property}" value="sol">
+				<and>
+					<contains string="@{osname}" substring="SunOS"/>
+				</and>
+			</condition>
 			<condition property="@{property}" value="bsd">
 				<and>
 					<contains string="@{osname}" substring="BSD"/>

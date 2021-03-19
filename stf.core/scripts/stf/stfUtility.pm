@@ -226,7 +226,9 @@ sub getPlatform {
 	elsif ($^O eq 'darwin') {
 		return "osx";
 	}
-	elsif ($^O =~ 'bsd') {
+	elsif ($^O =~ 'solaris') {
+		return "solaris";
+	} elsif ($^O =~ 'bsd') {
 		return "bsd";
 	}
 	else {
