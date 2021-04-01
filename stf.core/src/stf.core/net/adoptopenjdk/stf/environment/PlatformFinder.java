@@ -222,6 +222,9 @@ public class PlatformFinder {
         } else if(osArch.contains("aarch64")) {
                 // if the current system is aarch64 use arm as the osArch
             osArch = "arm";
+        } else if(osArch.contains("riscv")) {
+            // The openj9 jdk sets os.arch to riscv, the bisheng jdk sets it to riscv64
+            osArch = "riscv";
         } else if (osArch.length() == 4
         	 && osArch.charAt(0) == 'i'
         	 && Character.isDigit(osArch.charAt(1))
