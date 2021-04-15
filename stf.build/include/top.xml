@@ -376,7 +376,6 @@ limitations under the License.
 			<echo message="File to download: @{srcurl}"/>
 			<echo message="Destination: @{destdir}/@{destfile}"/>
 			<echo message="Download tool: curl"/>
-			<fail unless="downloadtool_available" message="Cannot find curl on PATH, needed to download @{srcurl}. Either install curl or add it to PATH and retry.  If you are running the build from the Ant view in Eclipse, add curl to your PATH before starting Eclipse."/>
 			<mkdir dir="@{destdir}"/>
 			<exec executable="curl">
 				<env key="_ENCODE_FILE_NEW" value="UNTAGGED"/>
