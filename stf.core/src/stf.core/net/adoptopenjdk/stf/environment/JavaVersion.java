@@ -83,8 +83,9 @@ public class JavaVersion {
 			throw new StfException("Failed to read result of command: " + javaCmd);
 		}
 
- 		// Eat superfluous first lines (e.g. JIT: env var TR_OPTIONS etc, or JVMJ9VM082E Unable to switch to IFA processor)
-        while (javaVersionOutput.startsWith("JVMJ9VM082E") || javaVersionOutput.startsWith("JIT:")) {
+ 		// Eat superfluous first lines (e.g. JIT: env var TR_OPTIONS, or JVMJ9VM082E Unable to switch to IFA processor,
+        // or JVMJ9VM090I Slow response to network query, etc )
+        while (javaVersionOutput.startsWith("JVMJ9VM") || javaVersionOutput.startsWith("JIT:")) {
  			// Line starts with error message. Remove up to and including the newline.
  			int endOfFirstLine = javaVersionOutput.indexOf('\n');
  			javaVersionOutput = javaVersionOutput.substring(endOfFirstLine+1);
