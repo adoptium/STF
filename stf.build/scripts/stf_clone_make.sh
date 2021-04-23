@@ -14,7 +14,7 @@
 #-------------------------------------------------------------------------
 
 # Clone
-mkdir -p $HOME/git && cd $HOME/git && rm -rf stf && mkdir stf && git clone https://github.com/AdoptOpenJDK/stf.git stf
+mkdir -p $HOME/git && cd $HOME/git && rm -rf stf && mkdir stf && git clone https://github.com/adoptium/stf.git stf
 if [ "$?" != "0" ]; then
         echo "Error cloning stf" 1>&2
         exit 1

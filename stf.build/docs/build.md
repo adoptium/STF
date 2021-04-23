@@ -18,7 +18,7 @@ These prereqs must be installed before attempting to build STF
 ### Installing the prereqs using the build scripts
 1. An internet connection is required
 2. Review the list of prereqs listed under 'Installing prereqs manually' and confirm that you accept their license terms.
-3. `git clone https://github.com/AdoptOpenJDK/stf.git stf`
+3. `git clone https://github.com/adoptium/stf.git stf`
 4. Change into the stf.build directory `cd <git-root>;stf.build`
 5. `make configure`
 
@@ -36,7 +36,7 @@ These prereqs must be installed before attempting to build STF
 | wget                  | https://www.gnu.org/copyleft/gpl.html                         | stf.build  | Windows - download from https://sourceforge.net/projects/gnuwin32/files/wget/1.11.4-1/wget-1.11.4-1-bin.zip                                                                                                                                                                   | Add to PATH                                                                                                                                                                                                                                                           | No                                 |
 
 ## Building from a command line
-1. `git clone https://github.com/AdoptOpenJDK/stf.git stf`
+1. `git clone https://github.com/adoptium/stf.git stf`
 2. Change into the stf.build directory `cd <git-root>;stf.build`
 3. `make`
 
@@ -53,6 +53,6 @@ line arguments when the tests execute outside of Eclipse.
 - Select the directory containing the prereqs. Select import into the new systemtest_prereqs folder.  Do not tick
 the 'Create top level folder' check box (otherwise you get an extra 'systemtest_prereqs' folder which you do not
 want).
-3. `git clone https://github.com/AdoptOpenJDK/stf.git stf`
+3. `git clone https://github.com/adoptium/stf.git stf`
 4. Import the STF projects into Eclipse (Find and import Eclipse projects)
 5. Eclipse should now build the projects without errors (check the 'Problems' view).

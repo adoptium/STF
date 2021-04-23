@@ -708,17 +708,17 @@ sub validate_jvm {
 # /xxxxxx       (xxxxxxx)             579397092/1290153920 31238576   Available
 #
 # On Windows use dir <results_root>:
-# C:\git\openjdk-systemtest>dir
+# C:\git\aqa-systemtest>dir
 # Volume in drive C has no label.
 # Volume Serial Number is xxxx-xxxx
 #
-# Directory of C:\git\openjdk-systemtest
+# Directory of C:\git\aqa-systemtest
 #
 #02/02/2017  15:23    <DIR>          .
 #02/02/2017  15:23    <DIR>          ..
 #02/02/2017  15:23               766 .gitattributes
 #02/02/2017  15:23                30 .gitignore
-#02/02/2017  15:23    <DIR>          openjdk-systemtest
+#02/02/2017  15:23    <DIR>          aqa-systemtest
 #               2 File(s)            796 bytes
 #               3 Dir(s)  214,264,049,664 bytes free
 
