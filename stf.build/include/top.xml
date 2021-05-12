@@ -322,7 +322,7 @@ limitations under the License.
 	</target>
 
 	<!--
-		Some tests may require test.debugging requires tools.jar for building (e.g. test.debugging in openjdk-systemtests).
+		Some tests may require test.debugging requires tools.jar for building (e.g. test.debugging in aqa-systemtest).
 		tools.jar is shipped with java8, but is built into the jdk in later releases (so does not exist).
 		The code below looks for tools.jar in Java 8, but only if we are using java 8.
 		If tools.jar is found, it is copied to PREREQS_ROOT/tools.

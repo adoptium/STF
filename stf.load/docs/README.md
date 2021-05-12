@@ -270,7 +270,7 @@ The Mauve code which verifies test conditions prefixes some output text with a '
 However, many Mauve tests don't give any positive or negative confirmation so, although assumed
 to pass, are given an 'unknown' result status.
 
-Of course, executing the mauve tests requires that they are available. See the https://github.com/AdoptOpenJDK/openjdk-systemtest project for details
+Of course, executing the mauve tests requires that they are available. See the https://github.com/adoptium/aqa-systemtest project for details
 of how to enable this feature. Once the test cases are built a single test can be executed outside of the test.load
 harness as follows:
 ```

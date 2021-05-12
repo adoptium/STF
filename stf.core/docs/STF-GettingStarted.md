@@ -24,7 +24,7 @@ from source on a development machine.
 
 On completion of these instructions you'll have an
 Eclipse installation with a workspace
-that contains the source code for STF itself and the AdoptOpenJDK tests which use it. These tests will be runnable from the command prompt and should pass.
+that contains the source code for STF itself and the adoptium tests which use it. These tests will be runnable from the command prompt and should pass.
 
 Eclipse is used a development tool to make the development/debugging of test
 automation quicker and easier, with local compile time checking, and tests which can execute
@@ -78,10 +78,10 @@ Verify that the Eclipse version works with at least Java 8 by opening
 1. The stf projects should now build without build errors.
 
 <a name="2.4"></a>
-### Clone and build the openjdk-systemtest git repository
-1. Follow the instructions in openjdk.build/docs/readme.md to clone the openjdk-systemtest git repository and set up the prereqs.
+### Clone and build the aqa-systemtest git repository
+1. Follow the instructions in openjdk.build/docs/readme.md to clone the aqa-systemtest git repository and set up the prereqs.
 1. Import these projects into Eclipse alongside the stf projects (Find and import Eclipse projects)
-1. Add any additional prereqs from the openjdk-systemtest make configure step to the systemtest_prereqs folder (use File --> Import).
+1. Add any additional prereqs from the aqa-systemtest make configure step to the systemtest_prereqs folder (use File --> Import).
 1. The openjdk.xxx projects should also now build without build errors.
 1. The native (C code) test cases cannot be built automatically by Eclipse.
  To build these run the ant build.  This can be done from within Eclipse by opening the Ant View,
@@ -157,9 +157,9 @@ This is obviously useful for getting a full list of all tests, but is also usefu
 you want the full test name but only know part of the name.
 
 ```
-perl $HOME/git/stf/stf.core/scripts/stf.pl -test-root="$HOME/git/openjdk-systemtest" -list
+perl $HOME/git/stf/stf.core/scripts/stf.pl -test-root="$HOME/git/aqa-systemtest" -list
 
-perl $HOME/git/stf/stf.core/scripts/stf.pl -test-root="$HOME/git/openjdk-systemtest" -list | grep -i memory
+perl $HOME/git/stf/stf.core/scripts/stf.pl -test-root="$HOME/git/aqa-systemtest" -list | grep -i memory
 
 GEN 10:51:58.145 -   | test.jlm               | TestJlmRemoteMemoryAuth        |
 GEN 10:51:58.145 -   | test.jlm               | TestJlmRemoteMemoryNoAuth      |
@@ -197,7 +197,7 @@ to get a UNIX style list of the available options you need to use '-help'
 argument in conjunction with a '-test=x' argument.
 
 ```
-perl $HOME/git/stf/stf.core/scripts/stf.pl -test-root="$HOME/git/openjdk-systemtest" -test=UtilLoadTest -help
+perl $HOME/git/stf/stf.core/scripts/stf.pl -test-root="$HOME/git/aqa-systemtest" -test=UtilLoadTest -help
 ```
 
 <a name="3.5"></a>
@@ -218,7 +218,7 @@ you can manually run the setup, execute and teardown scripts.
 
 For fully manual execution:
 ```
-perl $HOME/git/stf/stf.core/scripts/stf.pl -test-root="$HOME/git/openjdk-systemtest" -test=UtilLoadTest -dry-run</b>
+perl $HOME/git/stf/stf.core/scripts/stf.pl -test-root="$HOME/git/aqa-systemtest" -test=UtilLoadTest -dry-run</b>
 ...
 C:\stf_temp\20170801-133510-UtilLoadTest
 (STF creates the results directory yyyymmdd-hhmmss-testname)

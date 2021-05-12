@@ -748,9 +748,9 @@ public class StfRunner {
 				      + "add the directory containing Stf.pl to the system path.");
 		
 		help.outputSection("Example commands");
-		help.outputText("$ stf -test-root=$HOME/git/openjdk-systemtest -test=LambdaLoadTest");
-		help.outputText("$ stf -test-root=$HOME/git/openjdk-systemtest -test=MathLoadTest -test-args=\"workload=autoSimd\"");
-		help.outputText("$ stf -test-root=$HOME/git/openjdk-systemtest -test=MathLoadTest -test-args=\"workload=bigDecimal\" -dry-run");
+		help.outputText("$ stf -test-root=$HOME/git/aqa-systemtest -test=LambdaLoadTest");
+		help.outputText("$ stf -test-root=$HOME/git/aqa-systemtest -test=MathLoadTest -test-args=\"workload=autoSimd\"");
+		help.outputText("$ stf -test-root=$HOME/git/aqa-systemtest -test=MathLoadTest -test-args=\"workload=bigDecimal\" -dry-run");
 		
 		help.outputLine();
 	}

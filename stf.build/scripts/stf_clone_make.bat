@@ -13,7 +13,7 @@ REM limitations under the License.
 REM Save current directory
 set currdir=%cd%
 REM Clone
-(IF NOT EXIST %USERPROFILE%\git mkdir %USERPROFILE%\git) && cd %USERPROFILE%\git && (IF EXIST stf rmdir /s /q stf) && git clone https://github.com/AdoptOpenJDK/stf.git stf
+(IF NOT EXIST %USERPROFILE%\git mkdir %USERPROFILE%\git) && cd %USERPROFILE%\git && (IF EXIST stf rmdir /s /q stf) && git clone https://github.com/adoptium/stf.git stf
 REM Configure (get prereqs)
 cd %USERPROFILE%\git\stf\stf.build
 make configure
