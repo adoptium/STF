@@ -14,7 +14,6 @@ package stfArguments;
 
 use strict;
 use warnings;
-use diagnostics;
 use FindBin qw($Bin);
 use lib "$Bin";
 use stfArguments;
