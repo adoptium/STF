@@ -415,7 +415,7 @@ public class StfEnvironmentCore {
 		case LINUX:   return "linux";
 		case ZOS :    return "zos";
 		case OSX :    return "macosx";
-		case SOLARIS :    return "solaris";
+		case SOLARIS :    return "sunos";
 		default:      throw new StfException("Unknown platform for osgi.os: " + PlatformFinder.getPlatformAsString());
 		}
 	}
@@ -453,6 +453,9 @@ public class StfEnvironmentCore {
 			return "arm";
 		} else if (archName.equals("riscv")) {
 			return "riscv";
+		}
+		} else if (archName.equals("sparc")) {
+			return "sparc";
 		}
 		
 		throw new StfException("Unknown osgi.arch. archName:" + archName + " wordSize:" + wordSize);
