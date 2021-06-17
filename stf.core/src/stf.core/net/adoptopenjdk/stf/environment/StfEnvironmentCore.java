@@ -453,6 +453,8 @@ public class StfEnvironmentCore {
 			return "arm";
 		} else if (archName.equals("riscv")) {
 			return "riscv";
+		} else if (archName.equals("sparc")) {
+			return "sparc";
 		}
 		
 		throw new StfException("Unknown osgi.arch. archName:" + archName + " wordSize:" + wordSize);
