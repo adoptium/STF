@@ -34,7 +34,7 @@ public class PlatformFinder {
 		ZOS("zos"),
 		BSD("bsd"),
 		OSX("osx"),
-		SOLARIS("solaris");
+		SOLARIS("sunos");
 		
 		private String shortName;
 		private Platform(String shortName) { this.shortName = shortName; }
