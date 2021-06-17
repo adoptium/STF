@@ -195,9 +195,9 @@ public class PlatformFinder {
             osShortName = "bsd";
         }
         
-        // if we are on sunos use solaris as the shortname
+        // if we are on sunos use sunos as the shortname
         if (osName.contains("sunos")) {
-            osShortName = "solaris";
+            osShortName = "sunos";
         }
                 
         return osShortName;
