@@ -453,7 +453,6 @@ public class StfEnvironmentCore {
 			return "arm";
 		} else if (archName.equals("riscv")) {
 			return "riscv";
-		}
 		} else if (archName.equals("sparc")) {
 			return "sparc";
 		}
