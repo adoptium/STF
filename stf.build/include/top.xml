@@ -165,8 +165,7 @@ limitations under the License.
 		Targets to check for and download prereqs.
 		All prereqs are installed under the same ${first_prereqs_root} directory.
 	-->
-	<target name="configure" depends="check-for-download-tool,
-									  check-for-ant, configure-ant, print-ant-location, print-ant-error,
+	<target name="configure" depends="check-for-ant, configure-ant, print-ant-location, print-ant-error,
 									  check-for-junit, configure-junit, print-junit-location, print-junit-error,
 									  check-for-hamcrest-core, configure-hamcrest-core, print-hamcrest-core-location, print-hamcrest-core-error,
 									  check-for-log4j, configure-log4j, print-log4j-location, print-log4j-error,
@@ -352,52 +351,12 @@ limitations under the License.
 		<property name="asm" value="${asm_dir}/${asm_file}"/>
 		<available file="${asm}" property="asm_available"/>
 	</target>
-
-	<target name="check-for-download-tool" depends="check-for-wget, check-for-curl">
-		<condition property="downloadtool_available" value="true">
-			<or>
-				<isset property="wget_available"/>
-				<isset property="curl_available"/>
-			</or>
-		</condition>
-	</target>
-	
-	<!-- Target to check if wget is available. -->
-	<target name="check-for-wget" unless="isZOS">
-		<!-- wget will be used to download files. -->
-		<!-- If it cannot be found on the PATH then the build will fail when the download-file macro (in macrodefs.xml) is invoked. -->
-		<echo message="Looking for wget on PATH"/>
-		<available file="wget" filepath="${env.PATH}" property="wget_available"/>
-		<available file="wget.exe" filepath="${env.PATH}" property="wget_available"/>
-		<!-- On Windows PATH environment variable may be Path -->
-		<available file="wget.exe" filepath="${env.Path}" property="wget_available"/>
-	</target>
-
-	<!-- Target to check if curl is available. -->
-	<target name="check-for-curl" if="isZOS">
-		<!-- curl will be used to download files. -->
-		<!-- If it cannot be found on the PATH then the build will fail when the download-file macro (in macrodefs.xml) is invoked. -->
-		<echo message="Looking for curl on PATH"/>
-		<available file="curl" filepath="${env.PATH}" property="curl_available"/>
-	</target>
 	
 	<condition property="isZOS" value="true">
 			<equals arg1="${os.name}" arg2="z/OS"/>
 	</condition>
 		
 	<condition property="src-encoding" value="IBM-1047" else="UTF-8">
-		<isset property="isZOS"/>
-	</condition>
-
-	<condition property="download-tool" value="curl" else="wget">
-		<isset property="isZOS"/>
-	</condition>
-	
-	<condition property="download-tool-security-options" value="-kL" else="--no-check-certificate">
-		<isset property="isZOS"/>
-	</condition>
-	
-	<condition property="download-tool-srcfile-option" value="-o" else="-O">
 		<isset property="isZOS"/>
 	</condition>
 	
@@ -408,7 +367,7 @@ limitations under the License.
 	    </or>
 	</condition>
 
-	<macrodef name="download-file" description="Use ${download-tool} to download a file">
+	<macrodef name="download-file" description="Use curl to download a file">
 		<attribute name="srcurl" description="URL of file to download"/>
 		<attribute name="destdir" description="Directory in which to place the downloaded file"/>
 		<attribute name="destfile" description="File name of the downloaded file"/>
@@ -416,13 +375,12 @@ limitations under the License.
 			<echo message="Executing macro download-file"/>
 			<echo message="File to download: @{srcurl}"/>
 			<echo message="Destination: @{destdir}/@{destfile}"/>
-			<echo message="Download tool: ${download-tool}"/>
-			<fail unless="downloadtool_available" message="Cannot find ${download-tool} on PATH, needed to download @{srcurl}. Either install ${download-tool} or add it to PATH and retry.  If you are running the build from the Ant view in Eclipse, add ${download-tool} to your PATH before starting Eclipse."/>
+			<echo message="Download tool: curl"/>
 			<mkdir dir="@{destdir}"/>
-			<exec executable="${download-tool}">
+			<exec executable="curl">
 				<env key="_ENCODE_FILE_NEW" value="UNTAGGED"/>
-				<arg value="${download-tool-security-options}"/>
-				<arg value="${download-tool-srcfile-option}"/>
+				<arg value="-kL"/>
+				<arg value="-o"/>
 				<arg value="@{destdir}/@{destfile}"/>
 				<arg value="@{srcurl}"/>
 			</exec>
