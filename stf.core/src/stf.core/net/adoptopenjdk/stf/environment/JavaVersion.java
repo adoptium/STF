@@ -96,11 +96,6 @@ public class JavaVersion {
         if (javaVersionOutput.startsWith("openjdk version")) {
         	javaVersionOutput = javaVersionOutput.replace("openjdk", "java");
         }
-
-        // Sanity check. Verify that the output appears correct
-		if (!javaVersionOutput.startsWith("java version")) {
-			throw new StfException("'Java -version' output does not start with 'java version'. Actual output was: " + javaVersionOutput);
-		}
 	}
 
 	public static JavaVersion getInstance(StfEnvironmentCore environmentCore) throws StfException {
@@ -225,7 +220,7 @@ public class JavaVersion {
 		if (version == 9) {
 			return isJava9();
 		}
-		return javaVersionOutput.trim().startsWith(brand + " version \"" + stringifiedVersion);
+		return javaVersionOutput.contains("version \"" + stringifiedVersion);
 	}
 
 	/**
