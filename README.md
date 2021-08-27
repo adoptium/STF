@@ -2,8 +2,8 @@
 
 This repository contains the System Test Framework (STF) used by test cases in the javasvt repository to execute multi process, multi step Java tests.
 
-[Quick start (Unix)](#unix)  
-[Quick start (Windows)](#windows)  
+[Quick start (Unix)](#unix)
+[Quick start (Windows)](#windows)
 [More documentation](stf.build/docs/build.md)
 
 <a name="unix"></a>
@@ -17,14 +17,13 @@ wget is only required for the make configure step, which only needs to be done o
 
 Either copy, paste and execute [this script](stf.build/scripts/stf_clone_make.sh) which runs the command below, or run the commands yourself.
 
-
 ```shell
 # 1. Create a directory for the git clone
 mkdir -p $HOME/git
 
 # 2. Clone the git repository
 cd $HOME/git
-git clone https://github.com/AdoptOpenJDK/stf.git stf
+git clone https://github.com/adoptium/STF.git stf
 
 # 3. Set JAVA_HOME to a Java 8 or later Java
 
@@ -62,7 +61,7 @@ mkdir c:\%USERPROFILE%\git
 
 REM 2. Clone the test cases
 cd c:\%USERPROFILE%\git
-git clone https://github.com/AdoptOpenJDK/stf.git stf
+git clone https://github.com/adoptium/STF.git stf
 
 REM 3. Set JAVA_HOME to a Java 8 or later Java
 SET JAVA_HOME=<java-home>
