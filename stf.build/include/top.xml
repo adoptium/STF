@@ -48,7 +48,7 @@ limitations under the License.
 	<!--Following are the systemtest prereq jar versions currently in use-->
 	<property name="asm-version" value="9.0"/>
 	<property name="ant-version" value="1.10.2"/>
-	<property name="log4j-version" value="2.13.3"/>
+	<property name="log4j-version" value="2.15.0"/>
 	<property name="junit-version" value="4.12"/>
 	<property name="hamcrest-version" value="1.3"/> 
 
