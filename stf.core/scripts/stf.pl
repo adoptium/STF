@@ -733,10 +733,11 @@ sub check_free_space {
 	my @df_output = ();
 	print "Retrieving amount of free space on drive containing " .  $results_root . "\n";
 	if ($^O eq 'MSWin32') {
-		# dir doesn't work with escaped backslashes, so remove any that are there.
-		$results_root =~ s/\\\\/\\/g;
-		$cmd = "dir $results_root";
-		@df_output = `$cmd`;
+		# dir doesn't work with forward slashes or escaped backslashes, so remove any that are there.
+		$results_root =~ s,/,\\,g;
+		$results_root =~ s,\\\\,\\,g;
+		$cmd = "cmd /c dir $results_root";
+		@df_output = `$cmd 2>&1`;
 		foreach my $line ( @df_output ) {
 			if ( $line =~ m/.*bytes\s+free.*/ ) {
 				#               3 Dir(s)  214,264,049,664 bytes free
@@ -748,7 +749,7 @@ sub check_free_space {
 	}
 	else {
 		$cmd = "df -k $results_root";
-		my @df_output = `$cmd 2>&1`;
+		my @df_output = `$cmd`;
 		my $df_header = $df_output[0];
 		my $df_body;
 
