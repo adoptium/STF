@@ -153,6 +153,7 @@ limitations under the License.
 	</target>
 	<target name="run-check-prereqs" depends="check-for-ant, print-ant-location, print-ant-error,
 										  check-for-junit, print-junit-location, print-junit-error,
+		 								  check-for-jcstress, print-jcstress-location, print-jcstress-error,
 										  check-for-hamcrest-core, print-hamcrest-core-location, print-hamcrest-core-error,
 										  check-for-log4j, print-log4j-location, print-log4j-error,
 										  check-for-asm, print-asm-location, print-asm-error,
@@ -167,6 +168,7 @@ limitations under the License.
 	-->
 	<target name="configure" depends="check-for-ant, configure-ant, print-ant-location, print-ant-error,
 									  check-for-junit, configure-junit, print-junit-location, print-junit-error,
+									  check-for-jcstress, configure-jcstress, print-jcstress-location, print-jcstress-error,
 									  check-for-hamcrest-core, configure-hamcrest-core, print-hamcrest-core-location, print-hamcrest-core-error,
 									  check-for-log4j, configure-log4j, print-log4j-location, print-log4j-error,
 									  check-for-asm, configure-asm, print-asm-location, print-asm-error,
@@ -213,6 +215,23 @@ limitations under the License.
 	<target name="configure-junit" unless="junit_available">
 		<download-file destdir="${first_prereqs_root}/junit" destfile="junit.jar" srcurl="https://search.maven.org/remotecontent?filepath=junit/junit/${junit-version}/junit-${junit-version}.jar"/>
 		<available file="${junit}" property="junit_available"/>
+	</target>
+	
+	<!-- Target to check if jcstres is available. -->
+	<target name="check-for-jcstress" unless="check_prereqs_run">
+		<property name="jcstress_dir" location="${first_prereqs_root}/jcstress"/>
+		<property name="jcstress_file" value="jcstress-latest.jar"/>
+		<property name="jcstress" location="${jcstress_dir}/${jcstress_file}"/>
+		<available file="${jcstress}" property="jcstress_available"/>
+	</target>
+
+	<!--
+		Target to get jcstress from https://builds.shipilev.net/jcstress/jcstress-latest.jar
+		Copy to ${first_prereqs_root}/jcstress/jcstress-latest.jar
+	-->
+	<target name="configure-jcstress" unless="jcstress_available">
+		<download-file destdir="${first_prereqs_root}/jcstress" destfile="jcstress-latest.jar" srcurl="https://builds.shipilev.net/jcstress/jcstress-latest.jar"/>
+		<available file="${jcstress}" property="jcstress_available"/>
 	</target>
 
 	<!-- Target to check if hamcrest core (required by junit) is available. -->
@@ -394,6 +413,10 @@ limitations under the License.
 	<target name="print-junit-location" if="junit_available">
 		<echo message="Using junit from ${junit}"/>
 	</target>
+	
+	<target name="print-jcstress-location" if="jcstress_available">
+		<echo message="Using jcstress from ${jcstress}"/>
+	</target>
 
 	<target name="print-hamcrest-core-location" if="hamcrest_core_available">
 		<echo message="Using hamcrest-core from ${hamcrest_core}"/>
@@ -422,6 +445,11 @@ limitations under the License.
 
 	<target name="print-junit-error" unless="junit_available">
 		<echo message="ERROR: Cannot find junit at ${junit}"/>
+		<property name="fail_run" value="true"/>
+	</target>
+	
+	<target name="print-jcstress-error" unless="jcstress_available">
+		<echo message="ERROR: Cannot find jcstress at ${jcstress}"/>
 		<property name="fail_run" value="true"/>
 	</target>
 
