@@ -697,31 +697,43 @@ sub kill_process {
 		return;
 	}
 
-	info("  o Process $process->{uid} pid $ppid stop()");
-	$process->stop();
+	my $attempt = 1;
 
-	if($process->poll()) {
-		info("  o Process $process->{uid} pid $ppid terminate()");
-		$process->terminate();
-	}
+	while($attempt < 6) {
+		info("  o Process clean up attempt $attempt for $process->{uid} pid $ppid");
+		
+		info("  o Process $process->{uid} pid $ppid stop()");
+		$process->stop();
 
-	if($process->poll()) {
-		if ($^O eq 'os390') {
-			# Z/OS has another more forcefull kill option to try.
-			if ($process->poll()) {
-				sleep(5); # The kill -K doesn't work unless you give it some time after a kill -9. See the Z/OS documentation.
-				
-				info("  o kill -9 didn't work. Trying kill -K");
-				
-				my $kill_command = "kill -K $ppid";
-
-				$self->start_process(
-					mnemonic => "KILL",
-					logName	 => $process->{logdir} . $delimiter . "kill_k",
-					command  => $kill_command,
-					runtime  => 300
-				);
+		if($process->poll()) {
+			info("  o Process $process->{uid} pid $ppid terminate()");
+			$process->terminate();
+		}
+		
+		if($process->poll()) {
+			if ($^O eq 'os390') {
+				# Z/OS has another more forcefull kill option to try.
+				if ($process->poll()) {
+					sleep(5); # The kill -K doesn't work unless you give it some time after a kill -9. See the Z/OS documentation.
+					
+					info("  o kill -9 didn't work. Trying kill -K");
+					
+					my $kill_command = "kill -K $ppid";
+	
+					$self->start_process(
+						mnemonic => "KILL",
+						logName	 => $process->{logdir} . $delimiter . "kill_k",
+						command  => $kill_command,
+						runtime  => 300
+					);
+				}
 			}
+		}
+		
+		if($process->poll()) {
+			$attempt++;
+		} else {
+			last;
 		}
 	}
 
