@@ -75,7 +75,7 @@ public class PluginList {
 			// Now build an ascii table to tell the user about all the tests they can run
 			listTestCases(testRootDir,testRootTests);
 			
-			// Finally, we add the sub-list of tests in this one test root to the master list of tests in all test roots.
+			// Finally, we add the sub-list of tests in this one test root to the main list of tests in all test roots.
 			tests.addAll(testRootTests);
 		}
 	}
