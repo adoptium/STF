@@ -95,7 +95,7 @@ public class InventoryData {
 		// Read the inventory file and any which it includes
 		testList = readInventoryFile(testRoots, inventoryFileRef);
 		
-		// Read any exclusions, and remove their tests from the master list
+		// Read any exclusions, and remove their tests from the main list
 		for (String exclusionFileRef : exclusionFiles) {
 			if (verbose) {
 				logger.info("Reading exclusion file. File=" + exclusionFileRef);
