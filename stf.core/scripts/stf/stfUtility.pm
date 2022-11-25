@@ -245,7 +245,7 @@ sub getPlatform {
 #  my $platform = stf::stfUtility->getPlatformArch;
 #
 # Returns:
-#  x86, ppc, ppcle, 390, arm, riscv or sparc
+#  x86, ppc, ppcle, 390, arm, riscv, loongarch or sparc
 #------------------------------------------------------------#
 sub getPlatformArch {
 	my $platform = stf::stfUtility->getPlatform;
@@ -271,6 +271,9 @@ sub getPlatformArch {
 		}
 		elsif ($Config{archname} =~ 'riscv') {
 			return "riscv";
+		}
+		elsif ($Config{archname} =~ 'loongarch') {
+			return "loongarch";
 		}
 		elsif ($Config{archname} =~ 'sparc') {
 			return "sparc";
@@ -1179,6 +1182,9 @@ sub parseJavaVersionInfo {
 		elsif ( $Config{archname} =~ /riscv/  ) {
 			$arch = 'v';
 		}
+		elsif ( $Config{archname} =~ /loongarch/  ) {
+			$arch = 'la';
+		}
 		else {
 		    print "Logging\n";
 			stf::stfUtility->logMsg ( message => "stf::stfUtility->parseJavaVersionInfo: add code for Oracle java running on archname " . $Config{archname} );
@@ -1265,6 +1271,7 @@ sub parseJavaVersionInfo {
 	if ( $arch eq 'p' ) { $java_platform .= 'ppc-'; }
 	if ( $arch eq 'r' ) { $java_platform .= 'arm-'; }
 	if ( $arch eq 'v' ) { $java_platform .= 'riscv-'; }
+	if ( $arch eq 'la' ) { $java_platform .= 'loongarch-'; }
 	if ( $arch eq 'q' ) { $java_platform .= 'sparc-'; }
 	if ( $arch eq 'z' ) { $java_platform .= '390-'; }
 	if ( $java_platform ne 'Unknown' ) {
