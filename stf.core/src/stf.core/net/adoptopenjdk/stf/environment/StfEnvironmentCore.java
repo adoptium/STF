@@ -435,7 +435,7 @@ public class StfEnvironmentCore {
 
 	/** 
 	 * Returns the osgi.arch name.
-	 * Expected return values are x86, x86_64, ppc, ppc64, arm, riscv
+	 * Expected return values are x86, x86_64, ppc, ppc64, arm, riscv, loongarch
 	 */
 	public String getOsgiProcessorArchitecture() throws StfException {
 		String archName = PlatformFinder.getArchName();
@@ -453,6 +453,8 @@ public class StfEnvironmentCore {
 			return "arm";
 		} else if (archName.equals("riscv")) {
 			return "riscv";
+		} else if (archName.equals("loongarch")) {
+                        return "loongarch";
 		} else if (archName.equals("sparc")) {
 			return "sparc";
 		}

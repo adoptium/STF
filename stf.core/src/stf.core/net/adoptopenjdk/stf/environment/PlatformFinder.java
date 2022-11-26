@@ -86,7 +86,7 @@ public class PlatformFinder {
 		}
 
 		// Validate the architecture value
-		String osArchRegex = "390|x86|ppc|x86|arm|riscv|sparc";
+		String osArchRegex = "390|x86|ppc|x86|arm|riscv|sparc|loongarch";
 		if (!osArch.matches(osArchRegex)) {
 			throw new StfException("Unknown architecture value: '" + osArch + "'. Expected one of '" + osArchRegex + "'");
 		}
@@ -222,7 +222,10 @@ public class PlatformFinder {
         } else if(osArch.contains("aarch64")) {
                 // if the current system is aarch64 use arm as the osArch
             osArch = "arm";
-        } else if(osArch.contains("riscv")) {
+        } else if(osArch.contains("loongarch64")) {
+            // if the current system is loongarch64 use loongarch as the osArch
+           osArch = "loongarch";
+	} else if(osArch.contains("riscv")) {
             // The openj9 jdk sets os.arch to riscv, the bisheng jdk sets it to riscv64
             osArch = "riscv";
         } else if(osArch.contains("sparcv9")) {
