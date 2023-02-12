@@ -943,13 +943,9 @@ sub generate_process_diagnostics {
 	if ($platform eq "win") {
 		my $java;
 		my $jcmd;
-		FIND_JAVA: foreach my $dir (split(/;/,$ENV{PATH})) {
-			$java = catfile($dir, 'java.exe');
-			$jcmd = catfile($dir, 'jcmd.exe');
-			if (-e $java) {
-				last FIND_JAVA;
-			}
-		}
+		
+		$java = catfile($ENV{JAVA_HOME}, 'bin', 'java.exe');
+		$jcmd = catfile($ENV{JAVA_HOME}, 'bin', 'jcmd.exe');
 		
 		my %getJavaProperties_options = ();
 		$getJavaProperties_options{'PATH'} = $command_line_options{$java};
