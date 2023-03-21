@@ -302,17 +302,17 @@ limitations under the License.
 		Note: In Java 9 the classes we need from tools.jar were folded into the Class Library, 
 		so we don't need the jar, and this is correct.
 	-->
-	<target name="check-for-tools-jar">
+	<target name="check-for-tools-jar" depends="setup-java-properties">
 		<property name="tools_jar_dir" location="${first_prereqs_root}/tools"/>
 		<property name="tools_jar_file" value="tools.jar"/>
-		<echo message="java.specification.version is ${java.specification.version}"/>
+		<echo message="java_java_specification_version is ${java_java_specification_version}"/>
 		<condition property="tools_jar_correct">
 			<or>
 				<not>
-					<equals arg1="${java.specification.version}" arg2="1.8"/>
+					<equals arg1="${java_java_specification_version}" arg2="1.8"/>
 				</not>
 				<and>
-					<equals arg1="${java.specification.version}" arg2="1.8"/>
+					<equals arg1="${java_java_specification_version}" arg2="1.8"/>
 					<available file="${tools_jar_dir}/${tools_jar_file}"/>
 				</and>
 			</or>
