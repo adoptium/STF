@@ -44,13 +44,13 @@ limitations under the License.
 	<condition property="isOpenJ9" value="true" else="false" >
 		<contains string="${java_java_vm_vendor}" substring="J9"/>
 	</condition>
-	
+
 	<!--Following are the systemtest prereq jar versions currently in use-->
 	<property name="asm-version" value="9.0"/>
 	<property name="ant-version" value="1.10.2"/>
 	<property name="log4j-version" value="2.16.0"/>
 	<property name="junit-version" value="4.12"/>
-	<property name="hamcrest-version" value="1.3"/> 
+	<property name="hamcrest-version" value="1.3"/>
 
 	<!--
 		Determine the java version being used for the build and set properties for use by build.xml files.
@@ -295,11 +295,11 @@ limitations under the License.
 		<!-- We're just using the existence of pskill.exe to determine whether the tools are installed. -->
 	    <available file="${windows_sysinternals_dir}/pskill.exe" property="windows_sysinternals_available"/>
 	</target>
-	<!-- 
+	<!--
 		Target to check if there is a tools.jar already copied to PREREQS_ROOT/tools.
 		If we already have a tools.jar, or we are using Java >8, then tools.jar is correct.
 		If we do not have a tools.jar, and we are using Java 8, then tools.jar is not correct.
-		Note: In Java 9 the classes we need from tools.jar were folded into the Class Library, 
+		Note: In Java 9 the classes we need from tools.jar were folded into the Class Library,
 		so we don't need the jar, and this is correct.
 	-->
 	<target name="check-for-tools-jar" depends="setup-java-properties">
@@ -351,15 +351,15 @@ limitations under the License.
 		<property name="asm" value="${asm_dir}/${asm_file}"/>
 		<available file="${asm}" property="asm_available"/>
 	</target>
-	
+
 	<condition property="isZOS" value="true">
 			<equals arg1="${os.name}" arg2="z/OS"/>
 	</condition>
-		
+
 	<condition property="src-encoding" value="IBM-1047" else="UTF-8">
 		<isset property="isZOS"/>
 	</condition>
-	
+
 	<condition property="MAKE" value="gmake" else="make">
 	    <or>
 	        <equals arg1="${os.name}" arg2="AIX"/>
@@ -386,7 +386,7 @@ limitations under the License.
 			</exec>
 		</sequential>
 	</macrodef>
-	
+
 	<target name="print-ant-location" if="${ant_available}">
 		<echo message="Using ant from ${ant}"/>
 	</target>
@@ -410,7 +410,7 @@ limitations under the License.
 	<target name="print-tools-jar-location" if="tools_jar">
 		<echo message="Using tools.jar from ${tools_jar}"/>
 	</target>
-	
+
 	<target name="print-asm-location" if="asm_available">
 		<echo message="Using ${asm_file} from ${asm}"/>
 	</target>
@@ -434,7 +434,7 @@ limitations under the License.
 		<echo message="ERROR: Cannot find log4j-api at ${log4j_api} and / or log4j-core at ${log4j_core}"/>
 		<property name="fail_run" value="true"/>
 	</target>
-	
+
 	<target name="print-asm-error" unless="asm_available">
 		<echo message="ERROR: Cannot find ${asm_file} at ${asm}"/>
 		<property name="fail_run" value="true"/>
@@ -468,7 +468,7 @@ limitations under the License.
 	<target name="fail-if-error" if="fail_run">
 		<fail message="Cannot find one or more prereqs.  See the above error messages.  Running 'make configure' or the ant configure target may get all the missing prereqs.  See the appropriate stf.build/docs/build.md or openjdk.build/docs/build.md for more details."/>
 	</target>
-	
+
 	<target name="print-all-prereq-versions">
 		<echo message="Ant version in use     : ${ant-version}"/>
 		<echo message="log4j version in use   : ${log4j-version}"/>
@@ -504,12 +504,12 @@ limitations under the License.
 					<replacestring from="\" to="\\" />
 				</filterchain>
 			</loadproperties>
-			<!-- Uncomment to echo the -XshowSettings:properties output to the log. -->
-			<!-- <echoproperties>
+			<!-- comment to stop echo the -XshowSettings:properties output to the log. -->
+			<echoproperties>
 				<propertyset>
 					<propertyref prefix="@{java.id}."/>
 				</propertyset>
-			</echoproperties> -->
+			</echoproperties>
 			<delete file="${properties_file}" verbose="false"/>
 			<get-platform-prefix property="@{osname.property}" osname="${@{java.id}.os.name}"/>
 			<get-platform-arch property="@{arch.property}" arch="${@{java.id}.os.arch}"/>
