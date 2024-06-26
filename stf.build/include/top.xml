@@ -18,15 +18,18 @@ limitations under the License.
 
 	<!-- Set a property for accessing environment variables.  -->
 	<property environment="env"/>
+	<condition property="system_lib_dir" value="${env.SYSTEM_LIB_DIR}" else="${source_root}/../../systemtest_prereqs">
+		<isset property="env.SYSTEM_LIB_DIR"/>
+	</condition>
 
+	<echo message="system_lib_dir: ${system_lib_dir}"/>
 	<!-- Set default prereqs_root.  -->
 	<!-- If source has been checked out to /home/user/git/stf, default location for prereqs is /home/user/systemtest_prereqs.  -->
-	<property name="prereqs_root" location="${source_root}/../../systemtest_prereqs"/>
+	<property name="prereqs_root" location="${system_lib_dir}"/>
 
 	<!-- Test specific prereqs may have been added to prereqs-root (in path1;path2;path3 notation).
 	     Here the property first_prereqs_root is set containing just the first path in prereqs_root
 	     which is assumed to be where the make configure prereqs are installed. -->
-	<property name="prereqs_root" location="${source_root}/../../systemtest_prereqs"/>
 	<loadresource property="first_prereqs_root" encoding="UTF-8">
 		<concat>${prereqs_root}</concat>
 		<filterchain>
