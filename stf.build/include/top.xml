@@ -132,7 +132,7 @@ limitations under the License.
 		<pathelement location="${first_prereqs_root}/log4j/log4j-core.jar"/>
 	</path>
 	<path id="tools.class.path">
-		<pathelement location="${java.home}/../lib/tools.jar"/>
+		<pathelement location="${first_prereqs_root}/tools/tools.jar"/>
 	</path>
 	<path id="asm.class.path">
 		<pathelement location="${first_prereqs_root}/asm/asm.jar"/>
@@ -332,9 +332,9 @@ limitations under the License.
 	-->
 
 	<target name="configure-tools-jar" depends="setup-java-properties" unless="${tools_jar_correct}">
-		<property name="tools_jar_origin" value="${java.home}/../lib/tools.jar"/>
+		<property name="tools_jar_origin" value="${java_bindir}/../lib/tools.jar"/>
 		<echo message="configure-tools-jar: Copying ${tools_jar_origin} to ${tools_jar_dir}"/>
-        <copy file="${tools_jar_origin}" todir="${tools_jar_dir}"/>
+		<copy file="${tools_jar_origin}" todir="${tools_jar_dir}"/>
 		<property name="tools_jar" value="${tools_jar_dir}/${tools_jar_file}"/>
 		<available file="${tools_jar_dir}/${tools_jar_file}" property="tools_jar_correct"/>
 	</target>
