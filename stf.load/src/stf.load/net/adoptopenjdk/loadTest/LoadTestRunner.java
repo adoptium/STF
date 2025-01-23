@@ -180,19 +180,16 @@ class LoadTestRunner {
 								ResultStatus testResult = null;
 								try {
 									testResult = test.executeTest();
-								} catch (InvocationTargetException e) {
-									if (e.getCause() instanceof BlockedExitException) {
-										// The test has attempted to call System.exit(). Keep running.
-										BlockedExitException exitException = (BlockedExitException) e.getCause();
-										if (exitException.getExitValue() == 0) {
-											testResult = ResultStatus.BLOCKED_EXIT_PASS;
-										} else {
-											testResult = ResultStatus.BLOCKED_EXIT_FAIL;
-										}
+								} catch(BlockedExitException exitException) {
+									// The test has attempted to call System.exit(). Keep running.
+									if (exitException.getExitValue() == 0) {
+										testResult = ResultStatus.BLOCKED_EXIT_PASS;
 									} else {
-										// Some other invocation exception. Rethrow to log as test failure.
-										throw e;
+										testResult = ResultStatus.BLOCKED_EXIT_FAIL;
 									}
+								} catch (InvocationTargetException e) {
+									// Some other exception. Rethrow to log as test failure.
+									throw e;
 								}
 
 								// Test completed. Record pass/fail result to file

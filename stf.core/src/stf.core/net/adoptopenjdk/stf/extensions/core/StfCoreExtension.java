@@ -77,6 +77,8 @@ public class StfCoreExtension implements StfExtension {
 	public static Argument ARG_HAMCREST_CORE_JAR = new Argument("stfCore", "hamcrest-core-jar", false,  Required.MANDATORY);
 	public static Argument ARG_LOG4J_API_JAR     = new Argument("stfCore", "log4j-api-jar",     false,  Required.MANDATORY);
 	public static Argument ARG_LOG4J_CORE_JAR    = new Argument("stfCore", "log4j-core-jar",    false,  Required.MANDATORY);
+	public static Argument ARG_ASM_JAR           = new Argument("stfCore", "asm-jar",           false,  Required.MANDATORY);
+	public static Argument ARG_ASM_COMMONS_JAR   = new Argument("stfCore", "asm-commons-jar",   false,  Required.MANDATORY);
 	public static Argument ARG_APPS_ROOT         = new Argument("stfCore", "apps-root",         false,  Required.MANDATORY);
 	public static Argument ARG_MODE              = new Argument("stfCore", "mode",              false,  Required.MANDATORY);
 
@@ -96,6 +98,8 @@ public class StfCoreExtension implements StfExtension {
 				ARG_HAMCREST_CORE_JAR,
 				ARG_LOG4J_API_JAR,
 				ARG_LOG4J_CORE_JAR,
+				ARG_ASM_JAR,
+				ARG_ASM_COMMONS_JAR,
 				ARG_APPS_ROOT,
 				ARG_MODE,
 			};
@@ -116,6 +120,12 @@ public class StfCoreExtension implements StfExtension {
 		
 		help.outputArgName("-" + ARG_LOG4J_CORE_JAR.getName(), "FILE");
 		help.outputArgDesc("Points to the location of the log4j core jar file.");
+	
+		help.outputArgName("-" + ARG_ASM_JAR.getName(), "FILE");
+		help.outputArgDesc("Points to the location of the asm jar file.");
+
+		help.outputArgName("-" + ARG_ASM_COMMONS_JAR.getName(), "FILE");
+		help.outputArgDesc("Points to the location of the asm-commons jar file.");
 	}
 	
 	public void initialise(StfEnvironmentCore environmentCore, StfExtensionBase extensionBase, PerlCodeGenerator generator) throws StfException {
@@ -1055,11 +1065,15 @@ public class StfCoreExtension implements StfExtension {
 	 * @throws StfException if an internal error is detected.
 	 */
 	public LoadTestProcessDefinition createLoadTestSpecification(JavaVersion jvm) throws StfException {
+		String agentPath = System.getProperty("load.agent.path");
 		LoadTestProcessDefinition loadTestInvocation = new LoadTestProcessDefinition(environmentCore, jvm)
+			.addJvmOption("-javaagent:" + agentPath)
 			.addProjectToClasspath("stf.load")       // stf.load goes first to make sure we pick up the correct log4j config file
 			.addProjectToClasspath("stf.core")
 			.addPrereqJarToClasspath(JavaProcessDefinition.JarId.LOG4J_API)
 			.addPrereqJarToClasspath(JavaProcessDefinition.JarId.LOG4J_CORE)
+			.addPrereqJarToClasspath(JavaProcessDefinition.JarId.ASM)
+			.addPrereqJarToClasspath(JavaProcessDefinition.JarId.ASM_COMMONS)
 			.runClass("net.adoptopenjdk.loadTest.LoadTest")
 			.setResultsDir(environmentCore.getResultsDir());
 		

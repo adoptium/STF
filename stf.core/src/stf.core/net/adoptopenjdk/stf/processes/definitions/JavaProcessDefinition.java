@@ -529,7 +529,9 @@ public class JavaProcessDefinition implements ProcessDefinition {
 		JUNIT(StfCoreExtension.ARG_JUNIT_JAR),
 		HAMCREST(StfCoreExtension.ARG_HAMCREST_CORE_JAR),
 		LOG4J_API(StfCoreExtension.ARG_LOG4J_API_JAR),
-		LOG4J_CORE(StfCoreExtension.ARG_LOG4J_CORE_JAR);
+		LOG4J_CORE(StfCoreExtension.ARG_LOG4J_CORE_JAR),
+		ASM(StfCoreExtension.ARG_ASM_JAR),
+		ASM_COMMONS(StfCoreExtension.ARG_ASM_COMMONS_JAR);
 		
 		private Argument jarLocation;
 		private JarId(Argument jarLocation) { this.jarLocation = jarLocation; }

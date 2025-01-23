@@ -27,6 +27,7 @@ limitations under the License.
 	<path id="project.class.path">
 		<path refid="junit.class.path" />
 		<path refid="log4j.class.path" />
+		<path refid="asm.class.path" />
 		<pathelement location="${stf_root}/stf.core/bin/stf.core.jar"/>
 	</path>
 
@@ -58,6 +59,10 @@ limitations under the License.
 	<target name="build-jar" depends="build-java, create-bin-dir">
 		<jar destfile="${stf_load_jar_file}">
 			<fileset dir="${stf_load_bin_dir}" includes="**/*.class" />
+			<manifest>
+				<attribute name="Premain-Class" value="net.adoptopenjdk.blockedexitagent.BlockedExitAgent"/>
+				<attribute name="Can-Retransform-Classes" value="true"/>
+			</manifest>
 		</jar>
 	</target>
 

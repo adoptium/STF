@@ -49,7 +49,7 @@ limitations under the License.
 	</condition>
 
 	<!--Following are the systemtest prereq jar versions currently in use-->
-	<property name="asm-version" value="9.0"/>
+	<property name="asm-version" value="9.7.1"/>
 	<property name="ant-version" value="1.10.2"/>
 	<property name="log4j-version" value="2.16.0"/>
 	<property name="junit-version" value="4.12"/>
@@ -136,6 +136,7 @@ limitations under the License.
 	</path>
 	<path id="asm.class.path">
 		<pathelement location="${first_prereqs_root}/asm/asm.jar"/>
+		<pathelement location="${first_prereqs_root}/asm/asm-commons.jar"/>
 	</path>
 	<path id="stf.class.path">
 		<pathelement location="${stf_root}/stf.core/bin/stf.core.jar"/>
@@ -343,16 +344,30 @@ limitations under the License.
 	<target name="check-for-asm">
 		<property name="asm_dir" location="${first_prereqs_root}/asm"/>
 		<property name="asm_file" value="asm.jar"/>
+		<property name="asm_commons_file" value="asm-commons.jar"/>
 		<property name="asm" value="${asm_dir}/${asm_file}"/>
-		<available file="${asm_dir}/${asm_file}" property="asm_available"/>
+		<property name="asm_commons" value="${asm_dir}/${asm_commons_file}"/>
+		<condition property="asm_available">
+			<and>
+				<available file="${asm}"/>
+				<available file="${asm_commons}"/>
+			</and>
+		</condition>
 	</target>
 
 	<target name="configure-asm" unless="asm_available">
 		<!-- Fetch asm from https://repository.ow2.org/etc. -->
 		<delete dir="${first_prereqs_root}/asm" failonerror="false"/>
 		<download-file destdir="${asm_dir}" destfile="${asm_file}" srcurl="https://repository.ow2.org/nexus/content/repositories/releases/org/ow2/asm/asm/${asm-version}/asm-${asm-version}.jar"/>
+		<download-file destdir="${asm_dir}" destfile="${asm_commons_file}" srcurl="https://repository.ow2.org/nexus/content/repositories/releases/org/ow2/asm/asm-commons/${asm-version}/asm-commons-${asm-version}.jar"/>
 		<property name="asm" value="${asm_dir}/${asm_file}"/>
-		<available file="${asm}" property="asm_available"/>
+		<property name="asm-commons" value="${asm_dir}/${asm_commons_file}"/>
+		<condition property="asm_available">
+			<and>
+				<available file="${asm}"/>
+				<available file="${asm_commons}"/>
+			</and>
+		</condition>
 	</target>
 
 	<condition property="isZOS" value="true">
@@ -416,6 +431,7 @@ limitations under the License.
 
 	<target name="print-asm-location" if="asm_available">
 		<echo message="Using ${asm_file} from ${asm}"/>
+		<echo message="Using ${asm_commons_file} from ${asm_commons}"/>
 	</target>
 
 	<target name="print-ant-error" unless="ant_available">
@@ -439,7 +455,7 @@ limitations under the License.
 	</target>
 
 	<target name="print-asm-error" unless="asm_available">
-		<echo message="ERROR: Cannot find ${asm_file} at ${asm}"/>
+		<echo message="ERROR: Cannot find ${asm_file} at ${asm} and / or ${asm_commons_file} at ${asm_commons}"/>
 		<property name="fail_run" value="true"/>
 	</target>
 
