@@ -428,11 +428,14 @@ my ($now, $date, $time) = stf::stfUtility->getNow(date => $TRUE, time => $TRUE);
     my $sep = stf::stfUtility->getPathSeparator;
     my $log4j_core_dir = findElement($prereqs_root, "/log4j/log4j-core.jar");
     my $log4j_api_dir = findElement($prereqs_root, "/log4j/log4j-api.jar");
+    my $asm_jar = findElement($prereqs_root, "/asm/asm.jar");
+    my $asm_commons_jar = findElement($prereqs_root, "/asm/asm-commons.jar");
     my $cmd = "$javahome_generation/bin/java " .
               "$java_debug_settings" .
               " -Dlog4j.skipJansi=true" .  # Suppress warning on Windows
               " -Djava.system.class.loader=net.adoptopenjdk.stf.runner.StfClassLoader" .
-              " -classpath $log4j_api_dir" . $sep . "$log4j_core_dir" . $sep . "$Bin/../bin" .
+              " -Dload.agent.path=$Bin/../../stf.load/bin/stf.load.jar" .
+              " -classpath $asm_jar" . $sep . "$asm_commons_jar" . $sep . "$log4j_api_dir" . $sep . "$log4j_core_dir" . $sep . "$Bin/../bin" .
               " net.adoptopenjdk.stf.runner.StfRunner" .
               " -properties \"$stf_parameters, $stf_personal_properties, $stf_defaults\"" .
               " -testDir \"$test_dir\"";
