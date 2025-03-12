@@ -36,7 +36,7 @@ class BlockedExitAgent {
             /* System.exit calls in LoadTest class should not be overwritten. */
             if ((null != loader) && (!className.contains("net/adoptopenjdk/loadTest/LoadTest"))) {    
                 ClassReader cr = new ClassReader(classBytes);
-                ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+                ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_MAXS);
                 cr.accept(new BlockedExitClassVisitor(cw), ClassReader.EXPAND_FRAMES);
                 return cw.toByteArray();
             } else {
@@ -78,6 +78,10 @@ class BlockedExitAgent {
                 super.visitVarInsn(ILOAD, localId);
                 super.visitMethodInsn(INVOKESPECIAL, blockedExitException, "<init>", "(I)V");
                 super.visitInsn(ATHROW);
+                /* Manually update the stack map frame instead of using COMPUTE_FRAMES which was
+                 * causing a duplicate class loading error.
+                 */
+                super.visitFrame(F_APPEND, 3, new Object[] {INTEGER, INTEGER, "java/lang/Object"}, 0, null);
             } else {
                 super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
             }
