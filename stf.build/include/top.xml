@@ -537,7 +537,7 @@ limitations under the License.
 			<delete file="${properties_file}" verbose="false"/>
 			<property name="resolved.os.name" value="${@{java.id}.os.name}"/>
 			<echo message="DEBUG: Resolved os.name for @{java.id} is ${resolved.os.name}"/>
-			<get-platform-prefix property="@{osname.property}" osname="${@{java.id}.os.name}"/>
+			<get-platform-prefix property="@{osname.property}" osname="${resolved.os.name}"/>
 			<get-platform-arch property="@{arch.property}" arch="${@{java.id}.os.arch}"/>
 			<get-platform-bits property="@{bits.property}" bits="${@{java.id}.sun.arch.data.model}"/>
 			<property name="@{platform.property}" value="${@{osname.property}}_${@{arch.property}}-${@{bits.property}}"/>
