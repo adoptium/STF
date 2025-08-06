@@ -99,34 +99,6 @@ limitations under the License.
 	<!-- To use a different location property rtb.vcvarsall_filename needs to be set on the command line for the build.  -->
 	<!-- The vcvarsall.bat file argument amd64 is added if the javac being used to compile the java classes is a 64 bit java. -->
 
-	<target name="setup-windows-compiler" unless="setup_windows_compiler_run">
-		<property name="setup_windows-compiler_run" value="true"/>
-		<property name="vs14_vcvarsall_filename" location="c:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat"/>
-		<available file="${vs14_vcvarsall_filename}" property="vs14_available"/>
-		<property name="vs10_vcvarsall_filename" location="c:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\vcvarsall.bat"/>
-		<available file="${vs10_vcvarsall_filename}" property="vs10_available"/>
-		<property name="vs22_pro_vcvarsall_filename" location="c:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Auxiliary\\Build\\vcvarsall.bat"/>
-	   	<available file="${vs22_pro_vcvarsall_filename}" property="vs22_pro_available"/>
-		<condition property="vcvarsall_filename" value="${vs14_vcvarsall_filename}">
-			<isset property="vs14_available"/>
-		</condition>
-		<condition property="vcvarsall_filename" value="${vs10_vcvarsall_filename}">
-			<isset property="vs10_available"/>
-		</condition>
-		<condition property="vcvarsall_filename" value="${vs22_pro_vcvarsall_filename}">
-			<isset property="vs22_pro_available"/>
-	    	</condition>
-		<condition property="windows_native_compiler_present" value="true">
-			<isset property="vcvarsall_filename"/>
-			</condition>
-		<condition property="vcvarsall_bits_arg" value="amd64" else="">
-			<equals arg1="${java_bits}" arg2="64" trim="true"/>
-		</condition>
-		<condition property="setup_windows_build_env" value='call "${vcvarsall_filename}" ${vcvarsall_bits_arg} &amp;&amp;' else="">
-			<equals arg1="${is_windows}" arg2="true"/>
-		</condition>
-	</target>
-
 	<!-- Set up classpaths for prereqs. -->
 	<path id="junit.class.path">
 		<pathelement location="${first_prereqs_root}/junit/junit.jar"/>
@@ -156,7 +128,7 @@ limitations under the License.
 		Target to check for prereqs.
 		Same as configure target except prereqs are not installed if missing.
 	-->
-	<target name="check-prereqs" depends="setup-java-properties, setup-windows-compiler" unless="check_prereqs_run">
+	<target name="check-prereqs" depends="setup-java-properties" unless="check_prereqs_run">
 		<ant target="run-check-prereqs" inheritAll="true"/>
 		<property name="check_prereqs_run" value="true"/>
 	</target>
