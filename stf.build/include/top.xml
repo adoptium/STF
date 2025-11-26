@@ -335,8 +335,8 @@ limitations under the License.
 	<target name="configure-asm" unless="asm_available">
 		<!-- Fetch asm from https://repository.ow2.org/etc. -->
 		<delete dir="${first_prereqs_root}/asm" failonerror="false"/>
-		<download-file destdir="${asm_dir}" destfile="${asm_file}" srcurl="https://repository.ow2.org/nexus/content/repositories/releases/org/ow2/asm/asm/${asm-version}/asm-${asm-version}.jar"/>
-		<download-file destdir="${asm_dir}" destfile="${asm_commons_file}" srcurl="https://repository.ow2.org/nexus/content/repositories/releases/org/ow2/asm/asm-commons/${asm-version}/asm-commons-${asm-version}.jar"/>
+		<download-file destdir="${asm_dir}" destfile="${asm_file}" srcurl="https://repo1.maven.org/maven2/org/ow2/asm/asm/${asm-version}/asm-${asm-version}.jar"/>
+		<download-file destdir="${asm_dir}" destfile="${asm_commons_file}" srcurl="https://repo1.maven.org/maven2/org/ow2/asm/asm-commons/${asm-version}/asm-commons-${asm-version}.jar"/>
 		<property name="asm" value="${asm_dir}/${asm_file}"/>
 		<property name="asm-commons" value="${asm_dir}/${asm_commons_file}"/>
 		<condition property="asm_available">
