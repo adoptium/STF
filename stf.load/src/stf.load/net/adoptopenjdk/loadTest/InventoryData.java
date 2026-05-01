@@ -108,14 +108,14 @@ public class InventoryData {
 
 		// List the tests to be used
 		if (verbose) {
-			logger.info("Final test list:");
+			logger.trace("Final test list:");
 			String adjustedWeightingString = " ";
 			for (AdaptorInterface test : testList) {
 				if (weightingMultiplier.intValue() > 1) {
 					int roundedWeighting = test.getRoundedAdjustedWeighting(weightingMultiplier);
 					adjustedWeightingString = "->" + roundedWeighting;
 				}
-				logger.info("  " + test.getTestNum() + " " + test + "  Weighting=" + test.getWeighting() + adjustedWeightingString);
+				logger.trace("  " + test.getTestNum() + " " + test + "  Weighting=" + test.getWeighting() + adjustedWeightingString);
 			}
 		}
 	}
