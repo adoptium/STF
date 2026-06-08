@@ -55,7 +55,7 @@ if ( $^O eq 'MSWin32' ) {
 my $home_dir = stfArguments::get_home_dir();
 my $stf_personal_properties = $home_dir . "/.stf.properties";
 if (!-e $stf_personal_properties) {
-    $stf_personal_properties = "";
+	$stf_personal_properties = "";
 }
 
 # Locate the properties for this customisation of STF
@@ -139,25 +139,25 @@ my $test_list_arg = stfArguments::get_argument("list");
 # If help has been requested, but there is not enough information to run up STF java
 # code, then explain that some minimal arguments need to be set.
 if (stfArguments::get_argument("help") ne 'false') {
-    if ($test_name eq 'null') {
-        print "To get STF help please run again with a '-test' argument.\n";
-        print "This will allow STF to produce help on the extensions used by that test case.\n";
-        print "Extra options specific to this perl script.\n";
-        print "   -retain=nnn        Set the number of output directories to keep.\n";
-        print "   -retain-limit=nnn  Set the maximum number of failed output\n";
-        print "                      directories before a failure condition is declared\n";
-        exit 0;
-    }
+	if ($test_name eq 'null') {
+		print "To get STF help please run again with a '-test' argument.\n";
+		print "This will allow STF to produce help on the extensions used by that test case.\n";
+		print "Extra options specific to this perl script.\n";
+		print "   -retain=nnn        Set the number of output directories to keep.\n";
+		print "   -retain-limit=nnn  Set the maximum number of failed output\n";
+		print "                      directories before a failure condition is declared\n";
+		exit 0;
+	}
 }
 
 # Make sure that a test name has been specified
 if ($test_name eq 'null' && $test_list_arg eq 'false') {
-    print "** ERROR **  No test name specified. \(Use '-test' argument. eg, '-test=xyz', or '-list' to find all tests\)\n";
-    exit 0;
+	print "** ERROR **  No test name specified. \(Use '-test' argument. eg, '-test=xyz', or '-list' to find all tests\)\n";
+	exit 0;
 }
 if ($test_list_arg ne 'false') {
-    # STF has been run with something like 'stf -list', so force the name of the test to 'list'
-    $test_name = "list";
+	# STF has been run with something like 'stf -list', so force the name of the test to 'list'
+	$test_name = "list";
 }
 
 
@@ -189,8 +189,8 @@ if ( length $retain_number ) {
    # Increase results_retention_limit in line, otherwise failures are likely
    # User can override this with the retain-limit option if the wish to
    if ( $results_retention_number > $results_retention_limit ) {
-      print "WARNING: Overriding retain-limit to retain + 1\n";
-      $results_retention_limit = $results_retention_number+1;
+	  print "WARNING: Overriding retain-limit to retain + 1\n";
+	  $results_retention_limit = $results_retention_number+1;
    }
 }
 
@@ -199,32 +199,32 @@ if ( length $retain_number ) {
 if (-e $results_root) {
 	my @files = <'$results_root/*'>;
 	my $count = @files;
-    if ($count == 0) {
-        # No child directories yet, so structure is good
-        $delete_results_root = $TRUE;
-    } else {
-        # Found one or more child files/directories.
-        # Check that they are all STF directories.
-        foreach my $suspect_file (@files) {
-	        if (-d $suspect_file) {
-		    	# Check contents of old results directory, if it is not empty
-		    	my @subfiles = <'$suspect_file/*'>;
+	if ($count == 0) {
+		# No child directories yet, so structure is good
+		$delete_results_root = $TRUE;
+	} else {
+		# Found one or more child files/directories.
+		# Check that they are all STF directories.
+		foreach my $suspect_file (@files) {
+			if (-d $suspect_file) {
+				# Check contents of old results directory, if it is not empty
+				my @subfiles = <'$suspect_file/*'>;
 				my $subfiles_count = @subfiles;
 				if ($subfiles_count == 0) {
-				    print "Warning: Found empty results directory: $suspect_file\n";
+					print "Warning: Found empty results directory: $suspect_file\n";
 					$delete_results_root = $TRUE;
 				} else {
-			        # Check the structure of the old test directory, to see if it contains expected STF files
-			        my $setup_dir    = $suspect_file . "/setUp";
-			        my $execute_dir  = $suspect_file . "/execute";
-			        my $teardown_dir = $suspect_file . "/tearDown";
-			        if (-d $setup_dir && -d $execute_dir && -d $teardown_dir) {
-			            $delete_results_root = $TRUE;
-			        } else {
+					# Check the structure of the old test directory, to see if it contains expected STF files
+					my $setup_dir    = $suspect_file . "/setUp";
+					my $execute_dir  = $suspect_file . "/execute";
+					my $teardown_dir = $suspect_file . "/tearDown";
+					if (-d $setup_dir && -d $execute_dir && -d $teardown_dir) {
+						$delete_results_root = $TRUE;
+					} else {
 						print "**FAILED** results directory '$suspect_file' does not contain expected setUp, execute and tearDown directories\n";
 						$delete_results_root = $FALSE;
 						last;
-			        }
+					}
 				}
 
 				# Keep track of all result directories (allows deletion of oldest)
@@ -237,31 +237,31 @@ if (-e $results_root) {
 				last;
 			}
 		}
-    }
+	}
 } else { # results-root does not exist
-    $delete_results_root = $TRUE;
+	$delete_results_root = $TRUE;
 }
 
 
 # Abort the run if it is not safe to delete the results-root directory
 if ($delete_results_root == $FALSE) {
-    # List files in the alleged STF directory to allow debugging
-    print "Files/Directories at results root:\n";
-    print "  " . describe_file($results_root) . " " . "$results_root\n";
+	# List files in the alleged STF directory to allow debugging
+	print "Files/Directories at results root:\n";
+	print "  " . describe_file($results_root) . " " . "$results_root\n";
 	my @files = <'$results_root/*'>;
-    foreach my $file (@files) {
-        print "    " . describe_file($file) . " " . "$file\n";
-        if (-d $file) {
-            my @child_files = <'$file/*'>;
-            foreach my $child_file (@child_files) {
-                print "      " . describe_file($child_file) . " " . "$child_file\n";
-            }
-        }
-    }
+	foreach my $file (@files) {
+		print "    " . describe_file($file) . " " . "$file\n";
+		if (-d $file) {
+			my @child_files = <'$file/*'>;
+			foreach my $child_file (@child_files) {
+				print "      " . describe_file($child_file) . " " . "$child_file\n";
+			}
+		}
+	}
 
 	# We don't want to trash a box just because of an incorrect argument, so abort the run
-    print "Abort: Can't proceed as the results-root at '$results_root' does not appear to be a valid STF results directory\n";
-    exit 1;
+	print "Abort: Can't proceed as the results-root at '$results_root' does not appear to be a valid STF results directory\n";
+	exit 1;
 }
 
 
@@ -270,16 +270,16 @@ if ($delete_results_root == $FALSE) {
 ## directory is inside the results tree (which would cause the rmtree to fail)
 my $num_to_delete = $#results_dirs -$results_retention_number;
 if ($num_to_delete >= 0) {
-    my $current_script_path = Cwd::abs_path($0);
-    chdir dirname($current_script_path) or die "Failed to chdir to the stf.pl script directory $current_script_path\n";
-    my @results_to_delete = @results_dirs[0..$num_to_delete];
-    foreach my $results_root (@results_to_delete) {
-        _log("Deleting old STF results: $results_root");
-        # Some files may be longer than the Windows MAX_PATH value - e.g. the JCK run creates files
-        # longer than that in the results directory. rmtree cannot delete those files, so use rmtree
-        # instead.
-        deleteDirectory($results_root);
-    }
+	my $current_script_path = Cwd::abs_path($0);
+	chdir dirname($current_script_path) or die "Failed to chdir to the stf.pl script directory $current_script_path\n";
+	my @results_to_delete = @results_dirs[0..$num_to_delete];
+	foreach my $results_root (@results_to_delete) {
+		_log("Deleting old STF results: $results_root");
+		# Some files may be longer than the Windows MAX_PATH value - e.g. the JCK run creates files
+		# longer than that in the results directory. rmtree cannot delete those files, so use rmtree
+		# instead.
+		deleteDirectory($results_root);
+	}
 }
 
 # Find out if the current machine supports symbolic links
@@ -288,13 +288,13 @@ my $symlink_supported = eval { symlink("",""); 1 };
 # Now remove any orphaned symbolic links
 if (defined $symlink_supported && $symlink_supported eq 1) {
 	my @results_dir_content = <'$results_root/*'>;
-    foreach my $file (@results_dir_content) {
-        # Check to see if the current file is a link which has no directory
-    	if (-l $file && ! -d $file) {
-    	    _log("Deleting orphan results link: $file");
-    	    unlink $file;
-    	}
-    }
+	foreach my $file (@results_dir_content) {
+		# Check to see if the current file is a link which has no directory
+		if (-l $file && ! -d $file) {
+			_log("Deleting orphan results link: $file");
+			unlink $file;
+		}
+	}
 }
 
 # To allow for easier running on a Windows machine we may have ignored the failure to delete
@@ -306,17 +306,17 @@ if (defined $symlink_supported && $symlink_supported eq 1) {
 my $num_result_dirs = 0;
 my @files = <'$results_root/*'>;
 foreach my $file (@files) {
-    if (-d $file && ! -l $file) {
-        # Found a directory which is not a symbolic link.
-        # See if it contains a timestamp, eg /stf/20160706-092421-list
-        if ($file =~ /20[0-9]{6}-[0-9]{6}/) {
-        	$num_result_dirs++;
-        }
-    }
+	if (-d $file && ! -l $file) {
+		# Found a directory which is not a symbolic link.
+		# See if it contains a timestamp, eg /stf/20160706-092421-list
+		if ($file =~ /20[0-9]{6}-[0-9]{6}/) {
+			$num_result_dirs++;
+		}
+	}
 }
 if ($num_result_dirs > $results_retention_limit) {
-    print "**FAILED** Too many result directories. Limit is $num_result_dirs. Currently have $num_result_dirs directories at $results_root\n";
-    exit 2;
+	print "**FAILED** Too many result directories. Limit is $num_result_dirs. Currently have $num_result_dirs directories at $results_root\n";
+	exit 2;
 }
 
 
@@ -336,8 +336,8 @@ my $createResultsSymLinks = stfArguments::get_argument("create-results-sym-links
 # If symbolic links are supported and required then create the link
 # eg, /tmp/stf/UtilLoadTest -> /tmp/stf/20160704-115233-UtilLoadTest
 if (defined $symlink_supported && $symlink_supported eq 1 && $createResultsSymLinks ne 'false') {
-    my $new_link_name = $results_root . "/$test_name";
-    unlink $new_link_name;
+	my $new_link_name = $results_root . "/$test_name";
+	unlink $new_link_name;
 	symlink($test_dir, $new_link_name);
 }
 
@@ -393,212 +393,212 @@ my ($now, $date, $time) = stf::stfUtility->getNow(date => $TRUE, time => $TRUE);
 
 	output_banner("GENERATION");
 
-    # if any test root starts with '..' then resolve it now, before we change directory
-    my $test_root = stfArguments::get_argument("test-root");
+	# if any test root starts with '..' then resolve it now, before we change directory
+	my $test_root = stfArguments::get_argument("test-root");
 	my $updated_test_root = make_paths_absolute("test-root",$test_root,"");
 
 
-    # Abort run if any test root contains a space character.
-    # (This causes lots of class loading problems on windows)
-    if ($test_root =~ / /) {
-	    _log("**FAILED** STF cannot use any test root with a space character in its path: $test_root\n");
-	    exit 1;
+	# Abort run if any test root contains a space character.
+	# (This causes lots of class loading problems on windows)
+	if ($test_root =~ / /) {
+		_log("**FAILED** STF cannot use any test root with a space character in its path: $test_root\n");
+		exit 1;
 	}
 
 
-    # Write the stf arguments to a properties file
-    my $stf_parameters = $test_dir . "/stf_parameters.properties";
-    stfArguments::write_arguments_to_file $stf_parameters, $Bin, $updated_test_root, $updated_systemtest_prereqs;
+	# Write the stf arguments to a properties file
+	my $stf_parameters = $test_dir . "/stf_parameters.properties";
+	stfArguments::write_arguments_to_file $stf_parameters, $Bin, $updated_test_root, $updated_systemtest_prereqs;
 
 	# Move to the output directory
 	chdir($generation_dir);
 
-    # Decide if java debug has been enabled
+	# Decide if java debug has been enabled
 	my $java_debug_settings = "";
-    if (stfArguments::get_boolean_argument("debug-generation")) {
-        $java_debug_settings = stfArguments::get_argument("java-debug-args");
+	if (stfArguments::get_boolean_argument("debug-generation")) {
+		$java_debug_settings = stfArguments::get_argument("java-debug-args");
 	}
 
 	# Find the location of java to be used in the generation step
 	my $javahome_generation = stfArguments::get_and_check_argument("javahome-generation");
 	validate_jvm($javahome_generation, "javahome-generation");
 
-    # Build the command to run RunTestRunner - to generate the setup, execute and teardown scripts.
-    # The generation step needs a custom class loader so that classes used by the plugin can be loaded.
-    my $sep = stf::stfUtility->getPathSeparator;
-    my $log4j_core_dir = findElement($prereqs_root, "/log4j/log4j-core.jar");
-    my $log4j_api_dir = findElement($prereqs_root, "/log4j/log4j-api.jar");
-    my $asm_jar = findElement($prereqs_root, "/asm/asm.jar");
-    my $asm_commons_jar = findElement($prereqs_root, "/asm/asm-commons.jar");
-    my $cmd = "$javahome_generation/bin/java " .
-              "$java_debug_settings" .
-              " -Dlog4j.skipJansi=true" .  # Suppress warning on Windows
-              " -Djava.system.class.loader=net.adoptopenjdk.stf.runner.StfClassLoader" .
-              " -Dload.agent.path=$Bin/../../stf.load/bin/stf.load.jar" .
-              " -classpath $asm_jar" . $sep . "$asm_commons_jar" . $sep . "$log4j_api_dir" . $sep . "$log4j_core_dir" . $sep . "$Bin/../bin" .
-              " net.adoptopenjdk.stf.runner.StfRunner" .
-              " -properties \"$stf_parameters, $stf_personal_properties, $stf_defaults\"" .
-              " -testDir \"$test_dir\"";
+	# Build the command to run RunTestRunner - to generate the setup, execute and teardown scripts.
+	# The generation step needs a custom class loader so that classes used by the plugin can be loaded.
+	my $sep = stf::stfUtility->getPathSeparator;
+	my $log4j_core_dir = findElement($prereqs_root, "/log4j/log4j-core.jar");
+	my $log4j_api_dir = findElement($prereqs_root, "/log4j/log4j-api.jar");
+	my $asm_jar = findElement($prereqs_root, "/asm/asm.jar");
+	my $asm_commons_jar = findElement($prereqs_root, "/asm/asm-commons.jar");
+	my $cmd = "$javahome_generation/bin/java " .
+			  "$java_debug_settings" .
+			  " -Dlog4j.skipJansi=true" .  # Suppress warning on Windows
+			  " -Djava.system.class.loader=net.adoptopenjdk.stf.runner.StfClassLoader" .
+			  " -Dload.agent.path=$Bin/../../stf.load/bin/stf.load.jar" .
+			  " -classpath $asm_jar" . $sep . "$asm_commons_jar" . $sep . "$log4j_api_dir" . $sep . "$log4j_core_dir" . $sep . "$Bin/../bin" .
+			  " net.adoptopenjdk.stf.runner.StfRunner" .
+			  " -properties \"$stf_parameters, $stf_personal_properties, $stf_defaults\"" .
+			  " -testDir \"$test_dir\"";
 
-    _log("Starting process to generate scripts: $cmd");
-    my ($rc, $process) = stf::Commands->run_process(
-          	mnemonic  => "GEN",
-            command   => $cmd,
-            logName   => "$generation_dir" . "/generation",
-            uid       => $now,
-            echo      => $TRUE,
-            prefix_on => $TRUE,
-            runtime   => 900);
-    if ($rc != 0) {
-        print "Generation failed\n";
-        exit 1;
-    }
-
-    # If we are just running to provide help or a list of all tests then finish.
-    if ($help_arg ne 'false') {
-	    exit 0;
+	_log("Starting process to generate scripts: $cmd");
+	my ($rc, $process) = stf::Commands->run_process(
+		  	mnemonic  => "GEN",
+			command   => $cmd,
+			logName   => "$generation_dir" . "/generation",
+			uid       => $now,
+			echo      => $TRUE,
+			prefix_on => $TRUE,
+			runtime   => 900);
+	if ($rc != 0) {
+		print "Generation failed\n";
+		exit 1;
 	}
-    if ($test_list_arg ne 'false') {
-	    exit 0;
+
+	# If we are just running to provide help or a list of all tests then finish.
+	if ($help_arg ne 'false') {
+		exit 0;
+	}
+	if ($test_list_arg ne 'false') {
+		exit 0;
 	}
 
 
 	_log("");
-    _log("Script generation completed");
-    _log("");
+	_log("Script generation completed");
+	_log("");
 
-    # Read names of execute scripts to run from text file
-    my @executeStages = ();
-    my $filename = "$test_dir/executeStages.txt";
-    open(my $fh, '<', $filename) or die "Could not open file '$filename' $!";
-    while (my $row = <$fh>) {
-        chomp $row;
-        push(@executeStages, "$row");
-    }
-    close($fh);
+	# Read names of execute scripts to run from text file
+	my @executeStages = ();
+	my $filename = "$test_dir/executeStages.txt";
+	open(my $fh, '<', $filename) or die "Could not open file '$filename' $!";
+	while (my $row = <$fh>) {
+		chomp $row;
+		push(@executeStages, "$row");
+	}
+	close($fh);
 
-    # Build the perl commands needed to run the test
-    my $setupCmd    = "perl $test_dir/setUp.pl";
-    my $teardownCmd = "perl $test_dir/tearDown.pl";
+	# Build the perl commands needed to run the test
+	my $setupCmd    = "perl $test_dir/setUp.pl";
+	my $teardownCmd = "perl $test_dir/tearDown.pl";
 
 	my $dry_run = stfArguments::get_boolean_argument("dry-run");
 	if ($dry_run) {
-        _log("*Not* executing scripts, as dryRun mode set");
-        _log("Commands to execute scripts are:");
-        _log("  $setupCmd");
-        foreach (@executeStages) {
-            _log("  perl $test_dir/$_.pl");
-        }
-        _log("  $teardownCmd");
-        exit 0;
+		_log("*Not* executing scripts, as dryRun mode set");
+		_log("Commands to execute scripts are:");
+		_log("  $setupCmd");
+		foreach (@executeStages) {
+			_log("  perl $test_dir/$_.pl");
+		}
+		_log("  $teardownCmd");
+		exit 0;
 
-    } else {
-        my $rc_setup    = 0;
-        my $rc_execute  = 0;
-        my @rc_executes = ();
-        my $rc_teardown = 0;
+	} else {
+		my $rc_setup    = 0;
+		my $rc_execute  = 0;
+		my @rc_executes = ();
+		my $rc_teardown = 0;
 
-        $rc_setup = runScript($setupCmd, $setup_dir, "setup");
-        # Only run the test itself if the setup was successful
-        my $rc_execute_total = 0;
-        if ($rc_setup == 0) {
-            for my $i (0 .. $#executeStages) {
-                my $stageName = $executeStages[$i];
-                my $cmd = "perl $test_dir/$stageName.pl";
-                my $rc = runScript($cmd, $execute_dir, $stageName);
-                push(@rc_executes, $rc);
-                $rc_execute_total = $rc_execute_total + $rc;
-            }
-        }
+		$rc_setup = runScript($setupCmd, $setup_dir, "setup");
+		# Only run the test itself if the setup was successful
+		my $rc_execute_total = 0;
+		if ($rc_setup == 0) {
+			for my $i (0 .. $#executeStages) {
+				my $stageName = $executeStages[$i];
+				my $cmd = "perl $test_dir/$stageName.pl";
+				my $rc = runScript($cmd, $execute_dir, $stageName);
+				push(@rc_executes, $rc);
+				$rc_execute_total = $rc_execute_total + $rc;
+			}
+		}
 
-        $rc_teardown = runScript($teardownCmd, $teardown_dir, "teardown");
+		$rc_teardown = runScript($teardownCmd, $teardown_dir, "teardown");
 
-        _log("");
-        output_banner("results");
+		_log("");
+		output_banner("results");
 
-        # Find the longest stage name (so that the results can be neatly formatted)
-        my $longestStageName = length "teardown";
-        for my $i (0 .. $#executeStages) {
-            my $currStageLen = length $executeStages[$i];
-            if ($currStageLen > $longestStageName) {
-                $longestStageName = $currStageLen;
-            }
-        }
+		# Find the longest stage name (so that the results can be neatly formatted)
+		my $longestStageName = length "teardown";
+		for my $i (0 .. $#executeStages) {
+			my $currStageLen = length $executeStages[$i];
+			if ($currStageLen > $longestStageName) {
+				$longestStageName = $currStageLen;
+			}
+		}
 
-        # Report pass/fail for each stage
-        _log("Stage results:");
-        reportStageResult("setUp", $rc_setup, $longestStageName);
-        for my $i (0 .. $#rc_executes) {
-            reportStageResult($executeStages[$i], $rc_executes[$i], $longestStageName);
-        }
-        reportStageResult("teardown", $rc_setup, $longestStageName);
+		# Report pass/fail for each stage
+		_log("Stage results:");
+		reportStageResult("setUp", $rc_setup, $longestStageName);
+		for my $i (0 .. $#rc_executes) {
+			reportStageResult($executeStages[$i], $rc_executes[$i], $longestStageName);
+		}
+		reportStageResult("teardown", $rc_setup, $longestStageName);
 
-        # Output an overall pass/fail status message
+		# Output an overall pass/fail status message
    		my $rc_overall = $rc_setup + $rc_execute_total + $rc_teardown;
    		_log("");
    		if ($rc_overall == 0) {
-	        _log("Overall result: PASSED");
-	        # If the --rm-pass option was specified, delete the results directory because the test passed.
-	        if (stfArguments::get_boolean_argument("rm-pass")) {
-	            _log("Deleting the results directory because no failures were detected.");
-	            chdir $results_root;
-	            deleteDirectory($test_dir);
-	        }
-	    } else {
-	    	$rc_overall = 1;
-	        _log("Overall result: **FAILED**");
-	    }
+			_log("Overall result: PASSED");
+			# If the --rm-pass option was specified, delete the results directory because the test passed.
+			if (stfArguments::get_boolean_argument("rm-pass")) {
+				_log("Deleting the results directory because no failures were detected.");
+				chdir $results_root;
+				deleteDirectory($test_dir);
+			}
+		} else {
+			$rc_overall = 1;
+			_log("Overall result: **FAILED**");
+		}
 
-	    exit $rc_overall;
+		exit $rc_overall;
    }
 
 
 sub describe_file {
-    my $file = shift;
+	my $file = shift;
 
-    if (-f $file) {
-        return "f";
-    } elsif (-d $file) {
-        return "d";
-    }
+	if (-f $file) {
+		return "f";
+	} elsif (-d $file) {
+		return "d";
+	}
 
-    return "?";
+	return "?";
 }
 
 
 sub runScript {
 
-    # Runtime for the setup.pl, execute.pl and teardown.pl execution
-    # is set to a week (7 days).
-    # Tests should be setting timeouts for the processes within each script
-    # according to their expectations, but setting a very long timeout here
-    # at least stops automation machines being tied up for ever.
+	# Runtime for the setup.pl, execute.pl and teardown.pl execution
+	# is set to a week (7 days).
+	# Tests should be setting timeouts for the processes within each script
+	# according to their expectations, but setting a very long timeout here
+	# at least stops automation machines being tied up for ever.
 
-    my $script = shift;
-    my $results_dir = shift;
-    my $script_name = shift;
+	my $script = shift;
+	my $results_dir = shift;
+	my $script_name = shift;
 
-    _log("");
+	_log("");
 	output_banner($script_name);
 
-    _log("Running $script_name: $script");
+	_log("Running $script_name: $script");
 
-    my $return_code = 0;
-    my ($rc, $process) = stf::Commands->run_process(
-          mnemonic	=> "STF",
-          command   => $script,
-          logName    => "$results_dir" . "/$script_name",
-          uid       => $now,
-          echo      => $TRUE,
-          prefix_on => $FALSE,
-          runtime   => 604800);
+	my $return_code = 0;
+	my ($rc, $process) = stf::Commands->run_process(
+		  mnemonic	=> "STF",
+		  command   => $script,
+		  logName    => "$results_dir" . "/$script_name",
+		  uid       => $now,
+		  echo      => $TRUE,
+		  prefix_on => $FALSE,
+		  runtime   => 604800);
 
-    if ($rc != 0) {
-        _log("**FAILED** $script_name script failed. Expected return value=0 Actual=$rc");
-        $return_code = $rc;
-    }
+	if ($rc != 0) {
+		_log("**FAILED** $script_name script failed. Expected return value=0 Actual=$rc");
+		$return_code = $rc;
+	}
 
-    return $return_code;
+	return $return_code;
 }
 
 
@@ -610,85 +610,85 @@ sub runScript {
 #   ==============   E X E C U T E - J U N I T   ==============
 #
 sub output_banner {
-    my $bannerText = shift;
+	my $bannerText = shift;
 
-    # Make the text more readable for execute methods
-    $bannerText =~ s/^execute/execute-/;
+	# Make the text more readable for execute methods
+	$bannerText =~ s/^execute/execute-/;
 
-    # Work out how many padding characters to add on either side of the banner text
-    my $targetWidth = 80;
-    my $timestampWidth = 20;
-    my $titlePadding = 3;
-    my $expandedTextLength = ((length $bannerText) *2) -1;  # Allow for space insertion
-    my $numHighlight = ($targetWidth -$timestampWidth -$titlePadding - $expandedTextLength -$titlePadding) / 2;
+	# Work out how many padding characters to add on either side of the banner text
+	my $targetWidth = 80;
+	my $timestampWidth = 20;
+	my $titlePadding = 3;
+	my $expandedTextLength = ((length $bannerText) *2) -1;  # Allow for space insertion
+	my $numHighlight = ($targetWidth -$timestampWidth -$titlePadding - $expandedTextLength -$titlePadding) / 2;
 
-    # Make sure that we always have some highlighting characters
-    if ($numHighlight < 5) {
-        $numHighlight = 5;
-    }
+	# Make sure that we always have some highlighting characters
+	if ($numHighlight < 5) {
+		$numHighlight = 5;
+	}
 
-    # Create highlight string, with repeating '=' characters
-    my $highlight="";
-    my $i;
-    for ($i=0; $i<$numHighlight; $i++) {
-        $highlight = $highlight . "=";
-    }
+	# Create highlight string, with repeating '=' characters
+	my $highlight="";
+	my $i;
+	for ($i=0; $i<$numHighlight; $i++) {
+		$highlight = $highlight . "=";
+	}
 
-    # Format the banner text. Capitalise and add spacing
-    my $formattedBannerText="";
-    for ($i=0; $i<length $bannerText; $i++) {
-        $formattedBannerText = $formattedBannerText . uc substr($bannerText, $i, 1);
-        if ($i != (length $bannerText) -1) {
-            $formattedBannerText = $formattedBannerText . " ";  # Add space between characters of banner text
-        }
-    }
+	# Format the banner text. Capitalise and add spacing
+	my $formattedBannerText="";
+	for ($i=0; $i<length $bannerText; $i++) {
+		$formattedBannerText = $formattedBannerText . uc substr($bannerText, $i, 1);
+		if ($i != (length $bannerText) -1) {
+			$formattedBannerText = $formattedBannerText . " ";  # Add space between characters of banner text
+		}
+	}
 
 	# Build full banner text
-    my $bannerLine = "$highlight   $formattedBannerText   $highlight";
+	my $bannerLine = "$highlight   $formattedBannerText   $highlight";
 
-    _log($bannerLine);
+	_log($bannerLine);
 }
 
 
 # Output overall pass/fail from running a stage
 sub reportStageResult {
-    my $stageName = shift() . ":";
-    my $rc = shift;
-    my $stageNameLen = shift;
-    $stageNameLen += 1;  # to allow for the ':'
+	my $stageName = shift() . ":";
+	my $rc = shift;
+	my $stageNameLen = shift;
+	$stageNameLen += 1;  # to allow for the ':'
 
-    # Work out result status text
-    my $resultText;
-    if ($rc == 0) {
-        $resultText = " pass";
-    } else {
-        $resultText = "*fail*";
-    }
+	# Work out result status text
+	my $resultText;
+	if ($rc == 0) {
+		$resultText = " pass";
+	} else {
+		$resultText = "*fail*";
+	}
 
-    my $resultLine = sprintf("  %-${stageNameLen}s %s", $stageName, $resultText);
-    _log($resultLine);
+	my $resultLine = sprintf("  %-${stageNameLen}s %s", $stageName, $resultText);
+	_log($resultLine);
 }
 
 
 # This subroutine validates the JVM to be used for running STF for perl code generation.
 # It checks that javahome points at a directory containing a 'java' file.
 sub validate_jvm {
-    my $javahome = shift;
-    my $javahome_name = shift;
+	my $javahome = shift;
+	my $javahome_name = shift;
 
-    _log("Checking JVM: $javahome" );
+	_log("Checking JVM: $javahome" );
 
 	# Process execution goes wrong if java installed into a directory with spaces. Prevent execution.
-    if ($javahome =~ / /) {
-	    _log("**FAILED** Cannot run due to space character in \$JAVA_HOME: $javahome\n");
-	    exit 1;
+	if ($javahome =~ / /) {
+		_log("**FAILED** Cannot run due to space character in \$JAVA_HOME: $javahome\n");
+		exit 1;
 	}
 
-    # Firstly check that there is 'java' file in the expected place below javahome
-    if (!-e "$javahome/bin/java" && !-e "$javahome/bin/java.exe" ) {
-        _log("**FAILED** JVM for '$javahome_name' is not pointing at a valid JVM build: $javahome\n" );
-        exit 1;
-    }
+	# Firstly check that there is 'java' file in the expected place below javahome
+	if (!-e "$javahome/bin/java" && !-e "$javahome/bin/java.exe" ) {
+		_log("**FAILED** JVM for '$javahome_name' is not pointing at a valid JVM build: $javahome\n" );
+		exit 1;
+	}
 }
 
 # This subroutine retrieves the available space on results-root.
@@ -727,7 +727,7 @@ sub validate_jvm {
 
 sub check_free_space {
 
-    my $results_root = shift;
+	my $results_root = shift;
 
 	my $bytes_free = '';
 	my $kb_free = 0;
@@ -740,44 +740,44 @@ sub check_free_space {
 		$results_root =~ s,/,\\,g;
 		$results_root =~ s,\\\\,\\,g;
 
-        # Use chcp 437 (US English) to force locale-independent output.
-        # This handles MBCS machines (CN, KR, JP, TW) where default locale produces garbled text.
+		# Use chcp 437 (US English) to force locale-independent output.
+		# This handles MBCS machines (CN, KR, JP, TW) where default locale produces garbled text.
 		$cmd = "cmd /c \"chcp 437 >nul 2>&1 && dir $results_root 2>&1\"";
-        @df_output = `$cmd 2>&1`;
-        
-        foreach my $line (@df_output) {
-            if ($line =~ m/Dir\(s\)/) {
-                # Try English format: "3 Dir(s)  214,264,049,664 bytes free"
-                # chcp 437 should guarantee this format
-                ($bytes_free) = $line =~ /.*Dir\(s\)\s+([\d,]+)\s+bytes\s+free/i;
+		@df_output = `$cmd 2>&1`;
+		
+		foreach my $line (@df_output) {
+			if ($line =~ m/Dir\(s\)/) {
+				# Try English format: "3 Dir(s)  214,264,049,664 bytes free"
+				# chcp 437 should guarantee this format
+				($bytes_free) = $line =~ /.*Dir\(s\)\s+([\d,]+)\s+bytes\s+free/i;
 
-                if (!defined $bytes_free || $bytes_free eq '') {
-                    warn "WARN: Dir(s) regex missed on summary line, falling back to large-number extraction on: $line\n";
-                    my @numbers = $line =~ /([\d,]{10,})/g;
-                    if (@numbers) {
-                        $bytes_free = $numbers[-1];
-                    }
-                }
-            } elsif ($line =~ m/[\d,]{10,}/ && (!defined $bytes_free || $bytes_free eq '')) {
-                # Skip lines that are directory paths (contain backslash)
-                next if $line =~ m/\\/;
-                # Fallback: chcp 437 may have failed (MBCS machine), try extracting large number
-                warn "WARN: chcp may have failed, extracting free space from non-Dir(s) line: $line\n";
-                my @numbers = $line =~ /([\d,]{10,})/g;
-                if (@numbers) {
-                    $bytes_free = $numbers[-1];
-                }
-            }
-            # Validate and exit loop if we have a good value
-            if (defined $bytes_free && $bytes_free ne '') {
-                $bytes_free =~ s/\,//g;  # Remove commas
-                if ($bytes_free =~ /^\d+$/) {
-                    last;
-                } else {
-                    $bytes_free = '';  # Reset so a bad value doesn't leak
-                }
-            }
-        }
+				if (!defined $bytes_free || $bytes_free eq '') {
+					warn "WARN: Dir(s) regex missed on summary line, falling back to large-number extraction on: $line\n";
+					my @numbers = $line =~ /([\d,]{10,})/g;
+					if (@numbers) {
+						$bytes_free = $numbers[-1];
+					}
+				}
+			} elsif ($line =~ m/[\d,]{10,}/ && (!defined $bytes_free || $bytes_free eq '')) {
+				# Skip lines that are directory paths (contain backslash)
+				next if $line =~ m/\\/;
+				# Fallback: chcp 437 may have failed (MBCS machine), try extracting large number
+				warn "WARN: chcp may have failed, extracting free space from non-Dir(s) line: $line\n";
+				my @numbers = $line =~ /([\d,]{10,})/g;
+				if (@numbers) {
+					$bytes_free = $numbers[-1];
+				}
+			}
+			# Validate and exit loop if we have a good value
+			if (defined $bytes_free && $bytes_free ne '') {
+				$bytes_free =~ s/\,//g;  # Remove commas
+				if ($bytes_free =~ /^\d+$/) {
+					last;
+				} else {
+					$bytes_free = '';  # Reset so a bad value doesn't leak
+				}
+			}
+		}
 
 		# Convert bytes to KB
 		if (defined $bytes_free && $bytes_free =~ /^\d+$/ && $bytes_free > 0) {
@@ -791,8 +791,8 @@ sub check_free_space {
 		my $df_body;
 
 		for (my $i=1; $i<=$#df_output; $i++){
-     		$df_body .= $df_output[$i];
-     	}
+	 		$df_body .= $df_output[$i];
+	 	}
 
 		if ( $df_header =~ m/.*Filesystem\s+1K-blocks.*/ ) {
 			( $kb_free ) = $df_body =~ /[^\s]*\s+\d+\s+\d+\s+(\d+).*/;
@@ -814,9 +814,9 @@ sub check_free_space {
 			die "Unable to determine amount of free space for test results, terminating\n";
 		}
 	}
-    die "Unable to determine amount of free space for test results, terminating\n"
-        unless (defined $kb_free && $kb_free =~ /^\d+$/);
-    $mb_free = int($kb_free / 1024);
+	die "Unable to determine amount of free space for test results, terminating\n"
+		unless (defined $kb_free && $kb_free =~ /^\d+$/);
+	$mb_free = int($kb_free / 1024);
 	print "There is $mb_free Mb free\n";
 	return $mb_free;
 }
@@ -890,34 +890,34 @@ sub findElement {
 sub deleteDirectory {
 	my $doomed_directory = shift;
 	if ( $^O eq 'MSWin32' ) {
-        	my $cmd = "cmd /c rmdir /s /q \"$doomed_directory\"";
-            `$cmd`;
-            if ( $? ) {
-                die "Error running $cmd: $!";
-            }
-        }
-        else {
-            rmtree($doomed_directory, {keep_root => 1}, {error => \my $err} );
-            if ((defined $err) and (@$err)) {
-                for my $diag (@$err) {
-                    my ($file, $message) = %$diag;
-                    if ($file eq '') {
-                        _log("  general error: $message");
-                    } else {
-                        _log("  problem unlinking $file: $message");
-                    }
-                }
-            }
-        }
+			my $cmd = "cmd /c rmdir /s /q \"$doomed_directory\"";
+			`$cmd`;
+			if ( $? ) {
+				die "Error running $cmd: $!";
+			}
+		}
+		else {
+			rmtree($doomed_directory, {keep_root => 1}, {error => \my $err} );
+			if ((defined $err) and (@$err)) {
+				for my $diag (@$err) {
+					my ($file, $message) = %$diag;
+					if ($file eq '') {
+						_log("  general error: $message");
+					} else {
+						_log("  problem unlinking $file: $message");
+					}
+				}
+			}
+		}
 }
 
 # Simple internal method for logging.
 # For use when code only wants to log something.
 # Expects a single argument which contains the message to log.
 sub _log {
-    my $messageText = shift;
+	my $messageText = shift;
 
-    stf::stfUtility->logMsg(message => $messageText);
+	stf::stfUtility->logMsg(message => $messageText);
 }
 
 
