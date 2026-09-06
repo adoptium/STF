@@ -55,6 +55,14 @@ limitations under the License.
 	<property name="junit-version" value="4.12"/>
 	<property name="hamcrest-version" value="1.3"/>
 
+	<!-- SHA-256 checksums for all downloaded prereqs (fail the build on mismatch). -->
+	<property name="ant-sha256"           value="a8e6320476b721215988819bc554d61f5ec8a80338485b78afbe51df0dfcbc4d"/>
+	<property name="junit-sha256"         value="59721f0805e223d84b90677887d9ff567dc534d7c502ca903c0c2b17f05c116a"/>
+	<property name="hamcrest-sha256"      value="66fdef91e9739348df7a096aa384a5685f4e875584cce89386a7a47251c4d8e9"/>
+	<property name="log4j-sha256"         value="ae7d128379f3c5e52d4886a3c351bcbdcdef07f77e2905ea3e888aced035ba55"/>
+	<property name="asm-sha256"           value="8cadd43ac5eb6d09de05faecca38b917a040bb9139c7edeb4cc81c740b713281"/>
+	<property name="asm-commons-sha256"   value="9a579b54d292ad9be171d4313fd4739c635592c2b5ac3a459bbd1049cddec6a0"/>
+
 	<!--
 		Determine the java version being used for the build and set properties for use by build.xml files.
 		If the user did not set the property java_home, use the ant java.home property.
@@ -167,11 +175,12 @@ limitations under the License.
 	</target>
 
 	<!--
-		Target to get ant from http://archive.apache.org/dist/ant/binaries/apache-ant-bin.zip
+		Target to get ant from https://archive.apache.org/dist/ant/binaries/apache-ant-bin.zip
 		Unzip to PREREQS_ROOT/ant
 	-->
 	<target name="configure-ant" unless="ant_available">
-		<download-file destdir="${java.io.tmpdir}/apache-ant" destfile="apache-ant-bin.zip" srcurl="http://archive.apache.org/dist/ant/binaries/apache-ant-${ant-version}-bin.zip"/>
+		<download-file destdir="${java.io.tmpdir}/apache-ant" destfile="apache-ant-bin.zip" srcurl="https://archive.apache.org/dist/ant/binaries/apache-ant-${ant-version}-bin.zip"/>
+		<verify-checksum file="${java.io.tmpdir}/apache-ant/apache-ant-bin.zip" expected="${ant-sha256}"/>
 		<!-- The ant zip file includes a top level apache-ant directory. -->
 		<unzip src="${java.io.tmpdir}/apache-ant/apache-ant-bin.zip" dest="${java.io.tmpdir}/apache-ant"/>
 		<copydir src="${java.io.tmpdir}/apache-ant/apache-ant-${ant-version}" dest="${first_prereqs_root}/apache-ant"/>
@@ -193,6 +202,7 @@ limitations under the License.
 	-->
 	<target name="configure-junit" unless="junit_available">
 		<download-file destdir="${first_prereqs_root}/junit" destfile="junit.jar" srcurl="https://search.maven.org/remotecontent?filepath=junit/junit/${junit-version}/junit-${junit-version}.jar"/>
+		<verify-checksum file="${first_prereqs_root}/junit/junit.jar" expected="${junit-sha256}"/>
 		<available file="${junit}" property="junit_available"/>
 	</target>
 
@@ -210,6 +220,7 @@ limitations under the License.
 	-->
 	<target name="configure-hamcrest-core" unless="hamcrest_core_available">
 		<download-file destdir="${first_prereqs_root}/junit" destfile="hamcrest-core.jar" srcurl="https://search.maven.org/remotecontent?filepath=org/hamcrest/hamcrest-core/${hamcrest-version}/hamcrest-core-${hamcrest-version}.jar"/>
+		<verify-checksum file="${first_prereqs_root}/junit/hamcrest-core.jar" expected="${hamcrest-sha256}"/>
 		<available file="${hamcrest_core}" property="hamcrest_core_available"/>
 	</target>
 
@@ -229,11 +240,12 @@ limitations under the License.
 	</target>
 
 	<!--
-		Target to get log4j from https://archive.apache.org/dist/logging/log4j/${log4j-version}/log4j-bin.zip
+		Target to get log4j from https://archive.apache.org/dist/logging/log4j/${log4j-version}/apache-log4j-${log4j-version}-bin.zip
 		Copy to PREREQS_ROOT/log4j/log4j-api.jar and PREREQS_ROOT/log4j/log4j-core.jar
 	-->
 	<target name="configure-log4j" unless="log4j_available">
 		<download-file destdir="${java.io.tmpdir}/log4j" destfile="apache-log4j-bin.zip" srcurl="https://archive.apache.org/dist/logging/log4j/${log4j-version}/apache-log4j-${log4j-version}-bin.zip"/>
+		<verify-checksum file="${java.io.tmpdir}/log4j/apache-log4j-bin.zip" expected="${log4j-sha256}"/>
 		<unzip src="${java.io.tmpdir}/log4j/apache-log4j-bin.zip" dest="${java.io.tmpdir}/log4j"/>
 		<copy file="${java.io.tmpdir}/log4j/apache-log4j-${log4j-version}-bin/log4j-api-${log4j-version}.jar" tofile="${log4j_api}"/>
 		<copy file="${java.io.tmpdir}/log4j/apache-log4j-${log4j-version}-bin/log4j-core-${log4j-version}.jar" tofile="${log4j_core}"/>
@@ -268,13 +280,35 @@ limitations under the License.
 	<!--
 		Get the windows sysinternals tools from https://download.sysinternals.com/files/SysinternalsSuite.zip
 		Unzip to PREREQS_ROOT/windows_sysinternals
+
+		SysinternalsSuite.zip is a rolling release with no published stable SHA-256, so checksum
+		verification is skipped by default.  If you have obtained a trusted hash (e.g. from an
+		internal mirror or a prior verified download) you can supply it on the Ant command line:
+		  -Dsysinternals-sha256=<hex-digest>
+		When the property is set the download is verified; when it is absent verification is skipped
+		and a warning is printed instead.
 	-->
 	<target name="configure-windows-sysinternals" if="download_windows_sysinternals_required">
 		<download-file destdir="${java.io.tmpdir}/windows_sysinternals" destfile="SysinternalsSuite.zip" srcurl="https://download.sysinternals.com/files/SysinternalsSuite.zip"/>
+		<!-- Verify checksum only when a trusted hash has been supplied. -->
+		<condition property="sysinternals_hash_provided">
+			<isset property="sysinternals-sha256"/>
+		</condition>
+		<antcall target="verify-sysinternals-checksum"/>
+		<antcall target="warn-sysinternals-no-checksum"/>
 		<unzip src="${java.io.tmpdir}/windows_sysinternals/SysinternalsSuite.zip" dest="${windows_sysinternals_dir}"/>
 		<delete dir="${java.io.tmpdir}/windows_sysinternals"/>
 		<!-- We're just using the existence of pskill.exe to determine whether the tools are installed. -->
 	    <available file="${windows_sysinternals_dir}/pskill.exe" property="windows_sysinternals_available"/>
+	</target>
+
+	<target name="verify-sysinternals-checksum" if="sysinternals_hash_provided">
+		<verify-checksum file="${java.io.tmpdir}/windows_sysinternals/SysinternalsSuite.zip" expected="${sysinternals-sha256}"/>
+	</target>
+
+	<target name="warn-sysinternals-no-checksum" unless="sysinternals_hash_provided">
+		<echo message="WARNING: No SHA-256 supplied for SysinternalsSuite.zip — checksum verification skipped."/>
+		<echo message="         Supply -Dsysinternals-sha256=&lt;hex-digest&gt; to enable verification."/>
 	</target>
 	<!--
 		Target to check if there is a tools.jar already copied to PREREQS_ROOT/tools.
@@ -333,10 +367,12 @@ limitations under the License.
 	</target>
 
 	<target name="configure-asm" unless="asm_available">
-		<!-- Fetch asm from https://repository.ow2.org/etc. -->
+		<!-- Fetch asm from https://repo1.maven.org/etc. -->
 		<delete dir="${first_prereqs_root}/asm" failonerror="false"/>
 		<download-file destdir="${asm_dir}" destfile="${asm_file}" srcurl="https://repo1.maven.org/maven2/org/ow2/asm/asm/${asm-version}/asm-${asm-version}.jar"/>
+		<verify-checksum file="${asm_dir}/${asm_file}" expected="${asm-sha256}"/>
 		<download-file destdir="${asm_dir}" destfile="${asm_commons_file}" srcurl="https://repo1.maven.org/maven2/org/ow2/asm/asm-commons/${asm-version}/asm-commons-${asm-version}.jar"/>
+		<verify-checksum file="${asm_dir}/${asm_commons_file}" expected="${asm-commons-sha256}"/>
 		<property name="asm" value="${asm_dir}/${asm_file}"/>
 		<property name="asm-commons" value="${asm_dir}/${asm_commons_file}"/>
 		<condition property="asm_available">
@@ -372,13 +408,35 @@ limitations under the License.
 			<echo message="Destination: @{destdir}/@{destfile}"/>
 			<echo message="Download tool: curl"/>
 			<mkdir dir="@{destdir}"/>
-			<exec executable="curl">
+			<exec executable="curl" failonerror="true">
 				<env key="_ENCODE_FILE_NEW" value="UNTAGGED"/>
-				<arg value="-kL"/>
+				<arg value="-L"/>
+				<arg value="--fail"/>
 				<arg value="-o"/>
 				<arg value="@{destdir}/@{destfile}"/>
 				<arg value="@{srcurl}"/>
 			</exec>
+		</sequential>
+	</macrodef>
+
+	<!--
+		Verify that a downloaded file matches its expected SHA-256 digest.
+		Fails the build immediately if the file is missing or the digest does not match,
+		so a tampered or incomplete download is never unzipped or placed on the classpath.
+	-->
+	<macrodef name="verify-checksum" description="Verify SHA-256 of a downloaded file">
+		<attribute name="file"     description="Path of the file to verify"/>
+		<attribute name="expected" description="Expected SHA-256 hex digest"/>
+		<sequential>
+			<echo message="Verifying SHA-256 of @{file}"/>
+			<checksum file="@{file}" algorithm="SHA-256" property="checksum.@{file}" verifyproperty="checksum.ok.@{file}">
+				<value>@{expected}</value>
+			</checksum>
+			<fail message="SHA-256 mismatch for @{file} — expected @{expected}. Download may have been tampered with.">
+				<condition>
+					<not><istrue value="${checksum.ok.@{file}}"/></not>
+				</condition>
+			</fail>
 		</sequential>
 	</macrodef>
 
