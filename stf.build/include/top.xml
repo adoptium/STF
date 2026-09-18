@@ -425,20 +425,18 @@ limitations under the License.
 		so a tampered or incomplete download is never unzipped or placed on the classpath.
 	-->
 	<macrodef name="verify-checksum" description="Verify SHA-256 of a downloaded file">
-		<attribute name="file"     description="Path of the file to verify"/>
-		<attribute name="expected" description="Expected SHA-256 hex digest"/>
-		<sequential>
-			<echo message="Verifying SHA-256 of @{file}"/>
-			<checksum file="@{file}" algorithm="SHA-256" property="checksum.@{file}" verifyproperty="checksum.ok.@{file}">
-				<value>@{expected}</value>
-			</checksum>
-			<fail message="SHA-256 mismatch for @{file} — expected @{expected}. Download may have been tampered with.">
-				<condition>
-					<not><istrue value="${checksum.ok.@{file}}"/></not>
-				</condition>
-			</fail>
-		</sequential>
-	</macrodef>
+        <attribute name="file"     description="Path of the file to verify"/>
+        <attribute name="expected" description="Expected SHA-256 hex digest"/>
+        <sequential>
+            <echo message="Verifying SHA-256 of @{file}"/>
+            <checksum file="@{file}" algorithm="SHA-256" property="@{expected}" verifyproperty="checksum.ok.@{file}"/>
+            <fail message="SHA-256 mismatch for @{file} — expected @{expected}. Download may have been tampered with.">
+                <condition>
+                    <not><istrue value="${checksum.ok.@{file}}"/></not>
+                </condition>
+            </fail>
+        </sequential>
+    </macrodef>
 
 	<target name="print-ant-location" if="${ant_available}">
 		<echo message="Using ant from ${ant}"/>
